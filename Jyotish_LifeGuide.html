@@ -57,14 +57,13 @@ body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; 
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px 10px;
+  padding: 10px 18px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
 }
-.app-header-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; }
-.app-header-logo { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--gold2); letter-spacing: 0.03em; }
-.app-header-time { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.app-header-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; white-space: nowrap; opacity: 0.5; flex: 1; }
+.app-header-logo { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--gold2); letter-spacing: 0.02em; white-space: nowrap; flex-shrink: 0; padding-left: 1.5ch; }
+.app-header-time { font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--text2); white-space: nowrap; flex: 1; text-align: right; }
 
 /* ─── CONTENT AREA ───────────────────────────────────────── */
 #content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
@@ -315,7 +314,7 @@ body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; 
   <div class="status-bar"></div>
 
   <div class="app-header">
-    <div class="app-header-label">Jyotish LifeGuide · v3.1</div>
+    <div class="app-header-label">Jyotish LifeGuide</div>
     <div class="app-header-logo">Witnessing System</div>
     <div class="app-header-time" id="hdr-time"></div>
   </div>
@@ -1847,8 +1846,7 @@ function getGreeting(h){ if(h>=4&&h<12)return['Brahma Muhurta','Good morning,\nP
 function initClock(){
   var now=new Date(),h=now.getHours(),m=now.getMinutes();
   var pad=function(n){return n<10?'0'+n:n};
-  var ampm=h>=12?'pm':'am',h12=h%12||12;
-  document.getElementById('hdr-time').textContent=h12+':'+pad(m)+' '+ampm;
+  document.getElementById('hdr-time').textContent=pad(h)+':'+pad(m);
   var g=getGreeting(h);
   document.getElementById('greeting-period').textContent=g[0];
   document.getElementById('greeting-text').textContent=g[1];
