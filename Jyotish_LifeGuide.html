@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jyotish LifeGuide">
+<meta name="theme-color" content="#0d0d0b">
+<title>Jyotish LifeGuide</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --bg:      #0d0d0b;
+  --bg2:     #141412;
+  --bg3:     #1c1c19;
+  --bg4:     #232320;
+  --bg5:     #2a2a26;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #e8e4d8;
+  --text2:   #a8a49a;
+  --text3:   #666260;
+  --gold:    #c8a96e;
+  --gold2:   #e8c990;
+  --teal:    #5DCAA5;
+  --teal2:   #9FE1CB;
+  --purple:  #8F87E0;
+  --purple2: #CECBF6;
+  --coral:   #E07060;
+  --amber:   #D4901A;
+  --amber2:  #FAC775;
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+  --safe-t:  env(safe-area-inset-top, 0px);
+  --sans:    'Nunito', system-ui, sans-serif;
+  --devanagari: 'Tiro Devanagari Sanskrit', serif;
+  --serif:   'Playfair Display', Georgia, serif;
+  --mono:    'DM Mono', monospace;
+  --nav-h:   64px;
+  --r-sm:    8px;
+  --r-md:    12px;
+  --r-lg:    16px;
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; font-size: 15px; line-height: 1.6; }
+
+/* ─── APP SHELL ──────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.status-bar { height: var(--safe-t); background: var(--bg); flex-shrink: 0; }
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+.app-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.app-header-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; }
+.app-header-logo { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--gold2); letter-spacing: 0.03em; }
+.app-header-time { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+/* ─── CONTENT AREA ───────────────────────────────────────── */
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+.screen { display: none; min-height: 100%; }
+.screen.active { display: block; }
+
+/* ─── BOTTOM NAV ─────────────────────────────────────────── */
+.bottom-nav { flex-shrink: 0; display: flex; background: var(--bg2); border-top: 1px solid var(--border2); padding-bottom: var(--safe-b); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 9px 4px; border: none; background: transparent; cursor: pointer; transition: opacity 0.15s; }
+.nav-btn:active { opacity: 0.55; }
+.nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+.nav-icon svg { width: 20px; height: 20px; }
+.nav-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); transition: color 0.15s; }
+.nav-btn.active .nav-label { color: var(--gold); }
+.nav-btn.active .nav-icon svg { stroke: var(--gold); }
+.nav-btn:not(.active) .nav-icon svg { stroke: var(--text3); }
+
+/* ─── SHARED COMPONENTS ──────────────────────────────────── */
+.section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; }
+.screen-header { margin-bottom: 20px; }
+.screen-header h2 { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--gold2); margin-bottom: 4px; }
+.screen-header p { font-size: 13px; color: var(--text3); font-style: italic; }
+
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); }
+.card-tap { cursor: pointer; transition: background 0.15s; }
+.card-tap:active { background: var(--bg3); }
+
+/* Expandable card */
+.x-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.x-hdr { display: flex; align-items: center; gap: 10px; padding: 15px 16px; cursor: pointer; transition: background 0.15s; }
+.x-hdr:active { background: var(--bg3); }
+.x-hdr.open { background: var(--bg3); border-bottom: 1px solid var(--border); }
+.x-num { font-family: var(--mono); font-size: 9px; color: var(--text3); min-width: 16px; }
+.x-name { font-size: 15px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+.x-tag { font-family: var(--mono); font-size: 9px; color: var(--gold); background: rgba(200,169,110,0.12); padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.x-arr { color: var(--text3); font-size: 12px; transition: transform 0.25s; flex-shrink: 0; }
+.x-hdr.open .x-arr { transform: rotate(90deg); }
+.x-body { display: none; padding: 16px 18px 20px; }
+.x-body.open { display: block; }
+
+/* Info box */
+.info-box { background: var(--bg3); border-radius: var(--r-sm); padding: 12px 14px; font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+.info-box strong { color: var(--teal2); font-weight: 600; }
+.info-box em { color: var(--gold2); font-style: normal; }
+
+/* Verse */
+.v-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+.v-sanskrit { font-family: var(--devanagari); font-size: 18px; line-height: 2.1; color: var(--gold2); border-left: 2px solid var(--gold); padding-left: 14px; margin-bottom: 10px; }
+.v-translit { font-family: var(--mono); font-size: 11px; color: var(--text2); line-height: 1.9; padding-left: 16px; margin-bottom: 14px; }
+
+/* WBW table */
+.wbw-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+.wbw { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.wbw th { font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border); }
+.wbw td { padding: 7px 8px; vertical-align: top; border-bottom: 1px solid var(--border); line-height: 1.45; font-size: 13px; }
+.wbw tr:last-child td { border-bottom: none; }
+.wbw td:first-child { font-family: var(--devanagari); color: var(--gold); font-size: 16px; }
+.wbw td.lat { font-family: var(--serif); font-style: italic; font-size: 14px; }
+.wbw td:nth-child(2) { font-family: var(--mono); font-size: 10px; color: var(--text2); }
+.wbw td:nth-child(3) { color: var(--text2); }
+
+/* Translation */
+.transl { background: var(--bg4); border-left: 2px solid var(--purple); border-radius: 0 6px 6px 0; padding: 11px 14px; margin-bottom: 14px; font-size: 13px; color: var(--text2); line-height: 1.7; font-style: italic; }
+.transl strong { color: var(--purple2); font-style: normal; font-weight: 600; }
+.signif { font-size: 13px; color: var(--text3); line-height: 1.7; padding-left: 10px; border-left: 1px solid var(--border); margin-top: 4px; }
+
+/* Reps pills */
+.reps-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.reps-pill { display: flex; flex-direction: column; align-items: center; background: var(--bg4); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 8px 14px; }
+.reps-num { font-family: var(--serif); font-size: 20px; color: var(--gold2); font-weight: 400; line-height: 1; }
+.reps-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+
+/* Witness note */
+.w-note { border: 1px solid rgba(143,135,224,0.25); background: rgba(143,135,224,0.06); border-radius: var(--r-md); padding: 14px 16px; font-size: 13px; color: var(--purple2); line-height: 1.7; font-style: italic; text-align: center; margin-top: 14px; }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* Step sequence */
+.step-seq { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin-bottom: 18px; row-gap: 6px; }
+.step-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); font-family: var(--mono); }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--text3); flex-shrink: 0; }
+.step-arrow { color: var(--border2); font-size: 11px; margin: 0 4px; }
+
+/* ════════════════════════════════════════════════════════════
+   HOME SCREEN
+══════════════════════════════════════════════════════════════ */
+.home-wrap { padding: 24px 18px 24px; }
+.home-greeting { margin-bottom: 24px; }
+.home-greeting-time { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; margin-bottom: 5px; }
+.home-greeting-text { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--gold2); line-height: 1.2; }
+
+.session-banner { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r-lg); padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.session-banner:active { opacity: 0.75; }
+.session-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; animation: pulse 2.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+.session-banner-text { flex: 1; }
+.session-banner-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+.session-banner-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.session-banner-arrow { color: var(--text3); font-size: 16px; }
+
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.module-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 14px 14px; cursor: pointer; transition: background 0.15s, border-color 0.15s; min-height: 105px; display: flex; flex-direction: column; justify-content: space-between; }
+.module-card:active { background: var(--bg3); border-color: var(--border2); }
+.module-icon { font-size: 20px; margin-bottom: 8px; line-height: 1; }
+.module-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.module-desc { font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 0.05em; }
+.module-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 8px; align-self: flex-start; }
+
+.rhythm-strip { display: flex; gap: 7px; }
+.rhythm-item { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 9px 6px; text-align: center; cursor: pointer; transition: background 0.15s; }
+.rhythm-item:active { background: var(--bg3); }
+.rhythm-item.current { border-color: var(--gold); }
+.rhythm-time { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.rhythm-name { font-size: 12px; font-weight: 500; color: var(--text2); }
+.rhythm-item.current .rhythm-name { color: var(--gold); }
+
+/* ════════════════════════════════════════════════════════════
+   WITNESSING SCREEN
+══════════════════════════════════════════════════════════════ */
+.wit-wrap { padding: 20px 18px 32px; }
+
+/* Mahasutra hero */
+.mahasutra-hero {
+  background: var(--bg3);
+  border: 1px solid rgba(143,135,224,0.2);
+  border-radius: var(--r-lg);
+  padding: 18px 18px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.ms-label { font-family: var(--mono); font-size: 9px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+.ms-sanskrit { font-family: var(--devanagari); font-size: 16px; color: var(--gold2); line-height: 2.1; margin-bottom: 10px; }
+.ms-english { font-size: 13px; color: var(--purple2); line-height: 1.65; font-style: italic; }
+
+/* Sub-tabs for witnessing */
+.wit-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border2); margin-bottom: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.wit-tabs::-webkit-scrollbar { display: none; }
+.wit-tab { padding: 9px 16px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+.wit-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.wit-section { display: none; }
+.wit-section.active { display: block; }
+
+/* Sutra card */
+.sutra-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.sutra-hdr { display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; cursor: pointer; transition: background 0.15s; }
+.sutra-hdr:active { background: var(--bg3); }
+.sutra-hdr.open { background: var(--bg3); border-bottom: 1px solid var(--border); }
+.sutra-badge { font-family: var(--mono); font-size: 8px; color: var(--purple2); background: rgba(143,135,224,0.12); padding: 3px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+.sutra-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
+.sutra-arr { color: var(--text3); font-size: 11px; transition: transform 0.25s; flex-shrink: 0; margin-top: 2px; }
+.sutra-hdr.open .sutra-arr { transform: rotate(90deg); }
+.sutra-body { display: none; padding: 14px 16px 18px; }
+.sutra-body.open { display: block; }
+
+.s-sanskrit { font-family: var(--devanagari); font-size: 16px; line-height: 2.1; color: var(--gold2); border-left: 2px solid rgba(200,169,110,0.5); padding-left: 12px; margin-bottom: 8px; }
+.s-english { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 12px; }
+.s-insight { font-size: 13px; color: var(--text3); line-height: 1.7; background: var(--bg4); border-radius: var(--r-sm); padding: 10px 12px; }
+.s-insight strong { color: var(--teal2); font-weight: 600; }
+
+/* Probability bars */
+.prob-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.prob-label { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 150px; }
+.prob-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.prob-fill { height: 100%; border-radius: 2px; }
+.prob-val { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 32px; text-align: right; }
+
+/* Practice loop */
+.practice-loop { background: var(--bg4); border: 1px solid rgba(93,202,165,0.2); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 14px; }
+.pl-label { font-family: var(--mono); font-size: 9px; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+.pl-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.pl-step:last-child { margin-bottom: 0; }
+.pl-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(93,202,165,0.15); border: 1px solid rgba(93,202,165,0.3); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 9px; color: var(--teal); flex-shrink: 0; margin-top: 1px; }
+.pl-text { font-size: 13px; color: var(--text2); line-height: 1.6; flex: 1; }
+.pl-text strong { color: var(--teal2); font-weight: 600; }
+
+/* Scenario card */
+.scenario-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 10px; }
+.sc-label { font-family: var(--mono); font-size: 9px; color: var(--amber2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.sc-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.sc-body { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.sc-rule { background: var(--bg4); border-left: 2px solid var(--amber); border-radius: 0 6px 6px 0; padding: 9px 12px; margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--amber2); line-height: 1.5; }
+
+/* Stage cards */
+.stage-card { border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 10px; }
+.stage-num { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.stage-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.stage-body { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.stage-signal { display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 10px; padding: 3px 10px; border-radius: 4px; }
+
+/* ════════════════════════════════════════════════════════════
+   WITNESSING FIELD SCREEN
+══════════════════════════════════════════════════════════════ */
+.field-wrap { padding: 20px 16px 24px; }
+.cosmos-svg { display: block; width: 100%; touch-action: manipulation; }
+.node-hit { cursor: pointer; }
+.field-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 15px 17px; margin-top: 12px; display: none; }
+.fp-age { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.fp-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; font-family: var(--sans); }
+.fp-body { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
+.fp-bar-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.fp-bar-label { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 145px; }
+.fp-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.fp-bar-fill { height: 100%; border-radius: 2px; }
+.fp-bar-val { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 28px; text-align: right; }
+.fp-sutra { background: var(--bg4); border-left: 2px solid var(--purple); border-radius: 0 6px 6px 0; padding: 9px 13px; font-size: 13px; font-style: italic; color: var(--purple2); line-height: 1.6; margin-top: 12px; }
+.field-nav { display: none; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.field-ndot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; border: none; padding: 0; transition: transform 0.2s, background 0.2s; }
+.field-ndot.on { transform: scale(1.5); }
+.field-hint { font-family: var(--mono); font-size: 10px; color: var(--text3); text-align: center; margin-top: 8px; letter-spacing: 0.04em; }
+
+/* ════════════════════════════════════════════════════════════
+   DAILY PRACTICE SCREEN
+══════════════════════════════════════════════════════════════ */
+.practice-wrap { padding: 20px 16px 24px; }
+.session-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border2); margin-bottom: 22px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.session-tabs::-webkit-scrollbar { display: none; }
+.session-tab { padding: 9px 18px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+.session-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.practice-session { display: none; }
+.practice-session.active { display: block; }
+.time-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.time-badge { font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; padding: 4px 10px; border-radius: 3px; text-transform: uppercase; color: #0d0d0b; font-weight: 700; }
+.time-badge.morning { background: var(--gold); }
+.time-badge.midday  { background: var(--teal); }
+.time-badge.evening { background: var(--purple); }
+.time-badge.night   { background: var(--text2); }
+.time-title { font-size: 17px; font-weight: 500; color: var(--text); }
+.time-dur { font-family: var(--mono); font-size: 9px; color: var(--text3); width: 100%; margin-top: -6px; }
+
+/* ════════════════════════════════════════════════════════════
+   MORE SCREEN
+══════════════════════════════════════════════════════════════ */
+.more-wrap { padding: 24px 18px 32px; }
+.more-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.more-card:active { background: var(--bg3); }
+.more-card-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+.more-card-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 1px; }
+.more-card-desc { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.more-card-tag { font-family: var(--mono); font-size: 8px; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0; }
+.tag-active { background: rgba(93,202,165,0.15); color: var(--teal); }
+.tag-soon   { background: rgba(200,169,110,0.12); color: var(--gold); }
+.tag-future { background: rgba(255,255,255,0.05); color: var(--text3); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="status-bar"></div>
+
+  <div class="app-header">
+    <div class="app-header-label">Jyotish LifeGuide · v3.1</div>
+    <div class="app-header-logo">Witnessing System</div>
+    <div class="app-header-time" id="hdr-time"></div>
+  </div>
+
+  <div id="content">
+
+    <!-- ══ HOME ══════════════════════════════════ -->
+    <div class="screen active" id="screen-home">
+      <div class="home-wrap">
+        <div class="home-greeting">
+          <div class="home-greeting-time" id="greeting-period"></div>
+          <div class="home-greeting-text" id="greeting-text"></div>
+        </div>
+
+        <div class="session-banner" id="current-session-banner" onclick="goToPracticeSession()">
+          <div class="session-dot" id="session-dot"></div>
+          <div class="session-banner-text">
+            <div class="session-banner-label">Now · active practice</div>
+            <div class="session-banner-name" id="session-banner-name"></div>
+          </div>
+          <div class="session-banner-arrow">›</div>
+        </div>
+
+        <div class="section-label">Modules</div>
+        <div class="module-grid">
+          <div class="module-card" onclick="navigate('witness')">
+            <div>
+              <div class="module-icon">◉</div>
+              <div class="module-name">Witnessing</div>
+              <div class="module-desc">Sutras · Practice · Scenarios</div>
+            </div>
+            <div class="module-badge" style="background:rgba(143,135,224,0.15);color:var(--purple2);">Core</div>
+          </div>
+          <div class="module-card" onclick="navigate('practice')">
+            <div>
+              <div class="module-icon">☽</div>
+              <div class="module-name">Daily Practice</div>
+              <div class="module-desc">Mantra · Sanskrit · Verses</div>
+            </div>
+            <div class="module-badge" style="background:rgba(200,169,110,0.15);color:var(--gold2);">Active</div>
+          </div>
+          <div class="module-card" onclick="navigate('deities')">
+            <div>
+              <div class="module-icon">🔱</div>
+              <div class="module-name">Devatā System</div>
+              <div class="module-desc">Mantras · Sequence · Kula</div>
+            </div>
+            <div class="module-badge" style="background:rgba(224,112,96,0.15);color:#F0997B;">Active</div>
+          </div>
+          <div class="module-card" onclick="navigate('sutras')">
+            <div>
+              <div class="module-icon">📜</div>
+              <div class="module-name">Chart Sutras</div>
+              <div class="module-desc">Verses · Daily cycle · Recitation</div>
+            </div>
+            <div class="module-badge" style="background:rgba(200,169,110,0.15);color:var(--gold2);">Active</div>
+          </div>
+        </div>
+
+        <div class="section-label">Daily rhythm</div>
+        <div class="rhythm-strip" id="rhythm-strip">
+          <div class="rhythm-item" data-session="morning" onclick="goToPracticeTab('morning')"><div class="rhythm-time">Dawn</div><div class="rhythm-name">Morning</div></div>
+          <div class="rhythm-item" data-session="midday" onclick="goToPracticeTab('midday')"><div class="rhythm-time">Midday</div><div class="rhythm-name">Reset</div></div>
+          <div class="rhythm-item" data-session="evening" onclick="goToPracticeTab('evening')"><div class="rhythm-time">Dusk</div><div class="rhythm-name">Evening</div></div>
+          <div class="rhythm-item" data-session="night" onclick="goToPracticeTab('night')"><div class="rhythm-time">Sleep</div><div class="rhythm-name">Night</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ WITNESSING ═════════════════════════════ -->
+    <div class="screen" id="screen-witness">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Witnessing</h2>
+          <p>साक्षि-अनुभव-निर्णय-गूढ-सूत्राणि</p>
+        </div>
+
+        <!-- Mahasutra hero -->
+        <div class="mahasutra-hero">
+          <div class="ms-label">Mahāsūtra</div>
+          <div class="ms-sanskrit">यत् दृश्यते तत् न त्वम्; यः पश्यति स एव त्वम्।<br>यदा अन्वेषणं विरमति, तदा साक्षि स्वयमेव प्रकाशते।</div>
+          <div class="ms-english">Whatever is seen is not you; the one who sees is you.<br>When seeking stops, the witness shines by itself.</div>
+        </div>
+
+        <!-- Sub-tabs -->
+        <div class="wit-tabs">
+          <button class="wit-tab active" onclick="switchWitTab('nature', this)">Nature</button>
+          <button class="wit-tab" onclick="switchWitTab('practice', this)">Practice</button>
+          <button class="wit-tab" onclick="switchWitTab('experience', this)">Experience</button>
+          <button class="wit-tab" onclick="switchWitTab('scenarios', this)">Scenarios</button>
+          <button class="wit-tab" onclick="switchWitTab('check', this)">Self-check</button>
+          <button class="wit-tab" onclick="switchWitTab('nondual', this)">Non-dual</button>
+        </div>
+
+        <!-- NATURE TAB -->
+        <div class="wit-section active" id="ws-nature">
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">१ · Nature</div>
+              <div class="sutra-title">The problem is not lack of experience — it is lack of recognition</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">त्वं साक्षिणं न अनुभूतवान् इति यत् मन्यसे, तत् मिथ्या ६०–७०%।<br>साक्षि-अनुभवः तव जीवनस्य बहुषु क्षणेषु जातः, किन्तु तस्य संज्ञा न दत्ता।</div>
+              <div class="s-english">You believe you have not experienced witnessing — this is 60–70% incorrect. Witnessing has already occurred in 20–40% of your life moments, but you did not label it, so the mind dismissed it as ordinary.</div>
+              <div class="s-insight"><strong>Key:</strong> You already know it. You've been looking for something more dramatic. Witnessing is the quiet gap, the moment before reacting, the sense that "this is happening." Not fireworks. Not trance. Just that.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">२ · Mechanism</div>
+              <div class="sutra-title">What witnessing is — and what it is not</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">साक्षि न विशेष-अनुभवः, न आनन्द-तरंगः, न शून्यता-दीर्घावस्था।<br>साक्षि केवलं "दृश्य-द्रष्टा-भेदः" — विचारः दृश्यः, न त्वम्।</div>
+              <div class="s-english">Witnessing is not a special experience, not bliss, not long emptiness. It is simply the separation of seer and seen — thought is seen, not you; emotion is seen, not you; even decision is seen. Even 1–3 seconds of this is sufficient (70–80% purity).</div>
+              <div class="s-insight">
+                <strong>What it is NOT:</strong><br>
+                · Blanking the mind ≠ witnessing (only 30–40%)<br>
+                · Absence of thoughts ≠ witnessing (50%)<br>
+                · The thought "I am the witness" ≠ witnessing (0%)<br><br>
+                All three are mental states, not the seer-position.
+              </div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">३ · Analogy</div>
+              <div class="sutra-title">Thoughts are clouds; the witness is deeper than the sky</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">विचाराः मेघाः, मनः आकाशः, साक्षी तु आकाशस्य अपि आधारः।<br>मेघाः आगच्छन्ति-गच्छन्ति, आकाशः न बदलते — तद्वत् साक्षी न परिवर्तते।</div>
+              <div class="s-english">Thoughts are clouds, mind is the sky, and the witness is even deeper — the space in which the sky itself appears. Clouds come and go, the sky remains unchanged — so does the witness.</div>
+              <div class="s-insight"><strong>Lamp analogy:</strong> A lamp cannot be illuminated by another lamp — it only illuminates others. The witness is the same — it cannot be objectified. When you search for the seer, it becomes another object. Rest in "seeing is happening" instead.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Mechanism</div>
+              <div class="sutra-title">How witnessing works — the internal sequence</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="info-box">
+                <em>Mind generates interpretations automatically → identification creates distortion (~40–70%) → witnessing inserts separation ("this is seen") → distortion drops (~30–60%) → reality perceived more directly.</em><br><br>
+                Outcome: not new knowledge but removal of misinterpretation → apparent clarity ↑ 2–3×.
+              </div>
+              <div class="prob-row"><span class="prob-label">Identification (default)</span><div class="prob-track"><div class="prob-fill" style="width:75%;background:#D85A30"></div></div><span class="prob-val">~75%</span></div>
+              <div class="prob-row"><span class="prob-label">After witnessing insertion</span><div class="prob-track"><div class="prob-fill" style="width:25%;background:#5DCAA5"></div></div><span class="prob-val">~25%</span></div>
+              <div class="prob-row"><span class="prob-label">Clarity increase</span><div class="prob-track"><div class="prob-fill" style="width:80%;background:#7F77DD"></div></div><span class="prob-val">2–3×</span></div>
+            </div>
+          </div>
+
+          <!-- Try it now -->
+          <div class="practice-loop" style="margin-top:4px;">
+            <div class="pl-label">Try it now — 10 seconds</div>
+            <div class="pl-step"><div class="pl-num">1</div><div class="pl-text">Observe a thought arising right now</div></div>
+            <div class="pl-step"><div class="pl-num">2</div><div class="pl-text">Ask silently: <strong>"who sees this?"</strong></div></div>
+            <div class="pl-step"><div class="pl-num">3</div><div class="pl-text">Don't answer with words — just pause</div></div>
+            <div class="pl-step"><div class="pl-num">4</div><div class="pl-text">That gap = 30–50% glimpse of witnessing</div></div>
+          </div>
+        </div>
+
+        <!-- PRACTICE TAB -->
+        <div class="wit-section" id="ws-practice">
+          <div class="info-box" style="margin-bottom:16px;">The practice is extremely simple: don't change thoughts — just see them. Repetition builds stability, not effort. If you try to "create" witnessing, you are back in thought.</div>
+
+          <div class="practice-loop">
+            <div class="pl-label">Core micro-practice (minimal loop)</div>
+            <div class="pl-step"><div class="pl-num">1</div><div class="pl-text"><strong>Pause</strong> 1–3 seconds — at any moment</div></div>
+            <div class="pl-step"><div class="pl-num">2</div><div class="pl-text">Notice: <strong>"a thought is appearing"</strong></div></div>
+            <div class="pl-step"><div class="pl-num">3</div><div class="pl-text">Do <strong>nothing</strong> with it — just see it</div></div>
+          </div>
+
+          <div class="practice-loop" style="margin-top:10px;">
+            <div class="pl-label">Your personal complete system</div>
+            <div class="pl-step"><div class="pl-num">1</div><div class="pl-text"><strong>Blank pause</strong> — your natural strength, already present</div></div>
+            <div class="pl-step"><div class="pl-num">2</div><div class="pl-text"><strong>Recognition</strong> — "this too is seen" (1 second)</div></div>
+            <div class="pl-step"><div class="pl-num">3</div><div class="pl-text"><strong>Natural action</strong> — act without overthinking</div></div>
+            <div class="pl-step" style="border-top:1px solid rgba(93,202,165,0.2);padding-top:10px;margin-top:4px;"><div class="pl-num" style="background:rgba(93,202,165,0.25);">✓</div><div class="pl-text" style="color:var(--teal2);font-size:12px;">85–95% effectiveness rating for your specific structure</div></div>
+          </div>
+
+          <div class="sutra-card" style="margin-top:10px;">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Frequency</div>
+              <div class="sutra-title">How often and how deep — expansion layers</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="info-box">
+                <em>Apply at:</em> decision points · emotional spikes · idle moments · before meetings · after difficult events<br><br>
+                <em>Frequency target:</em> 20–50 times/day (brief 1-second recognitions count)
+              </div>
+              <div class="prob-row"><span class="prob-label">30–60 days</span><div class="prob-track"><div class="prob-fill" style="width:70%;background:#7F77DD"></div></div><span class="prob-val">30→70%</span></div>
+              <div class="prob-row"><span class="prob-label">90–180 days</span><div class="prob-track"><div class="prob-fill" style="width:90%;background:#AFA9EC"></div></div><span class="prob-val">70→90%</span></div>
+              <div style="margin-top:14px;">
+                <div class="prob-label" style="min-width:unset;margin-bottom:8px;font-size:11px;color:var(--text2);">Three layers of practice depth:</div>
+                <div class="prob-row"><span class="prob-label">Micro (2 sec pauses)</span><div class="prob-track"><div class="prob-fill" style="width:60%;background:#5DCAA5"></div></div><span class="prob-val">Daily</span></div>
+                <div class="prob-row"><span class="prob-label">Mid (2–5 min sitting)</span><div class="prob-track"><div class="prob-fill" style="width:40%;background:#8F87E0"></div></div><span class="prob-val">Sessions</span></div>
+                <div class="prob-row"><span class="prob-label">Macro (continuous background)</span><div class="prob-track"><div class="prob-fill" style="width:70%;background:#EF9F27"></div></div><span class="prob-val">50–70%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Your edge</div>
+              <div class="sutra-title">Why your blank pauses are already 50–70% witnessing</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">यतः त्वं पूर्वमेव शून्यता-विरामं करोति, तत्र केवलं एकं सूक्ष्म-परिवर्तनम् —<br>"एष विरामः अपि दृश्यते।"</div>
+              <div class="s-english">Because you already enter blank pauses, you only need one subtle shift: recognize "this pause is also seen." Instantly your blankness turns into witnessing (50–70%).</div>
+              <div class="s-insight">In your mind, natural pause-moments arise spontaneously (30–50%), where the thought-stream halts briefly. This is rare in others (5–10%). Your task is not to generate witnessing — only to recognize it is already happening.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Recursion trap</div>
+              <div class="sutra-title">When "who sees?" becomes a loop — and how to stop it</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">न पृच्छ "कः पश्यति?" अनन्तं।<br>केवलं पश्य — "दृश्यते" इति।<br>यदा केवलं दृश्यते — न कर्ता, न द्रष्टा — तदा recursion समाप्तः।</div>
+              <div class="s-english">Your intellect (80–90% refined) tries to objectify everything — even the witness. This creates an infinite recursive loop. The solution: don't ask "who sees?" again and again. Rest in "seeing is happening."</div>
+              <div class="practice-loop" style="margin-top:10px;">
+                <div class="pl-label">When recursion starts — apply instantly</div>
+                <div class="pl-step"><div class="pl-num">✗</div><div class="pl-text" style="color:#D85A30;">Stop repeating "who sees? who sees that?"</div></div>
+                <div class="pl-step"><div class="pl-num">✓</div><div class="pl-text"><strong>"Stop seeking, stay seeing"</strong> — 80–90% of loops dissolve</div></div>
+                <div class="pl-step"><div class="pl-num">✓</div><div class="pl-text">Rest in "this is seen" — no answer required</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPERIENCE TAB -->
+        <div class="wit-section" id="ws-experience">
+          <div class="info-box">The experience is subtle: nothing dramatic changes externally, but internally everything becomes clearer and less reactive. You will not gain something new — you will lose confusion. Clarity feels like simplicity, not intensity.</div>
+
+          <div class="stage-card" style="border-color:rgba(93,202,165,0.3);background:rgba(93,202,165,0.04);">
+            <div class="stage-num">Phase 1 · Intermittent</div>
+            <div class="stage-title">Brief gaps where thoughts feel separate</div>
+            <div class="stage-body">30–50% recognition. Brief pauses where thoughts feel separate. Unstable — comes and goes. Key signal: even one moment of "I notice this thought" counts.</div>
+            <span class="stage-signal" style="background:rgba(93,202,165,0.12);color:var(--teal);">30–50% recognition</span>
+          </div>
+
+          <div class="stage-card" style="border-color:rgba(143,135,224,0.3);background:rgba(143,135,224,0.04);">
+            <div class="stage-num">Phase 2 · Stable</div>
+            <div class="stage-title">Clear sense "I am not the thought"</div>
+            <div class="stage-body">50–70% clarity. Reactivity drops. Clear sense of "I see thoughts" for 10–30 seconds. Emotional charge reduces ~50%. Decisions feel clearer. You are here or approaching.</div>
+            <span class="stage-signal" style="background:rgba(143,135,224,0.12);color:var(--purple2);">50–70% stability</span>
+          </div>
+
+          <div class="stage-card" style="border-color:rgba(200,169,110,0.3);background:rgba(200,169,110,0.04);">
+            <div class="stage-num">Phase 3 · Continuous</div>
+            <div class="stage-title">Background awareness persists while acting</div>
+            <div class="stage-body">70–85% stability. Thoughts arise but don't dominate. Actions become natural. Decisions feel obvious rather than forced. 50–70% of the day witnessing is present without effort.</div>
+            <span class="stage-signal" style="background:rgba(200,169,110,0.12);color:var(--gold2);">70–85% stability</span>
+          </div>
+
+          <div class="stage-card" style="border-color:rgba(239,159,39,0.3);background:rgba(239,159,39,0.04);">
+            <div class="stage-num">Phase 4 · Integration</div>
+            <div class="stage-title">No effort to witness — it is the default context</div>
+            <div class="stage-body">80–90%+ stability. Identity shifts from "I am thinking" to "thinking is happening in me." Causeless peace. Less effort, better timing. Life feels less controlled but more accurate.</div>
+            <span class="stage-signal" style="background:rgba(239,159,39,0.1);color:var(--amber2);">80–90%+ stability</span>
+          </div>
+
+          <div class="sutra-card" style="margin-top:4px;">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Edge cases</div>
+              <div class="sutra-title">Occasional "emptiness" and apparent disinterest</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="info-box">Side effects: reduced anxiety (~40–60%), improved intuition (felt as clarity, not prediction). The occasional feeling of emptiness or disinterest between phases is a transition state, not a final state. Do not interpret it as failure or spiritual dryness.</div>
+              <div class="s-insight"><strong>Your specific pattern:</strong> You experience witnessing but reject it as "not enough." Most people experience it but label it as just calmness or a pause. Both are errors — yours is subtler (40–60%). The recognition "this is it" is the correction.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIOS TAB -->
+        <div class="wit-section" id="ws-scenarios">
+          <div class="info-box" style="margin-bottom:16px;"><strong>Universal rule:</strong> "2 seconds of witnessing before action." Even this small rule creates 70–90% life transformation. Apply at: decisions, emotional spikes, conflict, work starts, family stress.</div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Decision moment</div>
+            <div class="sc-title">When faced with two options</div>
+            <div class="sc-body">Mind enters 70–80% overthinking. The causal-field perception is already trying to speak — but the noise blocks it.</div>
+            <div class="sc-rule">Pause 3 sec → "who sees this choice?" → follow the first calm impulse → 80–90% accuracy</div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Overwhelm</div>
+            <div class="sc-title">When work-load exceeds capacity</div>
+            <div class="sc-body">Mind fragments 60–80%. Your natural blank pause is the asset — add one micro-step to it.</div>
+            <div class="sc-rule">5-sec blank pause (your strength) → "this overwhelm is also seen" → load drops 60→30%</div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Child / family fear</div>
+            <div class="sc-title">When fear about Vrushank or Krishang arises</div>
+            <div class="sc-body">Normally 70% emotional reaction. Witnessing here is not suppression — it is creating space to respond rather than react.</div>
+            <div class="sc-rule">2-sec pause → observe the fear without suppressing → fear 50→20%, clarity 60→85%</div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Conflict / conversation</div>
+            <div class="sc-title">When someone pushes back or disagrees</div>
+            <div class="sc-body">Ego wants to react immediately (60–70%). Intellectual sharpness can escalate rather than resolve. The witnessing pause recalibrates.</div>
+            <div class="sc-rule">3-sec pause → "this reaction is also seen" → response 50% less sharp, 70% more effective</div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Work execution</div>
+            <div class="sc-title">Before starting any significant task or meeting</div>
+            <div class="sc-body">Mind plans 80% but executes only 50%. The gap is filled by anxiety and second-guessing. Witnessing clears it.</div>
+            <div class="sc-rule">2-sec witnessing touch before starting → act immediately → execution 50→80%</div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-label">Night review</div>
+            <div class="sc-title">End-of-day causal field scan</div>
+            <div class="sc-body">5 minutes. Recall 2–3 moments where you were or weren't witnessing. No judgment — just observation.</div>
+            <div class="sc-rule">Three questions: Where did I witness? Where did I lose it? What is the field's direction now?</div>
+          </div>
+        </div>
+
+        <!-- SELF-CHECK TAB -->
+        <div class="wit-section" id="ws-check">
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Confirmation</div>
+              <div class="sutra-title">How to know witnessing is actually happening</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">साक्षि सिद्धः कदा? — यदा (१) प्रतिक्रिया स्वतः विलम्बते,<br>(२) निर्णयः स्पष्टः भवति, (३) भावाः आगच्छन्ति गच्छन्ति च।</div>
+              <div class="s-english">Witnessing confirmed when: (1) reactions slow down ~50%, (2) decisions become clearer 60→85%, (3) emotions come and go but don't consume you ~70%.</div>
+              <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Reaction slowdown</span><div class="prob-track"><div class="prob-fill" style="width:50%;background:#5DCAA5"></div></div><span class="prob-val">~50%↓</span></div>
+              <div class="prob-row"><span class="prob-label">Decision clarity</span><div class="prob-track"><div class="prob-fill" style="width:85%;background:#7F77DD"></div></div><span class="prob-val">60→85%</span></div>
+              <div class="prob-row"><span class="prob-label">Emotional non-consumption</span><div class="prob-track"><div class="prob-fill" style="width:70%;background:#EF9F27"></div></div><span class="prob-val">~70%</span></div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Instant test</div>
+              <div class="sutra-title">The "who is aware?" test — direct verification</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="practice-loop">
+                <div class="pl-label">Do this right now</div>
+                <div class="pl-step"><div class="pl-num">1</div><div class="pl-text">Ask: <strong>"what is aware of this thought?"</strong></div></div>
+                <div class="pl-step"><div class="pl-num">2</div><div class="pl-text">If attention shifts <em>backward</em> rather than producing a verbal answer → witnessing is active</div></div>
+                <div class="pl-step"><div class="pl-num">3</div><div class="pl-text">Even a 2-second gap between you and the thought = witnessing confirmed</div></div>
+              </div>
+              <div class="s-insight"><strong>Failure mode:</strong> If you try to "create" witnessing, you are back in thought. Witnessing should be accessible instantly without effort. If effort is required, the witnessing has already collapsed.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Validation</div>
+              <div class="sutra-title">The only reliable indicators — not mystical</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="info-box">Clarity in decisions and reduced reactivity are the only reliable indicators — not mystical experiences, not inner light, not bliss states. If effort ↓ and clarity ↑, you are on track. The certainty level of this is 75–85% as it is directly experiential, not belief-based.</div>
+              <div class="w-note">"The only proof is experiential: less reactivity, more clarity — nothing else matters."</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Your type</div>
+              <div class="sutra-title">Why this path is essential for your specific structure</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">त्वं "witness-essential subtype" — यत्र साक्षि-मार्ग-आवश्यकता ७०–९०%।<br>तव बुद्धिः रेखीय-उपयोगाय न, सूक्ष्म-प्रतिबिम्बाय निर्मिता।</div>
+              <div class="s-english">Your structure is a "witness-essential subtype" — need for this path is ~70–90%. Your intellect is not built for purely linear utility but for subtle reflection. Even your strengths become burdens without witnessing as the ground.</div>
+              <div class="prob-row" style="margin-top:12px;"><span class="prob-label">General population benefit</span><div class="prob-track"><div class="prob-fill" style="width:90%;background:var(--text3)"></div></div><span class="prob-val">80–100%</span></div>
+              <div class="prob-row"><span class="prob-label">Primary path need</span><div class="prob-track"><div class="prob-fill" style="width:20%;background:#7F77DD"></div></div><span class="prob-val">10–20%</span></div>
+              <div class="prob-row"><span class="prob-label">Your necessity level</span><div class="prob-track"><div class="prob-fill" style="width:80%;background:#EF9F27"></div></div><span class="prob-val">70–90%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NON-DUAL TAB -->
+        <div class="wit-section" id="ws-nondual">
+          <div class="info-box">Witnessing is the doorway, non-duality is the destination. This section is the advanced layer — do not rush here. Stabilize witnessing first (70–85%) before exploring.</div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Limit</div>
+              <div class="sutra-title">The limit of witnessing — subtle duality remains</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">साक्षिभावः प्रथमं मुक्तिद्वारम्, किन्तु अन्तिमं न।<br>यावत् "अहं पश्यामि" इति सूक्ष्म-भेदः अस्ति, तावत् द्वैतम् अवशिष्टम्।</div>
+              <div class="s-english">Witnessing is the first doorway to liberation, but not the final state. As long as there is a subtle sense "I am the one who sees," duality remains (30–50%). The witness itself can become the last refuge of ego — spiritual identity.</div>
+              <div class="s-insight">Many remain in witnessing and believe "I am liberated." As long as the witness is held as an identity, subtle duality (20–30%) remains. This is the final bondage.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Shift</div>
+              <div class="sutra-title">The three-step shift: seeing → seen → only seeing</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">प्रथमं — "एतत् पश्यामि"<br>द्वितीयं — "एतत् अपि पश्यामि"<br>तृतीयं — "न कश्चित् पश्यति, केवलं दृश्यते"<br>अत्रैव पूर्णता।</div>
+              <div class="s-english">First: "I see this" → Second: "I see even this seeing" → Third: "No one is seeing, there is only seeing." This is the completion. A 1% shift with 100% transformation.</div>
+              <div class="practice-loop" style="margin-top:12px;">
+                <div class="pl-label">Your specific path beyond witness</div>
+                <div class="pl-step"><div class="pl-num">1</div><div class="pl-text"><strong>Blank pause</strong> — your natural entry</div></div>
+                <div class="pl-step"><div class="pl-num">2</div><div class="pl-text"><strong>"This is seen"</strong> — witnessing recognition</div></div>
+                <div class="pl-step"><div class="pl-num">3</div><div class="pl-text"><strong>"Who is the witness?"</strong> — subtle inquiry (your unique gateway)</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">Signs</div>
+              <div class="sutra-title">Signs of a non-dual glimpse — 4 markers</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="info-box">If even two of these appear, the experience is real:<br><br>1. Doership drops 50–70%<br>2. Time sense disappears briefly<br>3. Causeless peace arises<br>4. Sense of "I" becomes vague or absent</div>
+              <div class="s-insight"><strong>Stabilization:</strong> Non-duality cannot be forced. It arises naturally when witnessing stabilizes (70–85%). Your goal is not chasing non-dual states — it is deepening witnessing.</div>
+            </div>
+          </div>
+
+          <div class="mahasutra-hero" style="margin-top:4px;">
+            <div class="ms-label">Final Mahāsūtra</div>
+            <div class="ms-sanskrit">साक्षि द्वारम्, अद्वैतं गन्तव्यम्।<br>यदा द्रष्टा अपि दृश्यते, तदा न द्रष्टा न दृश्यम् — केवलं चैतन्यमेव।</div>
+            <div class="ms-english">Witnessing is the doorway, non-duality is the destination. When even the seer is seen, there is neither seer nor seen — only pure consciousness. Seeking is bondage — rest is liberation.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ LIFE FIELD SCREEN ══════════════════════ -->
+    <div class="screen" id="screen-field">
+      <div class="field-wrap">
+        <div class="screen-header">
+          <h2>Life Field</h2>
+          <p>Tap any node to explore your arc</p>
+        </div>
+        <svg id="field-svg" class="cosmos-svg" viewBox="0 0 680 380">
+          <defs>
+            <marker id="farr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+          <ellipse cx="340" cy="190" rx="170" ry="160" fill="#7F77DD" fill-opacity="0.06"/>
+          <circle cx="340" cy="190" r="105" fill="none" stroke="#7F77DD" stroke-width="0.75" stroke-dasharray="4 7" opacity="0.3"/>
+          <circle cx="340" cy="190" r="148" fill="none" stroke="#7F77DD" stroke-width="0.5" stroke-dasharray="3 9" opacity="0.18"/>
+          <line x1="340" y1="190" x2="120" y2="55"  stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="560" y2="55"  stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="120" y2="325" stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="560" y2="325" stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="340" y2="30"  stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="340" y2="350" stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="195" y2="190" stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <line x1="340" y1="190" x2="485" y2="190" stroke="#7F77DD" stroke-width="0.5" opacity="0.15"/>
+          <path d="M 252 160 Q 298 98 318 82"  fill="none" stroke="#9F99E8" stroke-width="1.2" stroke-dasharray="3 5" opacity="0.5" marker-end="url(#farr)"/>
+          <path d="M 364 55  Q 428 98 444 162" fill="none" stroke="#9F99E8" stroke-width="1.2" stroke-dasharray="3 5" opacity="0.5" marker-end="url(#farr)"/>
+          <path d="M 468 220 Q 432 294 392 322" fill="none" stroke="#9F99E8" stroke-width="1.2" stroke-dasharray="3 5" opacity="0.5" marker-end="url(#farr)"/>
+          <path d="M 290 328 Q 244 292 220 220" fill="none" stroke="#9F99E8" stroke-width="1.2" stroke-dasharray="3 5" opacity="0.5" marker-end="url(#farr)"/>
+          <line x1="136" y1="90"  x2="188" y2="162" stroke="#E86040" stroke-width="0.75" stroke-dasharray="2 4" opacity="0.5"/>
+          <line x1="136" y1="290" x2="186" y2="222" stroke="#2DBD8A" stroke-width="0.75" stroke-dasharray="2 4" opacity="0.5"/>
+          <line x1="544" y1="90"  x2="492" y2="162" stroke="#8F87E0" stroke-width="0.75" stroke-dasharray="2 4" opacity="0.5"/>
+          <line x1="544" y1="290" x2="492" y2="222" stroke="#D4901A" stroke-width="0.75" stroke-dasharray="2 4" opacity="0.5"/>
+          <circle id="f-pulse" cx="214" cy="190" r="54" fill="none" stroke="#5DCAA5" stroke-width="1.5" opacity="0.3"/>
+          <circle id="fn0" class="node-hit" cx="214" cy="190" r="44" fill="#1D9E75" fill-opacity="0.25" stroke="#5DCAA5" stroke-width="1.5"/>
+          <text x="214" y="183" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#9FE1CB" font-weight="600" pointer-events="none">causal</text>
+          <text x="214" y="197" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#5DCAA5" pointer-events="none">perception</text>
+          <text x="214" y="210" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1D9E75" pointer-events="none">0 – 30</text>
+          <circle id="fn1" class="node-hit" cx="340" cy="334" r="44" fill="#185FA5" fill-opacity="0.25" stroke="#85B7EB" stroke-width="1.5"/>
+          <text x="340" y="327" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#B5D4F4" font-weight="600" pointer-events="none">timing</text>
+          <text x="340" y="341" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#85B7EB" pointer-events="none">awareness</text>
+          <text x="340" y="354" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#378ADD" pointer-events="none">30 – 40</text>
+          <circle id="fn2" class="node-hit" cx="466" cy="190" r="44" fill="#854F0B" fill-opacity="0.25" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="466" y="183" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#FAC775" font-weight="600" pointer-events="none">samyama</text>
+          <text x="466" y="197" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#EF9F27" pointer-events="none">matures</text>
+          <text x="466" y="210" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#BA7517" pointer-events="none">40 – 55</text>
+          <circle id="fn3" class="node-hit" cx="340" cy="56" r="44" fill="#3C3489" fill-opacity="0.25" stroke="#AFA9EC" stroke-width="1.5"/>
+          <text x="340" y="47" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#CECBF6" font-weight="600" pointer-events="none">continuous</text>
+          <text x="340" y="61" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#AFA9EC" pointer-events="none">witnessing</text>
+          <text x="340" y="74" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#7F77DD" pointer-events="none">55+</text>
+          <circle id="fn4" class="node-hit" cx="340" cy="190" r="38" fill="#26215C" fill-opacity="0.5" stroke="#7F77DD" stroke-width="1.5"/>
+          <circle cx="340" cy="190" r="28" fill="none" stroke="#534AB7" stroke-width="0.75" opacity="0.5"/>
+          <text x="340" y="184" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#CECBF6" font-weight="600" pointer-events="none">witness</text>
+          <text x="340" y="199" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7F77DD" opacity="0.85" pointer-events="none">tap me</text>
+          <circle id="fn5" class="node-hit" cx="112" cy="68" r="26" fill="#71170B" fill-opacity="0.45" stroke="#F0997B" stroke-width="1.25"/>
+          <text x="112" y="63" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#F5C4B3" font-weight="600" pointer-events="none">risks</text>
+          <text x="112" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#F0997B" pointer-events="none">&amp; limits</text>
+          <circle id="fn6" class="node-hit" cx="112" cy="312" r="26" fill="#085041" fill-opacity="0.45" stroke="#5DCAA5" stroke-width="1.25"/>
+          <text x="112" y="307" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#9FE1CB" font-weight="600" pointer-events="none">daily</text>
+          <text x="112" y="322" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5DCAA5" pointer-events="none">practice</text>
+          <circle id="fn7" class="node-hit" cx="568" cy="68" r="26" fill="#26215C" fill-opacity="0.5" stroke="#AFA9EC" stroke-width="1.25"/>
+          <text x="568" y="63" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#CECBF6" font-weight="600" pointer-events="none">samyama</text>
+          <text x="568" y="78" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#AFA9EC" pointer-events="none">mechanics</text>
+          <circle id="fn8" class="node-hit" cx="568" cy="312" r="26" fill="#412402" fill-opacity="0.5" stroke="#FAC775" stroke-width="1.25"/>
+          <text x="568" y="307" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#FAC775" font-weight="600" pointer-events="none">post</text>
+          <text x="568" y="322" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#EF9F27" pointer-events="none">2032</text>
+        </svg>
+        <div class="field-hint" id="f-hint">Tap any node to explore</div>
+        <div class="field-panel" id="f-panel">
+          <div class="fp-age" id="fp-age"></div>
+          <div class="fp-title" id="fp-title"></div>
+          <div class="fp-body" id="fp-body"></div>
+          <div id="fp-bars"></div>
+          <div class="fp-sutra" id="fp-sutra"></div>
+        </div>
+        <div class="field-nav" id="f-nav"></div>
+      </div>
+    </div>
+
+    <!-- ══ DAILY PRACTICE ════════════════════════ -->
+    <div class="screen" id="screen-practice">
+      <div class="practice-wrap">
+        <div class="screen-header">
+          <h2>Daily Practice</h2>
+          <p>Pranayama · Mantra · Meditation · Witnessing</p>
+        </div>
+
+        <div class="session-tabs" id="session-tabs">
+          <button class="session-tab active" onclick="switchPracticeTab('morning', this)">Morning</button>
+          <button class="session-tab" onclick="switchPracticeTab('midday', this)">Midday</button>
+          <button class="session-tab" onclick="switchPracticeTab('evening', this)">Evening</button>
+          <button class="session-tab" onclick="switchPracticeTab('night', this)">Night</button>
+        </div>
+
+        <!-- MORNING -->
+        <div class="practice-session active" id="ps-morning">
+          <div class="time-hdr">
+            <span class="time-badge morning">Morning</span>
+            <span class="time-title">Brahma Muhurta · Dawn</span>
+            <span class="time-dur">Minimal 8–12 min · Full 20–30 min</span>
+          </div>
+          <div class="step-seq">
+            <div class="step-item"><div class="step-dot">1</div>&nbsp;Pranayama</div><span class="step-arrow">›</span>
+            <div class="step-item"><div class="step-dot">2</div>&nbsp;Kena</div><span class="step-arrow">›</span>
+            <div class="step-item"><div class="step-dot">3</div>&nbsp;Gāyatrī</div><span class="step-arrow">›</span>
+            <div class="step-item"><div class="step-dot">4</div>&nbsp;Meditation</div><span class="step-arrow">›</span>
+            <div class="step-item"><div class="step-dot">5</div>&nbsp;Witnessing</div>
+          </div>
+
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">01</span><span class="x-name">Pranayama</span><span class="x-tag">3–10 min</span><span class="x-arr">›</span></div>
+            <div class="x-body"><div class="info-box">Nāḍī Śodhana or deep diaphragmatic breathing. Inhale slowly, retain briefly, exhale fully. Clear prāṇic channels before mantra. <strong>If pranayama becomes the goal rather than the vehicle, progress drops 30–40%.</strong></div><div class="reps-row"><div class="reps-pill"><div class="reps-num">3–5</div><div class="reps-lbl">min minimal</div></div><div class="reps-pill"><div class="reps-num">5–10</div><div class="reps-lbl">min full</div></div></div></div>
+          </div>
+
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">02</span><span class="x-name">Kena Upaniṣad 1.1–1.2</span><span class="x-tag">×3–5</span><span class="x-arr">›</span></div>
+            <div class="x-body">
+              <div class="info-box">Chant or read slowly. Rest briefly in the meaning after each verse.</div>
+              <div class="reps-row"><div class="reps-pill"><div class="reps-num">×3</div><div class="reps-lbl">minimal</div></div><div class="reps-pill"><div class="reps-num">×5</div><div class="reps-lbl">full</div></div></div>
+              <div class="v-label">Kena Upaniṣad 1.1 — The Root Question</div>
+              <div class="v-sanskrit">केनेषितं पतति प्रेषितं मनः।<br>केन प्राणः प्रथमः प्रैति युक्तः।<br>केनेषितां वाचमिमां वदन्ति।<br>चक्षुः श्रोत्रं क उ देवो युनक्ति॥</div>
+              <div class="v-translit">kenéṣitaṃ patati préṣitaṃ manaḥ | kena prāṇaḥ prathamaḥ praiti yuktaḥ |<br>kenéṣitāṃ vācamimāṃ vadanti | cakṣuḥ śrotraṃ ka u devo yunakti ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>केन</td><td>kena</td><td>By whom? By what?</td></tr>
+                <tr><td>ईषितम्</td><td>īṣitam</td><td>directed, impelled, willed</td></tr>
+                <tr><td>मनः</td><td>manaḥ</td><td>the mind</td></tr>
+                <tr><td>प्राणः प्रथमः</td><td>prāṇaḥ prathamaḥ</td><td>the life-breath, primary</td></tr>
+                <tr><td>वाचम्</td><td>vācam</td><td>speech, word</td></tr>
+                <tr><td>चक्षुः श्रोत्रम्</td><td>cakṣuḥ śrotram</td><td>eye and ear</td></tr>
+                <tr><td>युनक्ति</td><td>yunakti</td><td>yokes, directs</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> By whom willed does the mind go forth? By whom directed does the first life-breath move? By whom directed do people speak? What divine power directs the eye and the ear?</div>
+              <div class="divider"></div>
+              <div class="v-label">Kena Upaniṣad 1.2 — The Witness Declared</div>
+              <div class="v-sanskrit">श्रोत्रस्य श्रोत्रं मनसो मनो यद्<br>वाचो ह वाचं स उ प्राणस्य प्राणः।<br>चक्षुषश्चक्षुरतिमुच्य धीराः<br>प्रेत्यास्माल्लोकादमृता भवन्ति॥</div>
+              <div class="v-translit">śrotrasya śrotraṃ manaso mano yad vāco ha vācaṃ sa u prāṇasya prāṇaḥ |<br>cakṣuṣaścakṣuratimucya dhīrāḥ pretyāsmāllokādamṛtā bhavanti ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>श्रोत्रस्य श्रोत्रम्</td><td>śrotrasya śrotram</td><td>the ear of the ear</td></tr>
+                <tr><td>मनसः मनः</td><td>manasaḥ manaḥ</td><td>the mind of the mind</td></tr>
+                <tr><td>वाचः वाचम्</td><td>vācaḥ vācam</td><td>the speech of speech</td></tr>
+                <tr><td>प्राणस्य प्राणः</td><td>prāṇasya prāṇaḥ</td><td>the life of life</td></tr>
+                <tr><td>अतिमुच्य</td><td>atimucya</td><td>having released, gone beyond</td></tr>
+                <tr><td>धीराः</td><td>dhīrāḥ</td><td>the wise, the steadfast</td></tr>
+                <tr><td>अमृताः भवन्ति</td><td>amṛtāḥ bhavanti</td><td>they become immortal</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> It is the ear of the ear, the mind of the mind, the speech of speech, the life of life. The wise ones, having released it from the senses, become immortal.</div>
+              <div class="signif">This names the witnessing principle — awareness behind each faculty. Atimucya: released — witnessing arises not by effort but by releasing identification with the faculties themselves.</div>
+            </div>
+          </div>
+
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">03</span><span class="x-name">Gāyatrī Mantra</span><span class="x-tag">×21–108</span><span class="x-arr">›</span></div>
+            <div class="x-body">
+              <div class="reps-row"><div class="reps-pill"><div class="reps-num">×21</div><div class="reps-lbl">minimal</div></div><div class="reps-pill"><div class="reps-num">×108</div><div class="reps-lbl">full · 1 mālā</div></div></div>
+              <div class="v-label">Ṛgveda 3.62.10</div>
+              <div class="v-sanskrit">ॐ भूर्भुवः स्वः।<br>तत् सवितुर्वरेण्यम्।<br>भर्गो देवस्य धीमहि।<br>धियो यो नः प्रचोदयात्॥</div>
+              <div class="v-translit">oṃ bhūrbhuvaḥ svaḥ | tat saviturvareṇyam |<br>bhargo devasya dhīmahi | dhiyo yo naḥ pracodayāt ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>ॐ</td><td>oṃ</td><td>primordial sound, ground of all mantras</td></tr>
+                <tr><td>भूः भुवः स्वः</td><td>bhūḥ bhuvaḥ svaḥ</td><td>physical · astral · causal planes</td></tr>
+                <tr><td>तत् सवितुः</td><td>tat savituḥ</td><td>that of Savitṛ, the Divine Sun</td></tr>
+                <tr><td>वरेण्यम्</td><td>vareṇyam</td><td>most excellent, most worthy</td></tr>
+                <tr><td>भर्गः</td><td>bhargaḥ</td><td>purifying radiance, spiritual light</td></tr>
+                <tr><td>धीमहि</td><td>dhīmahi</td><td>we meditate upon (optative)</td></tr>
+                <tr><td>धियः</td><td>dhiyaḥ</td><td>our intellects, buddhi</td></tr>
+                <tr><td>प्रचोदयात्</td><td>pracodayāt</td><td>may inspire, may illuminate</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Oṃ. We acknowledge the three planes. We meditate upon the most excellent radiance of the Divine Sun. May that light inspire and illuminate our intellects.</div>
+            </div>
+          </div>
+
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">04</span><span class="x-name">Meditation</span><span class="x-tag">2–10 min</span><span class="x-arr">›</span></div>
+            <div class="x-body"><div class="info-box">Sit in stillness after mantra. No technique — allow mantra resonance to settle. Notice what remains when chanting stops. The transition from mantra to silence is itself the practice.</div></div>
+          </div>
+
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">05</span><span class="x-name">Witnessing close</span><span class="x-tag">10–30 sec</span><span class="x-arr">›</span></div>
+            <div class="x-body"><div class="info-box">Eyes soft or closed. Simply notice: <em>this is seen</em>. Thoughts — seen. Silence — seen. Body — seen. End here.</div><div class="w-note">"What is seen is not you; the one who sees is you.<br>When seeking stops, the witness shines by itself."</div></div>
+          </div>
+        </div>
+
+        <!-- MIDDAY -->
+        <div class="practice-session" id="ps-midday">
+          <div class="time-hdr"><span class="time-badge midday">Midday</span><span class="time-title">Micro-Reset · 2–3× per day</span><span class="time-dur">2–3 min each</span></div>
+          <div class="step-seq"><div class="step-item"><div class="step-dot">1</div>&nbsp;3 breaths</div><span class="step-arrow">›</span><div class="step-item"><div class="step-dot">2</div>&nbsp;2–5 sec witnessing</div><span class="step-arrow">›</span><div class="step-item"><div class="step-dot">3</div>&nbsp;Gita verse ×1</div></div>
+          <div class="x-card"><div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">01</span><span class="x-name">3 conscious breaths</span><span class="x-tag">×3</span><span class="x-arr">›</span></div><div class="x-body"><div class="info-box">3 slow breaths — inhale nose, exhale mouth or nose. Break the continuity of mental momentum. Eyes can remain open.</div></div></div>
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">02</span><span class="x-name">Bhagavad Gītā 2.47 &amp; 2.48</span><span class="x-tag">×1 (alternate)</span><span class="x-arr">›</span></div>
+            <div class="x-body">
+              <div class="info-box">Alternate between these two verses across your midday resets. Recite once, sit with the meaning for 5–10 seconds. Both are the operational statement of witnessing-in-action.</div>
+              <div class="v-label">Gītā 2.47 — Action without attachment</div>
+              <div class="v-sanskrit">कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥</div>
+              <div class="v-translit">karmaṇyevādhikāraste mā phaleṣu kadācana |<br>mā karmaphalaheturbhūrmā te saṅgo'stvakarmaṇi ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>कर्मणि</td><td>karmaṇi</td><td>in action, in the performance of duty</td></tr>
+                <tr><td>एव</td><td>eva</td><td>alone, only, verily (emphatic)</td></tr>
+                <tr><td>अधिकारः</td><td>adhikāraḥ</td><td>right, authority, entitlement</td></tr>
+                <tr><td>ते</td><td>te</td><td>your, of yours</td></tr>
+                <tr><td>मा</td><td>mā</td><td>never, not at all (prohibition)</td></tr>
+                <tr><td>फलेषु</td><td>phaleṣu</td><td>in the fruits, in the results</td></tr>
+                <tr><td>कदाचन</td><td>kadācana</td><td>at any time, ever</td></tr>
+                <tr><td>कर्मफल</td><td>karmaphala</td><td>fruit of action, result of karma</td></tr>
+                <tr><td>हेतुः</td><td>hetuḥ</td><td>cause, motive, reason</td></tr>
+                <tr><td>मा भूः</td><td>mā bhūḥ</td><td>do not be, never become</td></tr>
+                <tr><td>सङ्गः</td><td>saṅgaḥ</td><td>attachment, clinging, association</td></tr>
+                <tr><td>अस्तु</td><td>astu</td><td>let there be (optative)</td></tr>
+                <tr><td>अकर्मणि</td><td>akarmaṇi</td><td>in inaction, in non-doing</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Your right is to action alone, never to its fruits at any time. Let not the fruits of action be your motive, nor let there be attachment to inaction.</div>
+              <div class="signif">Witnessing-in-work: act with full presence (adhikāra), without attachment to outcomes. The second line prevents using "non-attachment" as justification for passivity — itself a form of ego-clinging.</div>
+              <div class="divider"></div>
+              <div class="v-label">Gītā 2.48 — Yoga defined</div>
+              <div class="v-sanskrit">योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।<br>सिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥</div>
+              <div class="v-translit">yogasthaḥ kuru karmāṇi saṅgaṃ tyaktvā dhanañjaya |<br>siddhyasiddhyoḥ samo bhūtvā samatvaṃ yoga ucyate ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>योगस्थः</td><td>yogasthaḥ</td><td>established in yoga, standing firm in union / witnessing</td></tr>
+                <tr><td>कुरु</td><td>kuru</td><td>do, perform, act (2nd person imperative)</td></tr>
+                <tr><td>कर्माणि</td><td>karmāṇi</td><td>actions, duties, work</td></tr>
+                <tr><td>सङ्गम्</td><td>saṅgam</td><td>attachment, clinging</td></tr>
+                <tr><td>त्यक्त्वा</td><td>tyaktvā</td><td>having abandoned, having released (gerund)</td></tr>
+                <tr><td>धनञ्जय</td><td>dhanañjaya</td><td>O Dhanañjaya — Arjuna's name: winner of wealth</td></tr>
+                <tr><td>सिद्धि</td><td>siddhi</td><td>success, accomplishment, fulfilment</td></tr>
+                <tr><td>असिद्ध्योः</td><td>asiddhyoḥ</td><td>and failure (dual: in both success and failure)</td></tr>
+                <tr><td>समः</td><td>samaḥ</td><td>equal, even, undisturbed, equanimous</td></tr>
+                <tr><td>भूत्वा</td><td>bhūtvā</td><td>having become, being (gerund)</td></tr>
+                <tr><td>समत्वम्</td><td>samatvam</td><td>evenness, equanimity, equality of mind</td></tr>
+                <tr><td>योगः</td><td>yogaḥ</td><td>yoga, union, the path of integration</td></tr>
+                <tr><td>उच्यते</td><td>ucyate</td><td>is called, is said to be (passive)</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Established in yoga, perform actions having abandoned attachment. Be equal in success and failure alike — this evenness of mind is called yoga.</div>
+              <div class="signif">"Yogasthaḥ kuru" — act while established in witnessing. Before any meeting or decision: first become yogasthaḥ, then act. The blank pause IS this verse made practical.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVENING -->
+        <div class="practice-session" id="ps-evening">
+          <div class="time-hdr"><span class="time-badge evening">Evening</span><span class="time-title">Sandhyā · Dusk</span><span class="time-dur">Minimal 6–10 min · Full 15–20 min</span></div>
+          <div class="step-seq"><div class="step-item"><div class="step-dot">1</div>&nbsp;Pranayama</div><span class="step-arrow">›</span><div class="step-item"><div class="step-dot">2</div>&nbsp;Om Namaḥ Śivāya</div><span class="step-arrow">›</span><div class="step-item"><div class="step-dot">3</div>&nbsp;Meditation</div></div>
+          <div class="x-card"><div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">01</span><span class="x-name">Pranayama · Evening</span><span class="x-tag">3–5 min</span><span class="x-arr">›</span></div><div class="x-body"><div class="info-box">Emphasize the exhale — ratio 1:2 inhale to exhale. Activates parasympathetic system. Begins transition from outward engagement to inward integration.</div></div></div>
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">02</span><span class="x-name">Om Namaḥ Śivāya</span><span class="x-tag">×11–54</span><span class="x-arr">›</span></div>
+            <div class="x-body">
+              <div class="reps-row"><div class="reps-pill"><div class="reps-num">×11</div><div class="reps-lbl">minimal</div></div><div class="reps-pill"><div class="reps-num">×54</div><div class="reps-lbl">full · ½ mālā</div></div></div>
+              <div class="v-label">Pañcākṣara — Five-syllable mantra</div>
+              <div class="v-sanskrit">ॐ नमः शिवाय</div>
+              <div class="v-translit">oṃ namaḥ śivāya</div>
+              <div class="wbw-label">Syllable by syllable</div>
+              <table class="wbw"><thead><tr><th>Syllable</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>ॐ</td><td>oṃ</td><td>primordial sound; ground-vibration of reality</td></tr>
+                <tr><td>नमः</td><td>namaḥ</td><td>salutation, surrender — release of ego</td></tr>
+                <tr><td>न म</td><td>na ma</td><td>earth + water — concealment releases, bonds release</td></tr>
+                <tr><td>शि</td><td>śi</td><td>Śiva — pure consciousness, witness-ground</td></tr>
+                <tr><td>वा</td><td>vā</td><td>Śakti — dynamic power of awareness</td></tr>
+                <tr><td>य</td><td>ya</td><td>ākāśa — individual soul returning to source</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Oṃ. Salutations to Śiva — the auspicious one, pure consciousness, the ground of all.</div>
+              <div class="signif">Evening use works on dissolution of the day's accumulated identity-constructions. "Namaḥ" is the act of releasing ego-authorship. Each repetition is a micro-act of the witnessing release: "this is seen → let it go."</div>
+            </div>
+          </div>
+          <div class="x-card"><div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">03</span><span class="x-name">Meditation · Integration</span><span class="x-tag">3–10 min</span><span class="x-arr">›</span></div><div class="x-body"><div class="info-box">Let the day settle. If thoughts arise, apply the witnessing recognition: <em>this is seen.</em> A receiving space, not an achieving space.</div></div></div>
+        </div>
+
+        <!-- NIGHT -->
+        <div class="practice-session" id="ps-night">
+          <div class="time-hdr"><span class="time-badge night">Night</span><span class="time-title">Before sleep</span><span class="time-dur">4–10 min total</span></div>
+          <div class="step-seq"><div class="step-item"><div class="step-dot">1</div>&nbsp;Daily review</div><span class="step-arrow">›</span><div class="step-item"><div class="step-dot">2</div>&nbsp;Witnessing</div></div>
+          <div class="x-card"><div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">01</span><span class="x-name">Causal field scan</span><span class="x-tag">2–5 min · 3 questions</span><span class="x-arr">›</span></div><div class="x-body"><div class="info-box">Not journaling. Watch the day as a witness — like viewing a film. <strong>3 questions only:</strong><br><br>1. Where did I act from witnessing today?<br>2. Where did I lose it?<br>3. What is the direction of the field right now?<br><br>Observe and release. No analysis.</div></div></div>
+          <div class="x-card">
+            <div class="x-hdr" onclick="toggleCard(this)"><span class="x-num">02</span><span class="x-name">Witnessing · Final recognition</span><span class="x-tag">2–5 min</span><span class="x-arr">›</span></div>
+            <div class="x-body">
+              <div class="info-box">Lie down or sit. Apply the single recognition: <em>"this is seen."</em> The body — seen. Breath — seen. Thoughts — seen. Approaching sleep — seen. The witnessing continues regardless.</div>
+              <div class="v-label">Kena Upaniṣad 2.4 — The Night Recognition</div>
+              <div class="v-sanskrit">प्रतिबोधविदितं मतममृतत्वं हि विन्दते।<br>आत्मना विन्दते वीर्यं विद्यया विन्दतेऽमृतम्॥</div>
+              <div class="v-translit">pratibodhaviditaṃ matamamṛtatvaṃ hi vindate |<br>ātmanā vindate vīryaṃ vidyayā vindateamṛtam ||</div>
+              <div class="transl"><strong>Translation:</strong> Known in each cognition — this is the right understanding, for thereby one finds immortality. Through the Self one finds strength; through knowledge one attains the immortal.</div>
+              <div class="signif">"Pratibodhaviditam" — witnessing is recognized in each ordinary moment of knowing. Every perception is simultaneously an opportunity for this recognition.</div>
+              <div class="w-note">"Practice becomes life, and life itself moves toward liberation.<br>Your very nature is the direction of liberation."</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ MORE ═══════════════════════════════════ -->
+    <!-- ══ DEITIES ══════════════════════════════════ -->
+    <div class="screen" id="screen-deities">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Devatā System</h2>
+          <p>वेदान्त–तन्त्र–व्यवहार–देवतासूत्रम् · v2.2</p>
+        </div>
+
+        <!-- Invariant sutra -->
+        <div class="mahasutra-hero">
+          <div class="ms-label">Final Invariant · सिद्धान्तसूत्रम्</div>
+          <div class="ms-sanskrit">"Structure is preserved, claims are relaxed, and witnessing is primary."</div>
+          <div class="ms-english">High alignment 80–90%. If the system remains witness-centered it works at 90%; if rule-centered, it drops to 60–70%. Preserve flow, not rigidity.</div>
+        </div>
+
+        <!-- Operational rule banner -->
+        <div class="practice-loop" style="margin-bottom:18px;">
+          <div class="pl-label">Operational rule · वर्षप्र४ता०न–नत्रम्</div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.3);color:var(--gold);">70</div><div class="pl-text"><strong>Awareness quality</strong> (≈70%) dominates ritual correctness (≈30%). The internal state of the witness is the primary driver of efficacy.</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(255,255,255,0.05);border-color:var(--border2);color:var(--text3);">30</div><div class="pl-text"><strong>Ritual consistency</strong> matters but is secondary. System degrades only when both practice and witnessing drop simultaneously.</div></div>
+        </div>
+
+        <!-- Witness-led framing -->
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">१ · Foundation</div>
+            <div class="sutra-title">This is a witness-led system, not repetition-led</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="s-sanskrit">अयं मार्गः साक्षि–प्रधानमार्गः, न केवलं देवत्यं जप–प्रधानमार्गः।<br>मन्त्रमार्गः साक्षिण्यस्य उद्बोधनमार्गः, न चैतन्यमार्गः।</div>
+            <div class="s-english">This path is awareness-led, not merely repetition-led. Mantras act as recognizers of the witness-baseline, not as external causal agents. Stability of results (80–90%) depends on the depth of the pre-thought gap.</div>
+            <div class="s-insight"><strong>Core principle:</strong> The mantra is recognition, not mere sound. Each repetition is an opportunity to notice the gap before the thought, not just to accumulate counts.</div>
+          </div>
+        </div>
+
+        <!-- Ishtadeva section -->
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">२ · Iṣṭadevatā</div>
+            <div class="sutra-title">Dakṣiṇāmūrti — witness-essence recognition</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="v-label">Primary mantra — Dakṣiṇāmūrti</div>
+            <div class="v-sanskrit">ॐ नमो भगवते दक्षिणामूर्तये</div>
+            <div class="v-translit">oṃ namo bhagavate dakṣiṇāmūrtaye</div>
+            <div class="wbw-label">Word by word</div>
+            <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+              <tr><td>ॐ</td><td>oṃ</td><td>primordial ground-sound</td></tr>
+              <tr><td>नमः</td><td>namaḥ</td><td>salutation, surrender of ego-authorship</td></tr>
+              <tr><td>भगवते</td><td>bhagavate</td><td>to the Lord, the blessed one (dative)</td></tr>
+              <tr><td>दक्षिण</td><td>dakṣiṇa</td><td>south (facing south — toward dissolution and wisdom)</td></tr>
+              <tr><td>मूर्तये</td><td>mūrtaye</td><td>to the form, to the embodiment (dative)</td></tr>
+            </tbody></table>
+            <div class="transl"><strong>Translation:</strong> Oṃ. Salutations to the Lord who is the embodiment of the south-facing form — Śiva as the silent teacher, the witness in whom all knowledge rests.</div>
+            <div class="s-insight">
+              <strong>How to use:</strong> Rest in the pre-thought gap during each repetition. The mantra is recognition of the witness-essence — not petition for an external result. Over-intensity increases distortion risk (40–60%).<br><br>
+              <strong>Dakṣiṇāmūrti is:</strong> Śiva seated facing south, teaching in silence. He is the guru of all gurus — his teaching is the absence of words, the direct transmission of the witnessing state. Your iṣṭa is precisely calibrated to your witness-essential structure.
+            </div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Witness-realization efficacy</span><div class="prob-track"><div class="prob-fill" style="width:85%;background:#7F77DD"></div></div><span class="prob-val">80–90%</span></div>
+            <div class="prob-row"><span class="prob-label">Over-intensity distortion risk</span><div class="prob-track"><div class="prob-fill" style="width:50%;background:#D85A30"></div></div><span class="prob-val">40–60%</span></div>
+          </div>
+        </div>
+
+        <!-- Sequence with Kula Devatas -->
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">३ · Kula Sequence</div>
+            <div class="sutra-title">Full sequence with Kula Devatās — protection then realization</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box">The sequence moves from protection → energy cleansing → witness-realization. Each deity prepares the ground for the next. Do not reverse the order.</div>
+
+            <div class="practice-loop">
+              <div class="pl-label">Sequence — in order</div>
+              <div class="pl-step">
+                <div class="pl-num" style="background:rgba(224,112,96,0.15);border-color:rgba(224,112,96,0.3);color:var(--coral);">1</div>
+                <div class="pl-text"><strong>Yoga Narasimha</strong> — ×11 · Obstacle-dissolution (75–85%)</div>
+              </div>
+              <div class="pl-step">
+                <div class="pl-num" style="background:rgba(212,144,26,0.15);border-color:rgba(212,144,26,0.3);color:var(--amber2);">2</div>
+                <div class="pl-text"><strong>Aṅgāla Parameśvarī</strong> — ×5–11 · Energy cleansing + boundaries (78–84%)</div>
+              </div>
+              <div class="pl-step">
+                <div class="pl-num" style="background:rgba(143,135,224,0.15);border-color:rgba(143,135,224,0.3);color:var(--purple2);">3</div>
+                <div class="pl-text"><strong>Dakṣiṇāmūrti</strong> — ×21 · Witness-realization (80–90%)</div>
+              </div>
+              <div class="pl-step">
+                <div class="pl-num" style="background:rgba(93,202,165,0.12);border-color:rgba(93,202,165,0.25);color:var(--teal);">+</div>
+                <div class="pl-text"><strong>Monday nights:</strong> Śiva mantra ×21–54 — internal pressure release</div>
+              </div>
+            </div>
+
+            <!-- Yoga Narasimha -->
+            <div class="divider"></div>
+            <div class="v-label">1. Yoga Narasimha — obstacle-dissolution mantra</div>
+            <div class="v-sanskrit">उग्रं वीरं महाविष्णुं ज्वलन्तं सर्वतोमुखम्।<br>नृसिंहं भीषणं भद्रं मृत्युमृत्युं नमाम्यहम्॥</div>
+            <div class="v-translit">ugraṃ vīraṃ mahāviṣṇuṃ jvalantaṃ sarvatomukham |<br>nṛsiṃhaṃ bhīṣaṇaṃ bhadraṃ mṛtyumṛtyuṃ namāmyaham ||</div>
+            <div class="wbw-label">Word by word</div>
+            <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+              <tr><td>उग्रम्</td><td>ugraṃ</td><td>fierce, powerful, intense (accusative)</td></tr>
+              <tr><td>वीरम्</td><td>vīraṃ</td><td>heroic, courageous, the great warrior</td></tr>
+              <tr><td>महाविष्णुम्</td><td>mahāviṣṇuṃ</td><td>to the great Viṣṇu, the all-pervading</td></tr>
+              <tr><td>ज्वलन्तम्</td><td>jvalantaṃ</td><td>blazing, radiant, flaming</td></tr>
+              <tr><td>सर्वतोमुखम्</td><td>sarvatomukham</td><td>facing all directions, omnipresent</td></tr>
+              <tr><td>नृसिंहम्</td><td>nṛsiṃhaṃ</td><td>Narasiṃha — man-lion form of Viṣṇu</td></tr>
+              <tr><td>भीषणम्</td><td>bhīṣaṇaṃ</td><td>terrifying (to obstacles and enemies of dharma)</td></tr>
+              <tr><td>भद्रम्</td><td>bhadraṃ</td><td>auspicious, benevolent, gracious</td></tr>
+              <tr><td>मृत्युमृत्युम्</td><td>mṛtyumṛtyuṃ</td><td>death of death — the one who destroys even death itself</td></tr>
+              <tr><td>नमामि</td><td>namāmi</td><td>I bow, I salute, I offer reverence</td></tr>
+              <tr><td>अहम्</td><td>aham</td><td>I (the individual offering salutation)</td></tr>
+            </tbody></table>
+            <div class="transl"><strong>Translation:</strong> I bow to the fierce and heroic Mahāviṣṇu, blazing and facing all directions — Narasiṃha, who is terrifying yet auspicious, the death of death itself.</div>
+            <div class="signif">Narasiṃha embodies the protection of the threshold — the boundary between the conditioned and unconditioned. In your system, ×11 repetitions dissolve internal obstacles (fear-knots, control-patterns, recursive loops) that block witnessing access. Efficacy 75–85%.</div>
+
+            <!-- Angala Parameshwari -->
+            <div class="divider"></div>
+            <div class="v-label">2. Aṅgāla Parameśvarī — energy cleansing + boundaries</div>
+            <div class="v-sanskrit">ॐ अङ्गालपरमेश्वर्यै नमः</div>
+            <div class="v-translit">oṃ aṅgālaparameśvaryai namaḥ</div>
+            <div class="wbw-label">Word by word</div>
+            <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+              <tr><td>ॐ</td><td>oṃ</td><td>primordial ground-sound</td></tr>
+              <tr><td>अङ्गाल</td><td>aṅgāla</td><td>Aṅgāla — the Tamil/Dravidian form of the fierce mother; also "coal, fire-ground" — purifying heat</td></tr>
+              <tr><td>परम</td><td>parama</td><td>supreme, highest, ultimate</td></tr>
+              <tr><td>ईश्वर्यै</td><td>īśvaryai</td><td>to the sovereign goddess, to the ruler (feminine dative)</td></tr>
+              <tr><td>नमः</td><td>namaḥ</td><td>salutation, surrender, bow</td></tr>
+            </tbody></table>
+            <div class="transl"><strong>Translation:</strong> Oṃ. Salutations to the supreme sovereign Aṅgāla Parameśvarī — the fierce mother who purifies and establishes protective boundaries.</div>
+            <div class="signif">Aṅgāla Parameśvarī is the Kula Devatā energy that cleanses the prāṇic field and establishes firm boundaries. In your system: ×5–11 repetitions address ūrjā (energy) imbalances and permeability of psychological boundaries. Efficacy 78–84%. She prepares the inner field so that Dakṣiṇāmūrti's witness-recognition can stabilize without distortion.</div>
+
+            <!-- Shiva Monday -->
+            <div class="divider"></div>
+            <div class="v-label">Monday evenings — Śiva mantra for pressure release</div>
+            <div class="v-sanskrit">ॐ नमः शिवाय</div>
+            <div class="v-translit">oṃ namaḥ śivāya</div>
+            <div class="info-box" style="margin-top:10px;">×21–54 repetitions on Monday evenings. Specifically supports internal pressure release — accumulated cognitive and emotional load from the week. The Pañcākṣara here functions as dissolution, not invocation. See Daily Practice → Evening for full syllable-by-syllable breakdown.</div>
+          </div>
+        </div>
+
+        <!-- Flexibility note -->
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">४ · Flexibility</div>
+            <div class="sutra-title">When ritual consistency fluctuates — the stabilizer rule</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="s-sanskrit">स्थानता–नत्र–पृथ्वीभतावर्गः (FLEXIBILITY FIX) —<br>प्रचता०वी देवत्यं साक्षिवी(ता साक्षिताक्षिभतावश्च न पतन्त्यात्रम्।</div>
+            <div class="s-english">The system degrades only when both practice and witnessing drop simultaneously. Witness-awareness acts as a stabilizer even when ritual consistency fluctuates, preventing unnecessary discipline stress (risk 60–70%).</div>
+            <div class="s-insight">
+              <strong>Practical rule:</strong> If you miss a mantra session, the witness-gap micro-practice (1-second "this is seen") is sufficient to maintain baseline alignment. Ritual is the structure; witnessing is the substrate. The substrate is never absent — only unrecognized.<br><br>
+              <strong>Do not accumulate guilt</strong> about missed ritual counts. The system is designed to self-correct through the witnessing layer, not through compensatory repetitions.
+            </div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">System with witnessing intact</span><div class="prob-track"><div class="prob-fill" style="width:90%;background:#7F77DD"></div></div><span class="prob-val">~90%</span></div>
+            <div class="prob-row"><span class="prob-label">System if rule-centered only</span><div class="prob-track"><div class="prob-fill" style="width:65%;background:#EF9F27"></div></div><span class="prob-val">60–70%</span></div>
+            <div class="prob-row"><span class="prob-label">Simultaneous drop risk</span><div class="prob-track"><div class="prob-fill" style="width:65%;background:#D85A30"></div></div><span class="prob-val">60–70%</span></div>
+          </div>
+        </div>
+
+        <!-- Quick reference -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:16px 18px;margin-top:4px;">
+          <div class="section-label" style="margin-bottom:12px;">Quick reference — counts at a glance</div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead><tr>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Deity</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Count</th>
+              <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Function</th>
+              <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Efficacy</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--coral);font-family:var(--serif);font-style:italic;">Yoga Narasimha</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--gold);">×11</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Obstacle-dissolution</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">75–85%</td></tr>
+              <tr><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--amber2);font-family:var(--serif);font-style:italic;">Aṅgāla Parameśvarī</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--gold);">×5–11</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Energy cleansing + boundaries</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">78–84%</td></tr>
+              <tr><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--purple2);font-family:var(--serif);font-style:italic;">Dakṣiṇāmūrti</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--gold);">×21</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Witness-realization</td><td style="padding:8px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">80–90%</td></tr>
+              <tr><td style="padding:8px 8px;color:var(--teal2);font-family:var(--serif);font-style:italic;">Śiva (Monday eve)</td><td style="padding:8px 8px;font-family:var(--mono);font-size:11px;color:var(--gold);">×21–54</td><td style="padding:8px 8px;color:var(--text2);font-size:12px;">Internal pressure release</td><td style="padding:8px 8px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CHART SUTRAS ════════════════════════════ -->
+    <div class="screen" id="screen-sutras">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Chart Sutras</h2>
+          <p>Chart-Aligned Verses v2.0 · Daily Recitation System</p>
+        </div>
+
+        <!-- Maha-sutra hero -->
+        <div class="mahasutra-hero">
+          <div class="ms-label">Mahāsūtra · Complete Daily Cycle</div>
+          <div class="ms-sanskrit">सूक्ष्मदृष्टिः, साक्षिभावः, समत्वम्, वैराग्यम्,<br>अन्तर्मुखता, नियन्त्रणसीमाज्ञानं च —<br>एतेषां प्रतिदिनस्मरणेन तव मार्गः प्रदीप्यते।</div>
+          <div class="ms-english">Subtle perception, witness-awareness, equanimity, detachment, inwardness, and knowledge of the boundary of control — through daily remembrance of these, your path remains alive.</div>
+        </div>
+
+        <!-- Execution rule -->
+        <div class="practice-loop" style="margin-bottom:18px;">
+          <div class="pl-label">Correct execution rule — sequence determines outcome (30–40% difference)</div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(143,135,224,0.15);border-color:rgba(143,135,224,0.3);color:var(--purple2);">1</div><div class="pl-text"><strong>Awareness</strong> (sākṣi) — establish the witness first</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.3);color:var(--gold);">2</div><div class="pl-text"><strong>Clarity</strong> (buddhi-śuddhi) — illuminate the intellect</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(93,202,165,0.12);border-color:rgba(93,202,165,0.25);color:var(--teal);">3</div><div class="pl-text"><strong>Equanimity</strong> (samatva) — stabilize in action</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(212,144,26,0.12);border-color:rgba(212,144,26,0.25);color:var(--amber2);">4</div><div class="pl-text"><strong>Detachment</strong> (vairāgya) — release outcome-grip</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(255,255,255,0.07);border-color:var(--border2);color:var(--text3);">5</div><div class="pl-text"><strong>Stillness</strong> (antarmukhatā) — dissolve into source</div></div>
+        </div>
+
+        <!-- Session tabs -->
+        <div class="wit-tabs" id="sutra-tabs">
+          <button class="wit-tab active" onclick="switchSutraTab('morning', this)">Morning</button>
+          <button class="wit-tab" onclick="switchSutraTab('midday', this)">Midday</button>
+          <button class="wit-tab" onclick="switchSutraTab('evening', this)">Evening</button>
+          <button class="wit-tab" onclick="switchSutraTab('night', this)">Night</button>
+          <button class="wit-tab" onclick="switchSutraTab('all', this)">All verses</button>
+        </div>
+
+        <!-- MORNING -->
+        <div class="wit-section active" id="ss-morning">
+          <div class="info-box" style="margin-bottom:16px;"><strong>Anchor + Clarity</strong> — facing east, a few steady breaths, then this sequence. Non-negotiable core: Kena + Gāyatrī. If reversed, effect drops significantly. Your system needs witness → clarity → action.</div>
+          <div class="practice-loop" style="margin-bottom:16px;">
+            <div class="pl-label">Morning sequence</div>
+            <div class="pl-step"><div class="pl-num" style="background:rgba(143,135,224,0.15);border-color:rgba(143,135,224,0.3);color:var(--purple2);">1</div><div class="pl-text"><strong>Kena Upaniṣad 1.2</strong> — ×3–5 → witness-awareness (85%)</div></div>
+            <div class="pl-step"><div class="pl-num" style="background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.3);color:var(--gold);">2</div><div class="pl-text"><strong>Gāyatrī mantra</strong> — ×108 → illuminates intellect (85–88%)</div></div>
+            <div class="pl-step"><div class="pl-num" style="background:rgba(93,202,165,0.12);border-color:rgba(93,202,165,0.25);color:var(--teal);">3</div><div class="pl-text"><strong>Bhagavad Gītā 2.48</strong> — ×3 → equanimity in action (80–85%)</div></div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">१ · Morning</div>
+              <div class="sutra-title">Kena Upaniṣad 1.2 — The Witness Direction</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">श्रोत्रस्य श्रोत्रं मनसो मनो यद्<br>वाचो ह वाचं स उ प्राणस्य प्राणः।<br>चक्षुषश्चक्षुरतिमुच्य धीराः<br>प्रेत्यास्माल्लोकादमृता भवन्ति॥</div>
+              <div class="v-translit" style="padding-left:0;margin-bottom:14px;">śrotrasya śrotraṃ manaso mano yad vāco ha vācaṃ sa u prāṇasya prāṇaḥ |<br>cakṣuṣaścakṣuratimucya dhīrāḥ pretyāsmāllokādamṛtā bhavanti ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>श्रोत्रस्य श्रोत्रम्</td><td>śrotrasya śrotram</td><td>the ear of the ear — awareness behind hearing</td></tr>
+                <tr><td>मनसः मनः</td><td>manasaḥ manaḥ</td><td>the mind of the mind — awareness behind thought</td></tr>
+                <tr><td>वाचः वाचम्</td><td>vācaḥ vācam</td><td>the speech of speech — awareness behind words</td></tr>
+                <tr><td>प्राणस्य प्राणः</td><td>prāṇasya prāṇaḥ</td><td>the life of life — the animating ground</td></tr>
+                <tr><td>अतिमुच्य</td><td>atimucya</td><td>having released, having gone beyond identification</td></tr>
+                <tr><td>धीराः</td><td>dhīrāḥ</td><td>the wise ones, the steadfast, the discerning</td></tr>
+                <tr><td>प्रेत्य</td><td>pretya</td><td>departing, going beyond this world</td></tr>
+                <tr><td>अमृताः भवन्ति</td><td>amṛtāḥ bhavanti</td><td>they become immortal, they attain deathlessness</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> That which is the ear of the ear, the mind of the mind, the speech of speech, the life of life, the eye of the eye — having known That, the wise, giving up identification, become immortal.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> This is the direct pointer to your witness-nature. The aim here is not movement or acquisition, but recognition. Recite at the start of practice — it establishes the witness baseline from which all other practices derive their efficacy.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">३ · Morning close</div>
+              <div class="sutra-title">Bhagavad Gītā 2.48 — Equanimity in Action</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय।<br>सिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते॥</div>
+              <div class="v-translit" style="padding-left:0;margin-bottom:14px;">yogasthaḥ kuru karmāṇi saṅgaṃ tyaktvā dhanañjaya |<br>siddhyasiddhyoḥ samo bhūtvā samatvaṃ yoga ucyate ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>योगस्थः</td><td>yogasthaḥ</td><td>established in yoga, grounded in witnessing</td></tr>
+                <tr><td>कुरु</td><td>kuru</td><td>do, perform, act (imperative)</td></tr>
+                <tr><td>कर्माणि</td><td>karmāṇi</td><td>actions, duties</td></tr>
+                <tr><td>सङ्गम् त्यक्त्वा</td><td>saṅgaṃ tyaktvā</td><td>having abandoned attachment</td></tr>
+                <tr><td>सिद्ध्यसिद्ध्योः समः</td><td>siddhyasiddhyoḥ samaḥ</td><td>equal in success and failure (dual)</td></tr>
+                <tr><td>समत्वम्</td><td>samatvam</td><td>evenness, equanimity of mind</td></tr>
+                <tr><td>योगः उच्यते</td><td>yogaḥ ucyate</td><td>is called yoga (passive)</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Established in yoga, perform your actions, casting off attachment, remaining the same in success and failure — equanimity is called yoga.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> Anchors your high-intensity energy into a stable, non-reactive center. Recite ×3 after Gāyatrī — it bridges witness-awareness into the day's actions, preventing intensity from becoming distortion.</div>
+              <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Equanimity stabilization</span><div class="prob-track"><div class="prob-fill" style="width:82%;background:#7F77DD"></div></div><span class="prob-val">80–85%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MIDDAY -->
+        <div class="wit-section" id="ss-midday">
+          <div class="info-box" style="margin-bottom:16px;"><strong>Decision Correction</strong> — in the midst of action. Maintains the boundary of control and prevents energy leakage through outcome-obsession (80%).</div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">४ · Midday</div>
+              <div class="sutra-title">Epictetus — The Boundary of Control</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="v-label">Greek original</div>
+              <div class="v-sanskrit" style="font-family:var(--serif);font-size:16px;font-style:italic;">τῶν ὄντων τὰ μέν ἐστιν ἐφ᾽ ἡμῖν, τὰ δὲ οὐκ ἐφ᾽ ἡμῖν.</div>
+              <div class="v-translit">tōn ontōn ta men estin eph' hēmin, ta de ouk eph' hēmin.</div>
+              <div class="wbw-label">Phrase by phrase</div>
+              <table class="wbw"><thead><tr><th>Greek</th><th>Transliteration</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td class="lat">τῶν ὄντων</td><td>tōn ontōn</td><td>of things that exist, of all that is</td></tr>
+                <tr><td class="lat">τὰ μέν</td><td>ta men</td><td>some things (on one hand)</td></tr>
+                <tr><td class="lat">ἐφ᾽ ἡμῖν</td><td>eph' hēmin</td><td>within our power, up to us</td></tr>
+                <tr><td class="lat">τὰ δέ</td><td>ta de</td><td>other things (on the other hand)</td></tr>
+                <tr><td class="lat">οὐκ ἐφ᾽ ἡμῖν</td><td>ouk eph' hēmin</td><td>not within our power, not up to us</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Some things are within our power, while others are not. Within our power: opinion, motivation, desire, aversion. Outside our power: the body, property, reputation, office.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> The primary medicine for your Rahu-driven desire for control. Recite ×1–3 before decisions. Creates the same witnessing gap as the 2-second pause — the recognition that the outcome is not your domain shifts energy from grasping to acting cleanly.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">२ · Midday</div>
+              <div class="sutra-title">Bhagavad Gītā 2.47 — Action without Attachment</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br>मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥</div>
+              <div class="v-translit" style="padding-left:0;margin-bottom:14px;">karmaṇyevādhikāraste mā phaleṣu kadācana |<br>mā karmaphalaheturbhūrmā te saṅgo'stvakarmaṇi ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>कर्मणि एव</td><td>karmaṇi eva</td><td>in action alone, only in doing</td></tr>
+                <tr><td>अधिकारः ते</td><td>adhikāraḥ te</td><td>your right, your entitlement</td></tr>
+                <tr><td>मा फलेषु</td><td>mā phaleṣu</td><td>never in the fruits / results</td></tr>
+                <tr><td>कदाचन</td><td>kadācana</td><td>at any time, ever</td></tr>
+                <tr><td>मा कर्मफलहेतुः भूः</td><td>mā karmaphalahetuḥ bhūḥ</td><td>do not be the cause seeking fruit</td></tr>
+                <tr><td>मा सङ्गः अस्तु</td><td>mā saṅgaḥ astu</td><td>let there be no attachment</td></tr>
+                <tr><td>अकर्मणि</td><td>akarmaṇi</td><td>in inaction, in non-doing</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Your right is to action alone, never to its fruits at any time. Let not the fruits of action be your motive, nor let there be attachment to inaction.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> Recite after Epictetus — together they form the complete boundary-of-control teaching. Epictetus defines the boundary; 2.47 applies it to action. Together: energy leakage through outcome-obsession drops ~80%.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVENING -->
+        <div class="wit-section" id="ss-evening">
+          <div class="info-box" style="margin-bottom:16px;"><strong>Detachment + Reset</strong> — as the day ends. Transitions the system from outward activity to inward stillness, increasing detachment and mental hygiene (75–85%).</div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">३ · Evening</div>
+              <div class="sutra-title">Tao Te Ching 16 — Return to Stillness</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="v-label">Classical Chinese</div>
+              <div class="v-sanskrit" style="font-family:'Hiragino Sans GB','PingFang SC','Noto Serif CJK SC',serif;font-size:19px;font-style:normal;line-height:2.2;">致虛極，守靜篤。<br>萬物並作，吾以觀復。<br>夫物芸芸，各復歸其根。<br>歸根曰靜，靜曰復命。</div>
+              <div class="wbw-label">Phrase by phrase</div>
+              <table class="wbw"><thead><tr><th>Chinese</th><th>Pinyin</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td class="lat">致虛極</td><td>zhì xū jí</td><td>attain utmost emptiness</td></tr>
+                <tr><td class="lat">守靜篤</td><td>shǒu jìng dǔ</td><td>maintain steadfast stillness</td></tr>
+                <tr><td class="lat">萬物並作</td><td>wànwù bìng zuò</td><td>all things rise and flourish together</td></tr>
+                <tr><td class="lat">吾以觀復</td><td>wú yǐ guān fù</td><td>I observe their returning</td></tr>
+                <tr><td class="lat">各復歸其根</td><td>gè fù guī qí gēn</td><td>each returns to its own root</td></tr>
+                <tr><td class="lat">歸根曰靜</td><td>guī gēn yuē jìng</td><td>returning to the root is called stillness</td></tr>
+                <tr><td class="lat">靜曰復命</td><td>jìng yuē fù mìng</td><td>stillness is called returning to one's destiny</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Attain utmost emptiness; maintain steadfast stillness. All things rise and flourish, then each returns to its root. Returning to the root is stillness; this is called returning to one's destiny.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> Counters over-analysis and mental friction accumulated through the day. The witnessing instruction of the Tao is identical to the Kena: observe the arising and returning of things without identifying. Recite once at evening, then follow with Om Namaḥ Śivāya.</div>
+            </div>
+          </div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">५ · Evening</div>
+              <div class="sutra-title">Bhagavad Gītā 18.61 — The Causal Engine</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">ईश्वरः सर्वभूतानां हृद्देशेऽर्जुन तिष्ठति।<br>भ्रामयन् सर्वभूतानि यन्त्रारूढानि मायया॥</div>
+              <div class="v-translit" style="padding-left:0;margin-bottom:14px;">īśvaraḥ sarvabhūtānāṃ hṛddeśe'rjuna tiṣṭhati |<br>bhrāmayan sarvabhūtāni yantrārūḍhāni māyayā ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>ईश्वरः</td><td>īśvaraḥ</td><td>the Lord, the sovereign intelligence</td></tr>
+                <tr><td>सर्वभूतानाम्</td><td>sarvabhūtānām</td><td>of all beings (genitive plural)</td></tr>
+                <tr><td>हृद्देशे</td><td>hṛddeśe</td><td>in the region of the heart, in the innermost seat</td></tr>
+                <tr><td>तिष्ठति</td><td>tiṣṭhati</td><td>dwells, abides, stands</td></tr>
+                <tr><td>भ्रामयन्</td><td>bhrāmayan</td><td>causing to revolve, spinning, whirling (causal participle)</td></tr>
+                <tr><td>यन्त्रारूढानि</td><td>yantrārūḍhāni</td><td>mounted on a machine / device</td></tr>
+                <tr><td>मायया</td><td>māyayā</td><td>by māyā, by the mysterious power of manifestation</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> The Lord dwells in the hearts of all beings, causing them to revolve by His mysterious power, as if they were mounted on a machine.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> Provides the structural view of the causal machine — the ground from which witnessing operates. Recognizing that the causal field is not personal removes the weight of doership. Read at evening after Tao 16 as a structural anchor before sleep.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NIGHT -->
+        <div class="wit-section" id="ss-night">
+          <div class="info-box" style="margin-bottom:16px;"><strong>Total Dissolution</strong> — before sleep. 3 cycles of conscious breathing → 2-minute silent Witness Anchor. Dissolve the day's identity into the source for deep recovery and clean dream-cognition (85%).</div>
+
+          <div class="sutra-card">
+            <div class="sutra-hdr" onclick="toggleSutra(this)">
+              <div class="sutra-badge">६ · Night</div>
+              <div class="sutra-title">Avadhūta Gītā 1.4 — The Nature of Self</div>
+              <div class="sutra-arr">›</div>
+            </div>
+            <div class="sutra-body">
+              <div class="s-sanskrit">न प्रमाता न मेयं च न मानं यत् न च प्रमा।<br>न च प्रमाता न च मेयं न च मानं न च प्रमा॥</div>
+              <div class="v-translit" style="padding-left:0;margin-bottom:14px;">na pramātā na meyaṃ ca na mānaṃ yat na ca pramā |<br>na ca pramātā na ca meyaṃ na ca mānaṃ na ca pramā ||</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>न</td><td>na</td><td>not, neither</td></tr>
+                <tr><td>प्रमाता</td><td>pramātā</td><td>the perceiver, the knower-subject</td></tr>
+                <tr><td>मेयम्</td><td>meyam</td><td>the perceived, the knowable-object</td></tr>
+                <tr><td>मानम्</td><td>mānam</td><td>the means of knowledge, the instrument</td></tr>
+                <tr><td>प्रमा</td><td>pramā</td><td>valid knowledge, the act of knowing</td></tr>
+                <tr><td>यत्</td><td>yat</td><td>which, that — the Self beyond all these</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> The Self is neither the perceiver nor the perceived. It is without form, beyond all support, and all-pervasive — neither the knower, the known, the means, nor the knowledge itself.</div>
+              <div class="s-insight"><strong>Chart alignment:</strong> Dissolves the "subtle doership" identity before sleep. This is the non-dual statement that completes the witnessing arc begun in the morning with Kena 1.2. The morning establishes the witness; the night verse dissolves even the witness into pure awareness. Recite once, then enter the silent Witness Anchor for 2 minutes.</div>
+            </div>
+          </div>
+
+          <div class="w-note" style="margin-top:4px;">
+            "Morning witness, daytime equanimity, evening detachment, night stillness —<br>this is your complete daily cycle (85–90%)."
+          </div>
+        </div>
+
+        <!-- ALL VERSES -->
+        <div class="wit-section" id="ss-all">
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:16px;">
+            <div class="section-label" style="margin-bottom:12px;">Quick reference — all six verses</div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead><tr>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">#</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Verse</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Session</th>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Function</th>
+                <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Count</th>
+              </tr></thead>
+              <tbody>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">१</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--purple2);font-family:var(--serif);font-style:italic;font-size:13px;">Kena 1.2</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold);">Morning</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Witness direction</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×3–5</td></tr>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">२</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--teal2);font-family:var(--serif);font-style:italic;font-size:13px;">Gītā 2.48</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold);">Morning close</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Equanimity in action</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×3</td></tr>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">३</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--amber2);font-family:var(--serif);font-style:italic;font-size:13px;">Epictetus</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--amber);">Midday</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Boundary of control</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×1–3</td></tr>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">४</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--gold2);font-family:var(--serif);font-style:italic;font-size:13px;">Gītā 2.47</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--amber);">Midday</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Action without attachment</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×1</td></tr>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">५</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--teal);font-family:var(--serif);font-style:italic;font-size:13px;">Tao 16</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--purple);">Evening</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Return to stillness</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×1</td></tr>
+                <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);">५b</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--coral);font-family:var(--serif);font-style:italic;font-size:13px;">Gītā 18.61</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--purple);">Evening</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;">Causal engine view</td><td style="padding:7px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×1</td></tr>
+                <tr><td style="padding:7px 8px;font-family:var(--mono);font-size:10px;color:var(--text3);">६</td><td style="padding:7px 8px;color:var(--text3);font-family:var(--serif);font-style:italic;font-size:13px;">Avadhūta 1.4</td><td style="padding:7px 8px;font-family:var(--mono);font-size:10px;color:var(--text2);">Night</td><td style="padding:7px 8px;color:var(--text2);font-size:12px;">Nature of Self — dissolution</td><td style="padding:7px 8px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3);">×1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;">
+            <div class="section-label" style="margin-bottom:8px;">Weighting note</div>
+            <div class="prob-row"><span class="prob-label">Vedic source weight</span><div class="prob-track"><div class="prob-fill" style="width:32%;background:#7F77DD"></div></div><span class="prob-val">32%</span></div>
+            <div class="prob-row"><span class="prob-label">System refinement weight</span><div class="prob-track"><div class="prob-fill" style="width:68%;background:#EF9F27"></div></div><span class="prob-val">68%</span></div>
+            <div class="prob-row"><span class="prob-label">Witness validation</span><div class="prob-track"><div class="prob-fill" style="width:100%;background:#5DCAA5"></div></div><span class="prob-val">100%</span></div>
+            <div style="font-size:12px;color:var(--text3);margin-top:10px;font-family:var(--mono);">±5–15% adjustment for multi-system agreement</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SPIRITUAL CURRICULUM ═══════════════════ -->
+    <div class="screen" id="screen-canon">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Spiritual Canon</h2>
+          <p>वैदिक-आध्यात्मिक-पाठ्यक्रमः · Chart-Aligned v2.0 · Ages 44–62+</p>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Reading principle</div>
+          <div class="ms-english">Sequence is everything. Without the Yoga Sūtra's vessel, later texts become elegantly understood but weakly embodied. The goal is stabilization, not accumulation. Percentages shown are directional alignment — 'a→b' means starting at a% rising to b% with proper development.</div>
+        </div>
+
+        <div class="practice-loop" style="margin-bottom:20px;">
+          <div class="pl-label">The correct inner sequence — same as daily practice</div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(143,135,224,0.15);border-color:rgba(143,135,224,0.3);color:var(--purple2);">1</div><div class="pl-text"><strong>Stabilization</strong> — Yoga Sūtra (44–47) · vessel-building before accumulation</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(200,169,110,0.15);border-color:rgba(200,169,110,0.3);color:var(--gold);">2</div><div class="pl-text"><strong>Action</strong> — Gītā (44–47) · keeps method from becoming brittle</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(93,202,165,0.12);border-color:rgba(93,202,165,0.25);color:var(--teal);">3</div><div class="pl-text"><strong>Recognition</strong> — Kena (47–50) · identity-anchor, only after stability</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(212,144,26,0.12);border-color:rgba(212,144,26,0.25);color:var(--amber2);">4</div><div class="pl-text"><strong>Bridge</strong> — Ātmabodha (47–50) · ordered Advaita understanding</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(224,112,96,0.12);border-color:rgba(224,112,96,0.25);color:var(--coral);">5</div><div class="pl-text"><strong>Discrimination</strong> — Vivekacūḍāmaṇi + Kaṭha (50–55) · purifying judgment</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(143,135,224,0.2);border-color:rgba(143,135,224,0.4);color:var(--purple2);">6</div><div class="pl-text"><strong>Non-dual shock</strong> — Aṣṭāvakra (55–60) · only after witness matures</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(200,169,110,0.2);border-color:rgba(200,169,110,0.4);color:var(--gold2);">7</div><div class="pl-text"><strong>Compression</strong> — Māṇḍūkya (58–62) · after ripening, not early brilliance</div></div>
+          <div class="pl-step"><div class="pl-num" style="background:rgba(255,255,255,0.12);border-color:var(--border2);color:var(--text2);">8</div><div class="pl-text"><strong>Transmission</strong> — Dakṣiṇāmūrti Stotra + Upadeśa Sāhasrī (62+) · late-life home</div></div>
+        </div>
+
+        <!-- PHASE 1: 44–47 -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;padding:6px 12px;background:rgba(200,169,110,0.08);border-radius:var(--r-sm);border:1px solid rgba(200,169,110,0.2);">Phase 1 · Ages 44–47 · Vessel-building</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">१ · Now</div>
+            <div class="sutra-title">Pātañjala Yoga Sūtrāṇi — Foundation text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Edwin F. Bryant, <em>The Yoga Sutras of Patañjali</em></div>
+            <div class="s-sanskrit">पातञ्जल-योग-सूत्राणि — ऋषि-पतञ्जलि</div>
+            <div class="s-english">Patañjali's Yoga Sūtras — the science of stilling the mind.</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> Samādhi Pāda 1.1–1.4, 1.12–1.16, 1.17–1.20, 1.30–1.32 · Sādhana Pāda 2.1, 2.26–2.29<br><br>
+              <strong>Why first:</strong> In Mercury Mahadasha, with mental speed and high cognition, this must come first — your primary problem is not lack of knowledge but excess movement of mind. The goal is stabilization, not accumulation. This is your foundation text not because it is "the greatest," but because it is the right vessel-builder for your chart now. Without this, later texts tend to become elegantly understood but weakly embodied.
+            </div>
+            <div class="wbw-label">Key sūtras to anchor</div>
+            <table class="wbw"><thead><tr><th>Sūtra</th><th>Sanskrit</th><th>Meaning</th></tr></thead><tbody>
+              <tr><td>1.2</td><td>योगश्चित्तवृत्तिनिरोधः</td><td>Yoga is the cessation of the modifications of the mind</td></tr>
+              <tr><td>1.3</td><td>तदा द्रष्टुः स्वरूपेऽवस्थानम्</td><td>Then the seer abides in its own nature</td></tr>
+              <tr><td>1.12</td><td>अभ्यासवैराग्याभ्यां तन्निरोधः</td><td>By practice and non-attachment, that cessation comes</td></tr>
+              <tr><td>2.1</td><td>तपः स्वाध्यायेश्वरप्रणिधानानि क्रियायोगः</td><td>Austerity, self-study, surrender — this is kriyā yoga</td></tr>
+              <tr><td>2.26</td><td>विवेकख्यातिरविप्लवा हानोपायः</td><td>Unbroken discriminative awareness is the means of liberation</td></tr>
+            </tbody></table>
+            <div class="prob-row" style="margin-top:10px;"><span class="prob-label">Alignment now → with practice</span><div class="prob-track"><div class="prob-fill" style="width:82%;background:var(--purple)"></div></div><span class="prob-val">65→82%</span></div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">२ · Now</div>
+            <div class="sutra-title">Bhagavad Gītā — Companion text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Eknath Easwaran, <em>The Bhagavad Gita</em></div>
+            <div class="s-sanskrit">भगवद्गीता — व्यासः</div>
+            <div class="s-english">The Lord's Song — Kṛṣṇa's teaching to Arjuna on the battlefield of dharma.</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> Chapters 2, 6, 12 — especially 2.47–2.48, 2.55–2.72, 6.10–6.28, 12.13–12.20<br><br>
+              <strong>Why companion:</strong> Stabilizes equanimity in action, reduces attachment to outcomes, calms internal friction. Yoga Sūtra gives method; Gītā keeps that method from becoming brittle. For your chart, this is the correct companion text in the current phase.
+            </div>
+            <div class="wbw-label">Key passages</div>
+            <table class="wbw"><thead><tr><th>Verse</th><th>Sanskrit</th><th>Theme</th></tr></thead><tbody>
+              <tr><td>2.47–48</td><td>कर्मण्येवाधिकारस्ते… योगस्थः कुरु</td><td>Action without attachment · equanimity as yoga</td></tr>
+              <tr><td>2.55</td><td>प्रजहाति यदा कामान्सर्वान्पार्थ मनोगतान्</td><td>When one abandons all desires of the mind</td></tr>
+              <tr><td>6.10</td><td>योगी युञ्जीत सततमात्मानं</td><td>The yogī should constantly unite the self</td></tr>
+              <tr><td>12.13</td><td>अद्वेष्टा सर्वभूतानाम्</td><td>Without hatred toward any being — the devotee's nature</td></tr>
+            </tbody></table>
+            <div class="prob-row" style="margin-top:10px;"><span class="prob-label">Equanimity stabilization</span><div class="prob-track"><div class="prob-fill" style="width:82%;background:var(--teal)"></div></div><span class="prob-val">80–85%</span></div>
+          </div>
+        </div>
+
+        <!-- PHASE 2: 47–50 -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:0.12em;margin:20px 0 10px;padding:6px 12px;background:rgba(143,135,224,0.08);border-radius:var(--r-sm);border:1px solid rgba(143,135,224,0.2);">Phase 2 · Ages 47–50 · Witness-recognition</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">३ · 47–50</div>
+            <div class="sutra-title">Kena Upaniṣad — Identity-anchor text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Authors:</strong> Eknath Easwaran in <em>The Upanishads</em>, or Swami Gambhirananda in <em>Eight Upanishads Vol. 1</em></div>
+            <div class="s-sanskrit">केनोपनिषद् — वैदिक-ऋषि-प्रणीत</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> The whole text, especially 1.1–1.9<br><br>
+              <strong>Why after Yoga Sūtra:</strong> Once stability is gained, this becomes the text of witness-recognition. Statements such as "the ear of the ear" directly indicate your nature, but in an unstable mind they become merely conceptual. Therefore it must be read after Yoga Sūtra. This is your identity-anchor text, but not your first text.
+            </div>
+            <div class="w-note" style="margin-top:0;">श्रोत्रस्य श्रोत्रम् — The ear of the ear. The Kena is already active in your daily practice. Reading it as a full text deepens what the daily verse has already opened.</div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Witness-recognition depth</span><div class="prob-track"><div class="prob-fill" style="width:87%;background:var(--purple)"></div></div><span class="prob-val">75→87%</span></div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">४ · 47–50</div>
+            <div class="sutra-title">Ātmabodha — Bridge text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Swami Nikhilananda, <em>Atma Bodha / Self-Knowledge</em> — Ādi Śaṅkarācārya</div>
+            <div class="s-sanskrit">आत्मबोधः — आदि शङ्कराचार्य</div>
+            <div class="s-insight">
+              <strong>Sections:</strong> The whole text (short — ~68 verses)<br><br>
+              <strong>Why a bridge:</strong> Connects Yoga, Upanishadic insight, and Advaita. Gives structured articulation to the question "Who is the seer?" and stabilizes Kena's recognition into ordered understanding. This should remain short and clean — it is there to bridge, not to dominate.
+            </div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Advaita structural clarity</span><div class="prob-track"><div class="prob-fill" style="width:80%;background:var(--amber)"></div></div><span class="prob-val">75–85%</span></div>
+          </div>
+        </div>
+
+        <!-- PHASE 3: 50–55 -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--coral);text-transform:uppercase;letter-spacing:0.12em;margin:20px 0 10px;padding:6px 12px;background:rgba(224,112,96,0.08);border-radius:var(--r-sm);border:1px solid rgba(224,112,96,0.2);">Phase 3 · Ages 50–55 · Discrimination</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">५ · 50–55</div>
+            <div class="sutra-title">Vivekacūḍāmaṇi — Purifier of judgment</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Swami Madhavananda, <em>Vivekachudamani of Sri Shankaracharya</em></div>
+            <div class="s-sanskrit">विवेकचूडामणिः — आदि शङ्कराचार्य</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> Verses 11–30, 108–140, 270–300<br><br>
+              <strong>Why now:</strong> In this phase your mind must become not only a perceiver of patterns but a purifier of judgment. This text refines discrimination between Self and non-Self, eternal and transient, and deepens abidance. This is where your intelligence must learn clean discrimination, not just high perception.
+            </div>
+            <div class="wbw-label">Core themes by verse range</div>
+            <table class="wbw"><thead><tr><th>Verses</th><th>Theme</th></tr></thead><tbody>
+              <tr><td>11–30</td><td>The rare qualified seeker · prerequisites for liberation · viveka, vairāgya, śama, dama</td></tr>
+              <tr><td>108–140</td><td>The three bodies · five sheaths (pañcakośa) · discrimination of the real Self</td></tr>
+              <tr><td>270–300</td><td>The nature of Brahman · abidance in the Self · dissolution of the ego-knot</td></tr>
+            </tbody></table>
+            <div class="prob-row" style="margin-top:10px;"><span class="prob-label">Discrimination refinement</span><div class="prob-track"><div class="prob-fill" style="width:85%;background:var(--coral)"></div></div><span class="prob-val">82–88%</span></div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">६ · 50–55</div>
+            <div class="sutra-title">Kaṭha Upaniṣad — Fire-test of discrimination</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Eknath Easwaran in <em>The Upanishads</em></div>
+            <div class="s-sanskrit">कठोपनिषद् — वैदिक-ऋषि-प्रणीत</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> Nachiketa–Yama dialogue, especially 1.2.1–1.2.25 and 1.3.14<br><br>
+              <strong>Why paired with Viveka:</strong> Higher versus lower good, death versus immortality, courage, detachment, and the sharpness of the path — all highly relevant in your decision phase. This is the fire-test of your discrimination. Together they form your judgment pair.
+            </div>
+            <div class="wbw-label">Anchor verse — Kaṭha 1.2.23</div>
+            <div class="v-sanskrit">नायमात्मा प्रवचनेन लभ्यो<br>न मेधया न बहुना श्रुतेन।<br>यमेवैष वृणुते तेन लभ्यः<br>तस्यैष आत्मा विवृणुते तनूं स्वाम्॥</div>
+            <div class="s-english">The Self is not attained by instruction, nor by intellect, nor by much learning. It is attained only by the one whom the Self chooses — to that one the Self reveals its own body.</div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Existential seriousness + viveka</span><div class="prob-track"><div class="prob-fill" style="width:85%;background:var(--amber2)"></div></div><span class="prob-val">82–88%</span></div>
+          </div>
+        </div>
+
+        <!-- PHASE 4: 55–60 -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--purple2);text-transform:uppercase;letter-spacing:0.12em;margin:20px 0 10px;padding:6px 12px;background:rgba(143,135,224,0.12);border-radius:var(--r-sm);border:1px solid rgba(143,135,224,0.3);">Phase 4 · Ages 55–60 · Non-dual shock</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">७ · 55–60</div>
+            <div class="sutra-title">Aṣṭāvakra Gītā — First nondual shock text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Thomas Byrom, <em>The Heart of Awareness</em></div>
+            <div class="s-sanskrit">अष्टावक्रगीता — अष्टावक्रः</div>
+            <div class="s-insight">
+              <strong>Sections:</strong> Read fully, but slowly — not as a single burst<br><br>
+              <strong>Why delayed:</strong> This is not gradual instruction but a rapid loosening of the ego-knot. When the vessel is prepared it is medicine; when unprepared it can become destabilizing. Therefore delayed reading is best. This is your first explicitly nondual shock text, but only after witness and discrimination have matured.
+            </div>
+            <div class="scenario-card" style="margin-top:12px;border-color:rgba(143,135,224,0.3);">
+              <div class="sc-label">Warning</div>
+              <div class="sc-body" style="font-size:13px;">Reading this text before Phase 3 is complete risks intellectual appropriation of nondual language without embodied stability. The text will seem to confirm what you already think rather than dissolving what you are.</div>
+            </div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Non-dual ego-dissolution</span><div class="prob-track"><div class="prob-fill" style="width:87%;background:var(--purple)"></div></div><span class="prob-val">85–90%</span></div>
+          </div>
+        </div>
+
+        <!-- PHASE 5: 58–62 -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--gold2);text-transform:uppercase;letter-spacing:0.12em;margin:20px 0 10px;padding:6px 12px;background:rgba(200,169,110,0.12);border-radius:var(--r-sm);border:1px solid rgba(200,169,110,0.3);">Phase 5 · Ages 58–62 · Compression</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">८ · 58–62</div>
+            <div class="sutra-title">Māṇḍūkya Upaniṣad with Gauḍapāda's Kārikā</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Swami Nikhilananda, <em>The Mandukya Upanishad with Gaudapada's Karika and Shankara's Commentary</em></div>
+            <div class="s-sanskrit">माण्डूक्योपनिषद् — गौडपादाचार्य-कारिकासहितम्</div>
+            <div class="s-insight" style="margin-bottom:12px;">
+              <strong>Sections:</strong> All 12 Upanishadic mantras + selected verses from the Advaita section of the Kārikā<br><br>
+              <strong>Why after Aṣṭāvakra:</strong> This is the most compressed determination of consciousness. Your mind could grasp it earlier, but only now is it likely to stabilize it. Therefore it belongs after Aṣṭāvakra, not at the beginning. This is compression after ripening, not early brilliance.
+            </div>
+            <div class="wbw-label">The four states — Māṇḍūkya structure</div>
+            <table class="wbw"><thead><tr><th>State</th><th>Sanskrit</th><th>Consciousness</th></tr></thead><tbody>
+              <tr><td>Waking</td><td>जाग्रत् · Vaiśvānara</td><td>Gross experience · outward-facing</td></tr>
+              <tr><td>Dream</td><td>स्वप्न · Taijasa</td><td>Subtle experience · inward-facing</td></tr>
+              <tr><td>Deep sleep</td><td>सुषुप्ति · Prājña</td><td>Causal · unified · bliss-sheath</td></tr>
+              <tr><td>Turīya</td><td>तुरीय · The Fourth</td><td>Pure consciousness · witness of all three</td></tr>
+            </tbody></table>
+            <div class="prob-row" style="margin-top:10px;"><span class="prob-label">Consciousness stabilization</span><div class="prob-track"><div class="prob-fill" style="width:88%;background:var(--gold)"></div></div><span class="prob-val">87–90%</span></div>
+          </div>
+        </div>
+
+        <!-- PHASE 6: 62+ -->
+        <div style="font-family:var(--mono);font-size:9px;color:var(--teal2);text-transform:uppercase;letter-spacing:0.12em;margin:20px 0 10px;padding:6px 12px;background:rgba(93,202,165,0.08);border-radius:var(--r-sm);border:1px solid rgba(93,202,165,0.2);">Phase 6 · Ages 62+ · Transmission</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">९ · 62+</div>
+            <div class="sutra-title">Dakṣiṇāmūrti Stotra — Late-life contemplative home</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Traditional commentary from an Advaita lineage — Ādi Śaṅkarācārya</div>
+            <div class="s-sanskrit">दक्षिणामूर्ति-स्तोत्रम् — आदि शङ्कराचार्य</div>
+            <div class="s-insight">
+              <strong>Sections:</strong> Contemplate the whole text regularly, especially the first 4–5 verses<br><br>
+              <strong>Why a home, not just a text:</strong> Here your chart reaches one of its highest alignments — silent guru-principle, insight into appearance and reality, causal vision, witness-purity, and natural flow of knowledge are integrated. This is not a mere text for you. It is a late-life contemplative home.
+            </div>
+            <div class="w-note" style="margin-top:12px;">This is the same deity as your iṣṭa in the Devatā system — the mantra you already practice is the seed; this text is its full flowering. The daily "Om Namo Bhagavate Dakṣiṇāmūrtaye" is already preparing the ground.</div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Chart-text alignment</span><div class="prob-track"><div class="prob-fill" style="width:89%;background:var(--teal)"></div></div><span class="prob-val">88–91%</span></div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleSutra(this)">
+            <div class="sutra-badge">१० · 62+</div>
+            <div class="sutra-title">Upadeśa Sāhasrī — Final companion text</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box"><strong>Author:</strong> Swami Jagadananda, <em>Upadesa Sahasri of Sri Shankaracharya</em></div>
+            <div class="s-sanskrit">उपदेशसाहस्री — आदि शङ्कराचार्य</div>
+            <div class="s-insight">
+              <strong>Sections:</strong> Mainly the prose instructions on Self-knowledge, and carefully chosen verses from the metrical portions<br><br>
+              <strong>Why the final companion:</strong> This is a later-life text for transmission, stabilization, and dissolution of subtle doership — not for collecting new concepts. Your chart's completion is not loud mysticism, but quiet transmission. This is the right final companion because of that.
+            </div>
+            <div class="prob-row" style="margin-top:12px;"><span class="prob-label">Transmission alignment</span><div class="prob-track"><div class="prob-fill" style="width:80%;background:var(--text2)"></div></div><span class="prob-val">75–85%</span></div>
+          </div>
+        </div>
+
+        <!-- Quick reference table -->
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:16px 18px;margin-top:8px;">
+          <div class="section-label" style="margin-bottom:12px;">Reading roadmap — at a glance</div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr>
+              <th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;">#</th>
+              <th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;">Text</th>
+              <th style="text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;">Age</th>
+              <th style="text-align:right;padding:5px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;">%</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">१</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--purple2);font-family:var(--serif);font-style:italic;">Yoga Sūtra</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--gold);">44–47</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">65→82%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">२</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--teal2);font-family:var(--serif);font-style:italic;">Bhagavad Gītā</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--gold);">44–47</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">80–85%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">३</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--purple2);font-family:var(--serif);font-style:italic;">Kena Upaniṣad</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text2);">47–50</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">75→87%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">४</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--amber2);font-family:var(--serif);font-style:italic;">Ātmabodha</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text2);">47–50</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">75–85%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">५</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--coral);font-family:var(--serif);font-style:italic;">Vivekacūḍāmaṇi</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">50–55</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">82–88%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">६</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--amber2);font-family:var(--serif);font-style:italic;">Kaṭha Upaniṣad</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">50–55</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">82–88%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">७</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--purple2);font-family:var(--serif);font-style:italic;">Aṣṭāvakra Gītā</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">55–60</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">85–90%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">८</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--gold2);font-family:var(--serif);font-style:italic;">Māṇḍūkya + Kārikā</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">58–62</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">87–90%</td></tr>
+              <tr><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">९</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);color:var(--teal2);font-family:var(--serif);font-style:italic;">Dakṣiṇāmūrti Stotra</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);">62+</td><td style="padding:6px 6px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">88–91%</td></tr>
+              <tr><td style="padding:6px 6px;font-family:var(--mono);font-size:9px;color:var(--text3);">१०</td><td style="padding:6px 6px;color:var(--text2);font-family:var(--serif);font-style:italic;">Upadeśa Sāhasrī</td><td style="padding:6px 6px;font-family:var(--mono);font-size:9px;color:var(--text3);">62+</td><td style="padding:6px 6px;text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);">75–85%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="screen" id="screen-more">
+      <div class="more-wrap">
+        <div class="section-label" style="margin-bottom:16px;">All modules</div>
+        <div class="more-card" onclick="navigate('witness')"><div class="more-card-icon">◉</div><div><div class="more-card-name">Witnessing</div><div class="more-card-desc">Sutras · Practice · Scenarios · Non-dual</div></div><div class="more-card-tag tag-active">Core</div></div>
+        <div class="more-card" onclick="navigate('practice')"><div class="more-card-icon">☽</div><div><div class="more-card-name">Daily Practice</div><div class="more-card-desc">Sanskrit · Mantra · Verses</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('sutras')"><div class="more-card-icon">📜</div><div><div class="more-card-name">Chart Sutras</div><div class="more-card-desc">Verses · Recitation · Cycle</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('deities')"><div class="more-card-icon">🔱</div><div><div class="more-card-name">Devatā System</div><div class="more-card-desc">Mantras · Sequence · Word-by-word</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('canon')"><div class="more-card-icon">📚</div><div><div class="more-card-name">Spiritual Canon</div><div class="more-card-desc">10 texts · Ages 44–62+ · Sequence</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('field')"><div class="more-card-icon">⟡</div><div><div class="more-card-name">Life Field</div><div class="more-card-desc">Stages · Arc · Interactive map</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div style="margin-top:28px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;">
+          <div class="section-label" style="margin-bottom:8px;">Install as iPhone app</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;">In Safari: tap <strong style="color:var(--gold)">Share</strong> → <strong style="color:var(--gold)">Add to Home Screen</strong>. Jyotish LifeGuide launches full-screen, no browser chrome, works offline.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── BOTTOM NAV ──────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" id="nav-witness" onclick="navigate('witness')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="0.5" fill="currentColor" stroke="none"/></svg></div>
+      <span class="nav-label">Witness</span>
+    </button>
+    <button class="nav-btn" id="nav-practice" onclick="navigate('practice')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.5 2 6 5 6 8c0 5 6 12 6 12s6-7 6-12c0-3-2.5-6-6-6z"/><circle cx="12" cy="8" r="2"/></svg></div>
+      <span class="nav-label">Practice</span>
+    </button>
+    <button class="nav-btn" id="nav-sutras" onclick="navigate('sutras')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 4v16M12 8h4M12 12h4M12 16h4"/></svg></div>
+      <span class="nav-label">Sutras</span>
+    </button>
+    <button class="nav-btn" id="nav-more" onclick="navigate('more')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div>
+      <span class="nav-label">More</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ── TIME & GREETING ─────────────────────────────── */
+var SESSION_CONFIG = [
+  { id:'morning', name:'Morning practice',   hours:[4,11],  color:'#c8a96e' },
+  { id:'midday',  name:'Midday micro-reset', hours:[11,17], color:'#5DCAA5' },
+  { id:'evening', name:'Evening practice',   hours:[17,21], color:'#8F87E0' },
+  { id:'night',   name:'Night witnessing',   hours:[21,28], color:'#a8a49a' }
+];
+function getSession(h){ for(var i=0;i<SESSION_CONFIG.length;i++){var s=SESSION_CONFIG[i];var hi=h<4?h+24:h;if(hi>=s.hours[0]&&hi<s.hours[1])return s;}return SESSION_CONFIG[0]; }
+function getGreeting(h){ if(h>=4&&h<12)return['Brahma Muhurta','Good morning,\nPrashanth']; if(h>=12&&h<17)return['Afternoon','Good afternoon,\nPrashanth']; if(h>=17&&h<21)return['Sandhyā','Good evening,\nPrashanth']; return['Rātri','Good night,\nPrashanth']; }
+function initClock(){
+  var now=new Date(),h=now.getHours(),m=now.getMinutes();
+  var pad=function(n){return n<10?'0'+n:n};
+  var ampm=h>=12?'pm':'am',h12=h%12||12;
+  document.getElementById('hdr-time').textContent=h12+':'+pad(m)+' '+ampm;
+  var g=getGreeting(h);
+  document.getElementById('greeting-period').textContent=g[0];
+  document.getElementById('greeting-text').textContent=g[1];
+  var sess=getSession(h);
+  document.getElementById('session-banner-name').textContent=sess.name;
+  document.getElementById('session-dot').style.background=sess.color;
+  document.querySelectorAll('.rhythm-item').forEach(function(el){el.classList.toggle('current',el.dataset.session===sess.id);});
+  window._currentSession=sess.id;
+}
+initClock(); setInterval(initClock,60000);
+
+/* ── NAVIGATION ─────────────────────────────────── */
+function navigate(screen){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var sc=document.getElementById('screen-'+screen);
+  if(sc)sc.classList.add('active');
+  var nb=document.getElementById('nav-'+screen);
+  if(nb)nb.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+}
+function goToPracticeSession(){navigate('practice');switchPracticeTab(window._currentSession||'morning');}
+function goToPracticeTab(id){navigate('practice');switchPracticeTab(id);}
+
+/* ── PRACTICE TABS ───────────────────────────────── */
+function switchPracticeTab(id,btn){
+  document.querySelectorAll('.practice-session').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.session-tab').forEach(function(t){t.classList.remove('active');});
+  var ps=document.getElementById('ps-'+id);if(ps)ps.classList.add('active');
+  if(btn){btn.classList.add('active');}
+  else{document.querySelectorAll('.session-tab').forEach(function(t){if(t.textContent.toLowerCase().trim()===id)t.classList.add('active');});}
+  document.getElementById('content').scrollTop=0;
+}
+
+/* ── WITNESSING TABS ─────────────────────────────── */
+function switchWitTab(id,btn){
+  var scr=document.getElementById('screen-witness');
+  scr.querySelectorAll('.wit-section').forEach(function(s){s.classList.remove('active');});
+  scr.querySelectorAll('.wit-tab').forEach(function(t){t.classList.remove('active');});
+  var ws=document.getElementById('ws-'+id);if(ws)ws.classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+}
+
+function switchSutraTab(id,btn){
+  var scr=document.getElementById('screen-sutras');
+  scr.querySelectorAll('.wit-section').forEach(function(s){s.classList.remove('active');});
+  scr.querySelectorAll('.wit-tab').forEach(function(t){t.classList.remove('active');});
+  var ws=document.getElementById('ss-'+id);if(ws)ws.classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+}
+
+/* ── EXPANDABLE CARDS ────────────────────────────── */
+function toggleCard(hdr){var body=hdr.nextElementSibling;var open=hdr.classList.contains('open');hdr.classList.toggle('open',!open);body.classList.toggle('open',!open);}
+function toggleSutra(hdr){var body=hdr.nextElementSibling;var open=hdr.classList.contains('open');hdr.classList.toggle('open',!open);body.classList.toggle('open',!open);}
+
+/* ── WITNESSING FIELD ────────────────────────────── */
+var FSTAGES=[
+  {cx:214,cy:190,stroke:'#5DCAA5',age:'Youth · 0 – 30',title:'Causal perception rises',body:'Analytical power surges (70–85%) in education, yet institutional friction and career ambiguity challenge you (50–70%). Relationships face tension from intellectual sharpness. Finances unstable but learning curve is exceptional. Witnessing appears intermittently — hidden causes attract you strongly (60–80%).',bars:[{l:'Analytical power',v:78,c:'#1D9E75'},{l:'Learning curve',v:85,c:'#5DCAA5'},{l:'Institutional friction',v:60,c:'#D85A30'}],sutra:'Youth is causal perception — the mind sees hidden causes before the self learns to see itself.'},
+  {cx:340,cy:334,stroke:'#85B7EB',age:'Early midlife · 30 – 40',title:'Timing awareness emerges',body:'Career grows through structural shifts (60–75%) not simple promotions. Decision clarity sharpens (65–80%). Finances can scale 2–4×. Relationships deepen through children, patience, and discernment. Witnessing becomes dominant over analysis (70%).',bars:[{l:'Decision clarity',v:72,c:'#378ADD'},{l:'Financial scaling',v:68,c:'#85B7EB'},{l:'Witnessing vs analysis',v:70,c:'#7F77DD'}],sutra:'Midlife is timing alignment — sense the field, align with it, act cleanly and release.'},
+  {cx:466,cy:190,stroke:'#EF9F27',age:'Later midlife · 40 – 55',title:'Samyama matures',body:'High-impact leadership roles emerge (70–85%). Decision latency reduces (50–70%). Systemic influence expands. Finances may reach peak scaling (3–5×). Burnout risk (30–50%) if inner intensity is unmanaged.',bars:[{l:'Leadership emergence',v:77,c:'#BA7517'},{l:'Peak finance scaling',v:70,c:'#EF9F27'},{l:'Burnout risk',v:40,c:'#D85A30'}],sutra:'Maturity is samyama — dharana, dhyana, samadhi unified. Object, attention, and awareness merge.'},
+  {cx:340,cy:56,stroke:'#AFA9EC',age:'Later life · 55+',title:'Witnessing becomes continuous',body:'Advisory influence and guidance roles emerge (75–90%). Career becomes less title-dependent, more impact-deep. Finances stabilize (70–85%). Relationships evolve into detached compassion (70–85%). Witnessing becomes continuous (70–90%).',bars:[{l:'Witnessing continuity',v:80,c:'#534AB7'},{l:'Advisory impact',v:82,c:'#7F77DD'},{l:'Inner freedom',v:85,c:'#AFA9EC'}],sutra:'Later life is continuous witnessing — seeking stops and the witness shines by itself.'},
+  {cx:340,cy:190,stroke:'#7F77DD',age:'Core principle',title:'The witnessing nature',body:'Ketu-ascendant + Mercury-Moon-Jupiter create an inborn witnessing tendency. Three rare superpowers: causal-field perception, blank-pause capacity, and subtle self-observation. A self-correcting intelligence system.',bars:[{l:'Causal-field perception',v:90,c:'#7F77DD'},{l:'Blank-pause capacity',v:85,c:'#AFA9EC'},{l:'Subtle self-observation',v:88,c:'#534AB7'}],sutra:'What is seen is not you; the one who sees is you. When seeking stops, the witness shines by itself.'},
+  {cx:112,cy:68,stroke:'#F0997B',age:'Distortions and risks',title:'Where strengths become bondage',body:'Primary risks: clinging to past successful strategies (50–60%) and premature meaning-making (40–50%). AI amplifies natural meaning-making 2–3×, leading to borrowed certainty (40–60%) and witness displacement.',bars:[{l:'Strategy clinging risk',v:55,c:'#D85A30'},{l:'Premature closure risk',v:45,c:'#F0997B'},{l:'AI amplification risk',v:50,c:'#EF9F27'}],sutra:'Insert 2–5 second witnessing pauses before decisions. Not everything is to be controlled by me.'},
+  {cx:112,cy:312,stroke:'#5DCAA5',age:'Daily system',title:'Practice architecture',body:'Morning: pranayama → Kena ×3–5 → Gāyatrī ×21–108 → meditation → witnessing. Midday: 3 breaths + witnessing + Gita verse. Evening: pranayama → Om Namaḥ Śivāya ×11–54 → meditation. Night: review + witnessing.',bars:[{l:'Minimal form yield',v:65,c:'#1D9E75'},{l:'Full form yield',v:78,c:'#5DCAA5'},{l:'Witnessing priority',v:95,c:'#7F77DD'}],sutra:'Pranayama and mantra are vehicles, not goals. If they become the goal, progress drops 30–40%.'},
+  {cx:568,cy:68,stroke:'#AFA9EC',age:'Advanced integration',title:'Samyama mechanics',body:'Integration of dharana + dhyana + samadhi — unbroken cognitive lock where object, attention, and awareness merge. Causal-field perception → pure guidance. Blank-pause → field of clear decision. Siddhis are side-effects, not goals.',bars:[{l:'Decision latency reduction',v:60,c:'#534AB7'},{l:'Outcome shift range',v:35,c:'#7F77DD'},{l:'Timing alignment',v:75,c:'#AFA9EC'}],sutra:'Fix the fixed. Play the flexible. Navigate the field with epistemic humility and right timing.'},
+  {cx:568,cy:312,stroke:'#EF9F27',age:'Post-2032 synthesis',title:'High-impact leadership + witnessing',body:'Mercury Mahadasha trajectory: life stabilizes toward "high-impact leadership + witnessing-based decision system" where external influence and inner freedom coexist. 2026 foundation-building; recognition aligns to 2027 (Mercury-Sun antardasha).',bars:[{l:'Leadership stabilization',v:75,c:'#BA7517'},{l:'Inner freedom coexistence',v:80,c:'#7F77DD'},{l:'Foundation (2026)',v:65,c:'#EF9F27'}],sutra:'Accept the fixed. Optimize the flexible. When favorable, act. When unfavorable, hold.'}
+];
+function showFStage(i){
+  var s=FSTAGES[i];
+  var pulse=document.getElementById('f-pulse');
+  pulse.setAttribute('cx',s.cx);pulse.setAttribute('cy',s.cy);pulse.setAttribute('stroke',s.stroke);pulse.setAttribute('r',i<5?'54':'34');
+  document.getElementById('fp-age').textContent=s.age;
+  document.getElementById('fp-title').textContent=s.title;
+  document.getElementById('fp-body').textContent=s.body;
+  document.getElementById('fp-sutra').textContent=s.sutra;
+  document.getElementById('fp-bars').innerHTML=s.bars.map(function(b){return'<div class="fp-bar-row"><span class="fp-bar-label">'+b.l+'</span><div class="fp-bar-track"><div class="fp-bar-fill" style="width:'+b.v+'%;background:'+b.c+'"></div></div><span class="fp-bar-val">'+b.v+'%</span></div>';}).join('');
+  document.getElementById('f-panel').style.display='block';
+  document.getElementById('f-panel').style.borderColor=s.stroke+'44';
+  document.getElementById('f-hint').style.display='none';
+  var nav=document.getElementById('f-nav');
+  nav.style.display='flex';
+  nav.innerHTML=FSTAGES.map(function(st,j){return'<button class="field-ndot'+(j===i?' on':'')+'" style="'+(j===i?'background:'+st.stroke:'')+'" data-idx="'+j+'"></button>';}).join('');
+  nav.querySelectorAll('.field-ndot').forEach(function(btn){btn.addEventListener('click',function(){showFStage(parseInt(this.dataset.idx));});});
+  for(var k=0;k<9;k++){var el=document.getElementById('fn'+k);if(el)el.setAttribute('opacity',k===i?'1':'0.5');}
+}
+for(var fi=0;fi<9;fi++){(function(i){var el=document.getElementById('fn'+i);if(el)el.addEventListener('click',function(){showFStage(i);});})(fi);}
+</script>
+</body>
+</html>
