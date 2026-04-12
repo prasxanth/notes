@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agni">
+<meta name="theme-color" content="#090c0f">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMDkwYzBmIi8+PHBhdGggZD0iTTUwIDE4IEM1MCAxOCA2MiAzMiA2MiA0NCBDNjIgNTAgNTggNTQgNTQgNTYgQzU2IDQ4IDUwIDQyIDUwIDQyIEM1MCA0MiA0NCA1MiA0NiA2MCBDNDAgNTYgMzggNTAgMzggNDQgQzM4IDMyIDUwIDE4IDUwIDE4WiIgZmlsbD0iIzRFQzlCOCIgb3BhY2l0eT0iMC45Ii8+PHBhdGggZD0iTTUwIDM4IEM1MCAzOCA1NiA0NiA1NSA1NCBDNTIgNTcgNDggNTcgNDUgNTQgQzQ0IDQ2IDUwIDM4IDUwIDM4WiIgZmlsbD0iI0ZBQzc3NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjYiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMjUiLz48L3N2Zz4=">
+  <link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+  <link rel="apple-touch-startup-image" href="data:image/png;base64,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">
+<title>Agni</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #090c0f;
+  --bg2:     #0f1318;
+  --bg3:     #161c23;
+  --bg4:     #1d2530;
+  --bg5:     #24303d;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #dde6ef;
+  --text2:   #8a9db0;
+  --text3:   #4a5a6a;
+  --cyan:    #4EC9B8;
+  --cyan2:   #9FE5DC;
+  --blue:    #5B9BD5;
+  --blue2:   #A8CFF0;
+  --amber:   #D4901A;
+  --amber2:  #FAC775;
+  --coral:   #E07060;
+  --coral2:  #F0A090;
+  --green:   #5CAD7A;
+  --green2:  #8FD4A8;
+  --purple:  #8B7FD4;
+  --purple2: #C0B8F0;
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+  --safe-t:  env(safe-area-inset-top, 0px);
+  --sans:    'Nunito', system-ui, sans-serif;
+  --serif:   'Playfair Display', Georgia, serif;
+  --mono:    'DM Mono', monospace;
+  --r-sm:    8px;
+  --r-md:    12px;
+  --r-lg:    16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; font-size: 15px; line-height: 1.6; }
+
+/* ─── SHELL ───────────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.status-bar { height: var(--safe-t); background: var(--bg); flex-shrink: 0; }
+
+/* ─── HEADER ──────────────────────────────────────────────── */
+.app-header {
+  flex-shrink: 0; display: flex; align-items: center;
+  padding: 10px 18px; gap: 10px;
+  border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.hdr-back { color: var(--cyan); font-size: 22px; cursor: pointer; display: none; padding-right: 4px; line-height: 1; user-select: none; }
+.hdr-back.vis { display: block; }
+.hdr-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; flex: 1; }
+.hdr-logo { font-family: var(--serif); font-size: 19px; color: var(--cyan2); flex-shrink: 0; }
+.hdr-time { font-family: var(--mono); font-size: 11px; color: var(--text2); flex: 1; text-align: right; }
+
+/* ─── CONTENT ─────────────────────────────────────────────── */
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+.screen { display: none; min-height: 100%; animation: fadeUp 0.28s ease both; }
+.screen.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── BOTTOM NAV ──────────────────────────────────────────── */
+.bottom-nav { flex-shrink: 0; display: flex; background: var(--bg2); border-top: 1px solid var(--border2); padding-bottom: var(--safe-b); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 9px 4px; border: none; background: transparent; cursor: pointer; }
+.nav-btn:active { opacity: 0.5; }
+.nav-icon svg { width: 20px; height: 20px; }
+.nav-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+.nav-btn.active .nav-label { color: var(--cyan); }
+.nav-btn.active .nav-icon svg { stroke: var(--cyan); }
+.nav-btn:not(.active) .nav-icon svg { stroke: var(--text3); }
+
+/* ─── SHARED ──────────────────────────────────────────────── */
+.wrap { padding: 20px 18px 28px; }
+.sec-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.13em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+.scr-head { margin-bottom: 18px; }
+.scr-head h2 { font-family: var(--serif); font-size: 22px; color: var(--cyan2); margin-bottom: 3px; }
+.scr-head p { font-size: 12px; color: var(--text3); font-style: italic; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.info-box { background: var(--bg3); border-radius: var(--r-sm); padding: 11px 13px; font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 12px; }
+.info-box strong { color: var(--cyan2); font-weight: 600; }
+
+/* expand cards */
+.xc { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; }
+.xh { display: flex; align-items: center; gap: 9px; padding: 12px 14px; cursor: pointer; transition: background .15s; }
+.xh:active, .xh.open { background: var(--bg3); }
+.xh.open { border-bottom: 1px solid var(--border); }
+.xh-em { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.xh-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.3; }
+.xh-tag { font-family: var(--mono); font-size: 8px; padding: 2px 7px; border-radius: 3px; flex-shrink: 0; }
+.xh-arr { color: var(--text3); font-size: 11px; transition: transform .2s; flex-shrink: 0; }
+.xh.open .xh-arr { transform: rotate(90deg); }
+.xb { display: none; padding: 13px 15px 16px; font-size: 13px; color: var(--text2); line-height: 1.7; }
+.xb.open { display: block; }
+
+/* ══════════════════════════════════════════════════════════
+   HOME SCREEN — "Lab Results → Protocols" timeline
+══════════════════════════════════════════════════════════ */
+
+.home-intro { margin-bottom: 22px; }
+.home-intro-sub { font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 5px; }
+.home-intro-title { font-family: var(--serif); font-size: 24px; color: var(--cyan2); margin-bottom: 4px; line-height: 1.2; }
+.home-intro-body { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before {
+  content: '';
+  position: absolute; left: 9px; top: 8px; bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--cyan) 0%, rgba(78,201,184,0.2) 100%);
+  border-radius: 1px;
+}
+
+.tl-entry { position: relative; margin-bottom: 16px; }
+.tl-dot {
+  position: absolute; left: -22px; top: 14px;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--bg);
+  flex-shrink: 0;
+}
+.tl-dot.active { background: var(--cyan); box-shadow: 0 0 0 3px rgba(78,201,184,0.25); }
+.tl-dot.future { background: var(--bg3); border: 2px solid var(--border2); }
+
+/* Lab card */
+.lab-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg);
+  overflow: hidden; cursor: pointer; transition: border-color .15s;
+}
+.lab-card:active { border-color: var(--border2); }
+.lab-card.active-entry { border-color: rgba(78,201,184,0.35); }
+
+.lab-card-header { padding: 13px 15px 11px; }
+.lab-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.lab-card-date { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+.lab-card-source { font-family: var(--mono); font-size: 8px; color: var(--text3); background: var(--bg4); padding: 2px 7px; border-radius: 3px; }
+.lab-card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.lab-card-sub { font-size: 12px; color: var(--text3); }
+
+/* Mini lab grid inside card */
+.lab-card-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 0 15px 12px; }
+.lcm { background: var(--bg3); border-radius: 6px; padding: 7px 6px; text-align: center; }
+.lcm-val { font-family: var(--mono); font-size: 12px; font-weight: 500; line-height: 1.2; }
+.lcm-name { font-family: var(--mono); font-size: 8px; color: var(--text3); margin-top: 1px; text-transform: uppercase; }
+.val-hi { color: var(--coral2); }
+.val-lo { color: var(--amber2); }
+.val-ok { color: var(--green2); }
+
+/* Arrow connector from lab → protocol */
+.connector {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 15px; background: var(--bg3);
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.connector-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; flex: 1; }
+.connector-protocol { font-family: var(--mono); font-size: 10px; font-weight: 500; }
+.connector-arrow { font-size: 13px; color: var(--text3); }
+
+/* Protocol pill inside lab card */
+.proto-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 15px; background: var(--bg3);
+  border-top: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.proto-pill:active { background: var(--bg4); }
+.proto-pill-icon { font-size: 16px; }
+.proto-pill-text { flex: 1; }
+.proto-pill-label { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+.proto-pill-name { font-size: 14px; font-weight: 600; }
+.proto-pill-reason { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 1px; line-height: 1.4; }
+.proto-pill-chevron { color: var(--text3); font-size: 15px; }
+
+.proto-pill.sep  .proto-pill-name { color: var(--coral2); }
+.proto-pill.sepl .proto-pill-name { color: var(--green2); }
+.proto-pill.future .proto-pill-name { color: var(--text3); }
+
+/* Gate mini summary */
+.gate-mini { display: flex; gap: 5px; flex-wrap: wrap; padding: 10px 15px; border-top: 1px solid var(--border); }
+.gm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 1px; }
+.gm-dot.fail { background: var(--coral); }
+.gm-dot.pass { background: var(--green); }
+.gm-item { display: flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 9px; color: var(--text3); }
+.gm-item .val { font-weight: 500; }
+.gm-item .val.fail { color: var(--coral2); }
+.gm-item .val.pass { color: var(--green2); }
+
+/* Future entry */
+.future-card {
+  background: var(--bg2); border: 1px dashed var(--border2); border-radius: var(--r-lg);
+  padding: 14px 15px; opacity: 0.5;
+}
+.future-card-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.future-card-title { font-size: 14px; color: var(--text2); }
+
+/* ══════════════════════════════════════════════════════════
+   PROTOCOL DETAIL SCREEN
+══════════════════════════════════════════════════════════ */
+.proto-origin-banner {
+  background: var(--bg3);
+  border: 1px solid rgba(78,201,184,0.2);
+  border-radius: var(--r-lg);
+  padding: 13px 15px;
+  margin-bottom: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 11px;
+}
+.proto-origin-banner:active { background: var(--bg4); }
+.pob-left { flex: 1; }
+.pob-label { font-family: var(--mono); font-size: 8px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.pob-date { font-size: 13px; font-weight: 600; color: var(--text); }
+.pob-metrics { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 2px; line-height: 1.5; }
+.pob-arrow { color: var(--cyan); font-size: 16px; }
+
+.proto-phase-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(224,112,96,0.1); border: 1px solid rgba(224,112,96,0.3);
+  border-radius: 20px; padding: 5px 12px 5px 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--coral2);
+  margin-bottom: 16px;
+}
+.proto-phase-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); animation: pulse 2.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+.ptabs { display: flex; border-bottom: 1px solid var(--border2); margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
+.ptabs::-webkit-scrollbar { display: none; }
+.ptab { padding: 8px 15px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+.ptab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.ptab-section { display: none; }
+.ptab-section.active { display: block; }
+
+/* Day schedule tabs */
+.dtabs { display: flex; border-bottom: 1px solid var(--border2); margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
+.dtabs::-webkit-scrollbar { display: none; }
+.dtab { padding: 7px 13px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.09em; color: var(--text3); border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+.dtab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* Time blocks */
+.tblock { margin-bottom: 16px; }
+.tblock-hdr { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+.tbadge { font-family: var(--mono); font-size: 8px; letter-spacing: 0.07em; padding: 3px 9px; border-radius: 3px; text-transform: uppercase; font-weight: 600; color: #090c0f; }
+.tbadge.waking    { background: var(--purple2); }
+.tbadge.early     { background: var(--cyan2); }
+.tbadge.breakfast { background: var(--amber2); }
+.tbadge.midmorn   { background: var(--blue2); }
+.tbadge.prelunch  { background: #9FE5DC; }
+.tbadge.lunch     { background: var(--green2); }
+.tbadge.afternoon { background: var(--purple2); }
+.tbadge.dinner    { background: var(--coral2); }
+.tbadge.bedtime   { background: var(--text2); }
+.tclock { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+.supp-row { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 9px 13px; display: flex; align-items: center; gap: 9px; margin-bottom: 5px; }
+.supp-em { font-size: 14px; line-height: 1; flex-shrink: 0; }
+.supp-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+.supp-dose { font-family: var(--mono); font-size: 9px; color: var(--text3); white-space: nowrap; }
+
+/* Gate detail */
+.gate-row { display: flex; align-items: center; gap: 9px; padding: 9px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 6px; }
+.gdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.gdot.fail { background: var(--coral); }
+.gdot.pass { background: var(--green); }
+.gate-row-label { font-size: 13px; color: var(--text); flex: 1; }
+.gate-row-val { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.gate-row-val.fail { color: var(--coral2); }
+.gate-row-val.pass { color: var(--green2); }
+.gate-row-target { font-family: var(--mono); font-size: 9px; color: var(--text3); }
+
+/* Caveat & situation */
+.cav-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 7px; overflow: hidden; }
+.cav-hdr { display: flex; align-items: center; gap: 9px; padding: 11px 13px; cursor: pointer; transition: background .15s; }
+.cav-hdr:active, .cav-hdr.open { background: var(--bg3); }
+.cav-hdr.open { border-bottom: 1px solid var(--border); }
+.cav-em { font-size: 14px; }
+.cav-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+.cav-arr { color: var(--text3); font-size: 10px; transition: transform .2s; }
+.cav-hdr.open .cav-arr { transform: rotate(90deg); }
+.cav-body { display: none; padding: 11px 13px 14px; }
+.cav-body.open { display: block; }
+.cav-condition { font-size: 13px; color: var(--cyan2); font-weight: 500; margin-bottom: 7px; }
+.cav-reason { background: var(--bg4); border-left: 2px solid var(--amber); border-radius: 0 5px 5px 0; padding: 7px 10px; font-family: var(--mono); font-size: 10px; color: var(--amber2); line-height: 1.5; }
+
+.sit-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 7px; }
+.sit-trigger { font-family: var(--mono); font-size: 8px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.sit-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.sit-action { background: var(--bg3); border-left: 2px solid var(--cyan); border-radius: 0 5px 5px 0; padding: 6px 10px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+.sit-why { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 6px; line-height: 1.4; }
+
+/* compare table */
+.comp-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px; }
+.comp-table th { font-family: var(--mono); font-size: 8px; letter-spacing: 0.07em; color: var(--text3); text-transform: uppercase; text-align: left; padding: 5px 9px; border-bottom: 1px solid var(--border); }
+.comp-table td { padding: 7px 9px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table td:first-child { color: var(--text2); }
+.comp-table td:nth-child(2) { font-family: var(--mono); font-size: 10px; color: var(--coral2); }
+.comp-table td:nth-child(3) { font-family: var(--mono); font-size: 10px; color: var(--green2); }
+
+/* ══════════════════════════════════════════════════════════
+   LABS SCREEN (full detail)
+══════════════════════════════════════════════════════════ */
+.lab-full-header {
+  background: linear-gradient(135deg, rgba(78,201,184,0.1) 0%, rgba(91,155,213,0.07) 100%);
+  border: 1px solid rgba(78,201,184,0.2);
+  border-radius: var(--r-lg); padding: 15px 16px; margin-bottom: 18px;
+}
+.lfh-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.lfh-date { font-family: var(--mono); font-size: 9px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.lfh-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.lfh-badge { font-family: var(--mono); font-size: 8px; background: var(--bg4); border: 1px solid var(--border2); padding: 3px 8px; border-radius: 3px; color: var(--text3); }
+.lfh-activated { font-family: var(--mono); font-size: 9px; color: var(--text3); }
+.lfh-activated strong { color: var(--coral2); }
+
+.lab-cat { margin-bottom: 18px; }
+.lab-cat-title { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 9px; }
+.lab-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 5px; }
+.lab-row-name { font-size: 13px; color: var(--text); flex: 1; }
+.lab-row-val { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.lab-row-range { font-family: var(--mono); font-size: 9px; color: var(--text3); white-space: nowrap; }
+.lab-row-flag { font-size: 11px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════
+   SUPPS SCREEN
+══════════════════════════════════════════════════════════ */
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="status-bar"></div>
+
+  <div class="app-header">
+    <div class="hdr-back" id="back-btn" onclick="goBack()">‹</div>
+    <div class="hdr-label" id="hdr-label">Agni</div>
+    <div class="hdr-logo">Agni</div>
+    <div class="hdr-time" id="hdr-time"></div>
+  </div>
+
+  <div id="content">
+
+    <!-- ══ HOME: Lab → Protocol Timeline ══════════════════════ -->
+    <div class="screen active" id="screen-home">
+      <div class="wrap">
+
+        <div class="home-intro">
+          <div class="home-intro-sub">Lab-Directed Protocol System</div>
+          <div class="home-intro-title">Each lab result<br>activates a protocol.</div>
+          <div class="home-intro-body">Tap any result set to see exactly what it found, why it chose this protocol, and the daily plan it generated.</div>
+        </div>
+
+        <div class="timeline">
+
+          <!-- ENTRY 1: Dec 2025 — ACTIVE -->
+          <div class="tl-entry">
+            <div class="tl-dot active"></div>
+            <div class="lab-card active-entry" onclick="openLabEntry()">
+              <div class="lab-card-header">
+                <div class="lab-card-top">
+                  <div>
+                    <div class="lab-card-date">December 3, 2025 · Fasting</div>
+                    <div class="lab-card-title">Function Health Panel</div>
+                    <div class="lab-card-sub">Quest Diagnostics · 40+ markers · Full cardiometabolic</div>
+                  </div>
+                  <div class="lab-card-source">SZ648122W</div>
+                </div>
+              </div>
+              <div class="lab-card-metrics">
+                <div class="lcm"><div class="lcm-val val-hi">114</div><div class="lcm-name">ApoB</div></div>
+                <div class="lcm"><div class="lcm-val val-hi">277</div><div class="lcm-name">TG</div></div>
+                <div class="lcm"><div class="lcm-val val-hi">2157</div><div class="lcm-name">LDL-P</div></div>
+                <div class="lcm"><div class="lcm-val val-lo">7</div><div class="lcm-name">Ferritin</div></div>
+                <div class="lcm"><div class="lcm-val val-hi">29</div><div class="lcm-name">HDL</div></div>
+                <div class="lcm"><div class="lcm-val val-hi">2.6</div><div class="lcm-name">hs-CRP</div></div>
+              </div>
+              <!-- THE KEY CONNECTOR: Lab activated this protocol -->
+              <div class="proto-pill sep" onclick="openProtocol('sep','dec2025')">
+                <div class="proto-pill-icon">🔴</div>
+                <div class="proto-pill-text">
+                  <div class="proto-pill-label">→ Activated Protocol</div>
+                  <div class="proto-pill-name">SEP Reset · Phase 1</div>
+                  <div class="proto-pill-reason">ApoB 114 · TG 277 · LDL-P 2157 · Ferritin 7 triggered decongestive reset</div>
+                </div>
+                <div class="proto-pill-chevron">›</div>
+              </div>
+              <!-- Gate progress mini -->
+              <div class="gate-mini">
+                <div class="gm-item"><div class="gm-dot fail"></div><span>ApoB <span class="val fail">114</span></span></div>
+                <div class="gm-item"><div class="gm-dot fail"></div><span>TG <span class="val fail">277</span></span></div>
+                <div class="gm-item"><div class="gm-dot fail"></div><span>LDL-P <span class="val fail">2157</span></span></div>
+                <div class="gm-item"><div class="gm-dot fail"></div><span>Ferritin <span class="val fail">7</span></span></div>
+                <div class="gm-item"><div class="gm-dot fail"></div><span>hs-CRP <span class="val fail">2.6</span></span></div>
+                <div class="gm-item"><div class="gm-dot pass"></div><span>ALT/AST <span class="val pass">✓</span></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ENTRY 2: ~Mar 2026 — Future / Pending -->
+          <div class="tl-entry">
+            <div class="tl-dot future"></div>
+            <div class="future-card">
+              <div class="future-card-label">⏳ Planned · ~March–April 2026</div>
+              <div class="future-card-title">Follow-up Panel · 8–12 weeks on SEP</div>
+              <div style="margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.6;">
+                Gate markers: ApoB, LDL-P, TG, HDL, Ferritin, hs-CRP, HbA1c<br>
+                If all 8 gates pass → SEP-L activated<br>
+                If TG 150–200 → Hold SEP-L, no de-escalation<br>
+                If 2+ worsen → Re-enter SEP reset 4–6 wks
+              </div>
+            </div>
+          </div>
+
+          <!-- ENTRY 3: SEP-L — future -->
+          <div class="tl-entry">
+            <div class="tl-dot future"></div>
+            <div class="future-card">
+              <div class="future-card-label">Conditional · Gates-dependent</div>
+              <div class="future-card-title">SEP-L Reversal Phase</div>
+              <div style="margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.6;">
+                ApoB ≤90 · LDL-P ≤1400 · TG ≤180 · HDL ≥35 · Ferritin ≥30 · hs-CRP ≤1.5<br>
+                Shifts from export dominance → production control<br>
+                Protein-anchored breakfast · therapeutic Omega-3 · pulsed fiber
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /timeline -->
+
+      </div>
+    </div>
+
+    <!-- ══ LAB DETAIL ══════════════════════════════════════════ -->
+    <div class="screen" id="screen-labs">
+      <div class="wrap">
+        <div class="lab-full-header">
+          <div class="lfh-top">
+            <div>
+              <div class="lfh-date">December 3, 2025 · Fasting · Quest</div>
+              <div class="lfh-title">Function Health Panel</div>
+            </div>
+            <div class="lfh-badge">SZ648122W</div>
+          </div>
+          <div class="lfh-activated">→ Activated: <strong>SEP Reset Phase 1</strong> · 5 of 8 gates failing</div>
+        </div>
+
+        <!-- Gate status -->
+        <div class="sec-label">Transition Gate Status</div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">ApoB</div><div class="gate-row-val fail">114</div><div class="gate-row-target">goal ≤90</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">LDL-P</div><div class="gate-row-val fail">2157</div><div class="gate-row-target">goal ≤1400</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">Triglycerides</div><div class="gate-row-val fail">277</div><div class="gate-row-target">goal ≤180</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">Ferritin</div><div class="gate-row-val fail">7</div><div class="gate-row-target">goal ≥30</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">hs-CRP</div><div class="gate-row-val fail">2.6</div><div class="gate-row-target">goal ≤1.5</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">HDL</div><div class="gate-row-val fail">29</div><div class="gate-row-target">goal ≥35</div></div>
+        <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">HbA1c</div><div class="gate-row-val fail">5.7%</div><div class="gate-row-target">goal ≤5.6</div></div>
+        <div class="gate-row"><div class="gdot pass"></div><div class="gate-row-label">AST / ALT</div><div class="gate-row-val pass">20 / 29</div><div class="gate-row-target">normal ✓</div></div>
+
+        <div class="divider"></div>
+
+        <div class="lab-cat">
+          <div class="lab-cat-title">Lipids & Lipoproteins</div>
+          <div class="lab-row"><div class="lab-row-name">Total Cholesterol</div><div class="lab-row-val val-ok">179</div><div class="lab-row-range">&lt;200</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">HDL</div><div class="lab-row-val val-lo">29</div><div class="lab-row-range">≥40</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">Triglycerides</div><div class="lab-row-val val-hi">277</div><div class="lab-row-range">&lt;150</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">LDL-C</div><div class="lab-row-val val-hi">110</div><div class="lab-row-range">&lt;100</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">ApoB</div><div class="lab-row-val val-hi">114</div><div class="lab-row-range">&lt;90</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">Lp(a)</div><div class="lab-row-val val-ok">41</div><div class="lab-row-range">&lt;75</div><div class="lab-row-flag">✓</div></div>
+        </div>
+
+        <div class="lab-cat">
+          <div class="lab-cat-title">LDL Fractionation</div>
+          <div class="lab-row"><div class="lab-row-name">LDL Particle #</div><div class="lab-row-val val-hi">2157</div><div class="lab-row-range">&lt;1138</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">LDL Small</div><div class="lab-row-val val-hi">401</div><div class="lab-row-range">&lt;142</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">LDL Pattern</div><div class="lab-row-val val-hi">B</div><div class="lab-row-range">A ideal</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">LDL Peak Size</div><div class="lab-row-val val-hi">207.4Å</div><div class="lab-row-range">&gt;222.9Å</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">HDL Large</div><div class="lab-row-val val-ok">7386</div><div class="lab-row-range">&gt;6729</div><div class="lab-row-flag">✓</div></div>
+        </div>
+
+        <div class="lab-cat">
+          <div class="lab-cat-title">Iron & CBC</div>
+          <div class="lab-row"><div class="lab-row-name">Ferritin</div><div class="lab-row-val val-hi" style="color:var(--coral2)">7</div><div class="lab-row-range">38–380</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">TIBC</div><div class="lab-row-val val-hi">457</div><div class="lab-row-range">250–425</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">Iron Total</div><div class="lab-row-val val-ok">128</div><div class="lab-row-range">50–180</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">Hemoglobin</div><div class="lab-row-val val-lo">13.1</div><div class="lab-row-range">13.2–17.1</div><div class="lab-row-flag">⚠️</div></div>
+        </div>
+
+        <div class="lab-cat">
+          <div class="lab-cat-title">Omega Fatty Acids</div>
+          <div class="lab-row"><div class="lab-row-name">EPA+DPA+DHA</div><div class="lab-row-val val-hi">2.8%</div><div class="lab-row-range">&gt;5.4%</div><div class="lab-row-flag">🔴</div></div>
+          <div class="lab-row"><div class="lab-row-name">Omega-6/Omega-3</div><div class="lab-row-val val-hi">14.7</div><div class="lab-row-range">≤14.4</div><div class="lab-row-flag">⚠️</div></div>
+        </div>
+
+        <div class="lab-cat">
+          <div class="lab-cat-title">Metabolic & Hormonal</div>
+          <div class="lab-row"><div class="lab-row-name">HbA1c</div><div class="lab-row-val val-hi">5.7%</div><div class="lab-row-range">&lt;5.7%</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">Glucose (fasting)</div><div class="lab-row-val val-ok">97</div><div class="lab-row-range">65–99</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">Insulin</div><div class="lab-row-val val-ok">12.2</div><div class="lab-row-range">≤18.4</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">hs-CRP</div><div class="lab-row-val val-hi">2.6</div><div class="lab-row-range">&lt;1.0 opt</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">SHBG</div><div class="lab-row-val val-lo">9</div><div class="lab-row-range">10–50</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">Testosterone</div><div class="lab-row-val" style="color:var(--text2)">303</div><div class="lab-row-range">250–1100</div><div class="lab-row-flag">—</div></div>
+          <div class="lab-row"><div class="lab-row-name">RBC Magnesium</div><div class="lab-row-val val-hi">6.9</div><div class="lab-row-range">4.0–6.4</div><div class="lab-row-flag">⚠️</div></div>
+          <div class="lab-row"><div class="lab-row-name">Vitamin D</div><div class="lab-row-val val-ok">90</div><div class="lab-row-range">30–100</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">Cortisol (AM)</div><div class="lab-row-val val-ok">4.7</div><div class="lab-row-range">4.6–20.6</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">DHEA-S</div><div class="lab-row-val val-ok">229</div><div class="lab-row-range">61–442</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">TSH</div><div class="lab-row-val val-ok">0.92</div><div class="lab-row-range">0.40–4.50</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">GGT</div><div class="lab-row-val val-ok">9</div><div class="lab-row-range">3–95</div><div class="lab-row-flag">✓</div></div>
+          <div class="lab-row"><div class="lab-row-name">AST / ALT</div><div class="lab-row-val val-ok">20 / 29</div><div class="lab-row-range">normal</div><div class="lab-row-flag">✓</div></div>
+        </div>
+
+        <!-- Protocol link from within labs -->
+        <div class="sec-label" style="margin-top:4px;">Activated Protocol</div>
+        <div class="proto-pill sep" style="border-radius:var(--r-md);border:1px solid rgba(224,112,96,0.3);background:rgba(224,112,96,0.07);" onclick="openProtocol('sep','dec2025')">
+          <div class="proto-pill-icon">🔴</div>
+          <div class="proto-pill-text">
+            <div class="proto-pill-label">Activated by this result set</div>
+            <div class="proto-pill-name">SEP Reset · Phase 1</div>
+            <div class="proto-pill-reason">5 gate failures → decongestive force protocol · 8–16 wk reset</div>
+          </div>
+          <div class="proto-pill-chevron">›</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ PROTOCOL DETAIL ═════════════════════════════════════ -->
+    <div class="screen" id="screen-protocol">
+      <div class="wrap">
+
+        <!-- Provenance banner: what labs activated this -->
+        <div class="proto-origin-banner" onclick="navigate('labs','Protocol · SEP Reset')">
+          <div class="pob-left">
+            <div class="pob-label">⬆ Activated by lab results</div>
+            <div class="pob-date">Function Health · Dec 3, 2025</div>
+            <div class="pob-metrics">ApoB 114 · TG 277 · LDL-P 2157 · Ferritin 7 · hs-CRP 2.6</div>
+          </div>
+          <div class="pob-arrow">›</div>
+        </div>
+
+        <div class="proto-phase-badge">
+          <div class="proto-phase-dot"></div>
+          SEP Reset · Phase 1 · Active
+        </div>
+
+        <div class="scr-head">
+          <h2>SEP Protocol</h2>
+          <p>Signal-Explicit Partitioning · Decongestive Reset · 8–16 wks</p>
+        </div>
+
+        <div class="info-box">
+          <strong>Why SEP?</strong> Hepatic VLDL overproduction + insulin resistance + iron deficiency + lipid export failure. This protocol forces cholesterol excretion via bile export, fiber binding, and sterol displacement — while repairing iron and suppressing upstream AMPK signals.
+        </div>
+
+        <div class="ptabs">
+          <button class="ptab active" onclick="showPTab('schedule',this)">Schedule</button>
+          <button class="ptab" onclick="showPTab('supps',this)">Supps</button>
+          <button class="ptab" onclick="showPTab('gates',this)">Gates</button>
+          <button class="ptab" onclick="showPTab('caveats',this)">Caveats</button>
+          <button class="ptab" onclick="showPTab('situations',this)">Situations</button>
+          <button class="ptab" onclick="showPTab('sepl',this)">→ SEP-L</button>
+        </div>
+
+        <!-- SCHEDULE TAB -->
+        <div class="ptab-section active" id="ptab-schedule">
+          <div class="dtabs" id="dtabs">
+            <button class="dtab" onclick="showDay('Mon',this)">Mon</button>
+            <button class="dtab" onclick="showDay('Tue',this)">Tue</button>
+            <button class="dtab" onclick="showDay('Wed',this)">Wed</button>
+            <button class="dtab" onclick="showDay('Thu',this)">Thu</button>
+            <button class="dtab" onclick="showDay('Fri',this)">Fri</button>
+            <button class="dtab" onclick="showDay('Sat',this)">Sat</button>
+            <button class="dtab" onclick="showDay('Sun',this)">Sun</button>
+          </div>
+          <div id="sched-content"></div>
+        </div>
+
+        <!-- SUPPS TAB -->
+        <div class="ptab-section" id="ptab-supps">
+          <div class="info-box">All 25 items · <strong>Times per week</strong> and dose listed. Tap for supply chain notes.</div>
+          <div id="supps-content"></div>
+        </div>
+
+        <!-- GATES TAB -->
+        <div class="ptab-section" id="ptab-gates">
+          <div class="info-box">All 8 gates must pass to transition to <strong>SEP-L</strong>. Currently 5 failing. Retest at 8–12 weeks.</div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">ApoB ≤ 90</div><div class="gate-row-val fail">114 H</div><div class="gate-row-target">−24 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">LDL-P ≤ 1400</div><div class="gate-row-val fail">2157 H</div><div class="gate-row-target">−757 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">TG ≤ 180</div><div class="gate-row-val fail">277 H</div><div class="gate-row-target">−97 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">Ferritin ≥ 30</div><div class="gate-row-val fail">7 L</div><div class="gate-row-target">+23 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">hs-CRP ≤ 1.5</div><div class="gate-row-val fail">2.6 H</div><div class="gate-row-target">−1.1 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">HDL ≥ 35</div><div class="gate-row-val fail">29 L</div><div class="gate-row-target">+6 needed</div></div>
+          <div class="gate-row"><div class="gdot fail"></div><div class="gate-row-label">HbA1c ≤ 5.6</div><div class="gate-row-val fail">5.7% H</div><div class="gate-row-target">−0.1 needed</div></div>
+          <div class="gate-row"><div class="gdot pass"></div><div class="gate-row-label">AST/ALT Normal</div><div class="gate-row-val pass">20/29 ✓</div><div class="gate-row-target">hold</div></div>
+
+          <div style="margin-top:16px;" class="info-box">
+            If TG 150–200 after retest → hold SEP-L, no de-escalation yet.<br>
+            If 2+ markers worsen → re-enter SEP reset for 4–6 weeks.
+          </div>
+        </div>
+
+        <!-- CAVEATS TAB -->
+        <div class="ptab-section" id="ptab-caveats">
+          <div id="caveats-content"></div>
+        </div>
+
+        <!-- SITUATIONS TAB -->
+        <div class="ptab-section" id="ptab-situations">
+          <div id="situations-content"></div>
+        </div>
+
+        <!-- SEP-L TAB -->
+        <div class="ptab-section" id="ptab-sepl">
+          <div class="info-box">SEP-L is activated <strong>only after all 8 gates pass</strong> in a follow-up panel. It shifts from bile export dominance to production control.</div>
+          <div class="sec-label">Phase Comparison</div>
+          <table class="comp-table">
+            <thead><tr><th>Lever</th><th>SEP (now)</th><th>SEP-L (future)</th></tr></thead>
+            <tbody>
+              <tr><td>Portfolio+</td><td>2 Tbsp × 2/day</td><td>1–2 Tbsp × 1/day</td></tr>
+              <tr><td>Plant Sterols</td><td>2000 mg/day</td><td>1000 mg/day</td></tr>
+              <tr><td>Fiber</td><td>Daily</td><td>3–4× / week</td></tr>
+              <tr><td>Omega-3</td><td>1g support</td><td>2.5–3g therapy</td></tr>
+              <tr><td>Iron</td><td>Daily</td><td>2–3× / week</td></tr>
+              <tr><td>AMPK rhythm</td><td>Shock daily</td><td>Rhythmic daily</td></tr>
+              <tr><td>Protein anchor</td><td>—</td><td>≥45g at breakfast</td></tr>
+            </tbody>
+          </table>
+          <div class="sec-label" style="margin-top:8px;">SEP-L Steady-State Targets</div>
+          <div class="info-box">ApoB &lt;80 · TG &lt;150 · HDL &gt;40 · hs-CRP &lt;1.0 · Ferritin 40–70 · HbA1c ≤5.6</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- ─── BOTTOM NAV ──────────────────────────────────────── -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navigate('home','Agni')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="nav-label">Timeline</div>
+    </button>
+    <button class="nav-btn" id="nav-labs" onclick="openLabEntry()">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 00-2-2h-4m-5 0h6"/></svg></div>
+      <div class="nav-label">Labs</div>
+    </button>
+    <button class="nav-btn" id="nav-protocol" onclick="openProtocol('sep','dec2025')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="nav-label">Protocol</div>
+    </button>
+  </div>
+
+</div>
+
+<script>
+/* ─── DATA ───────────────────────────────────────────────── */
+const SCHEDULE = {
+  Mon:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'6:30–7:00',b:'early',l:'Early Morning',items:[{e:'🥦',n:'Sulforaphane Core',d:'½–1 tsp'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'},{e:'☀️',n:'Vitamin D3',d:'2000 IU'},{e:'🦐',n:'Astaxanthin',d:'8 mg'},{e:'💨',n:'NO Core',d:'½–1 tsp'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🛡',n:'NAC',d:'600 mg'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'🍯',n:'Brahma/Agastya/Amukkura Rasayanam',d:'1 tsp with milk'}]},
+  ],
+  Tue:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🛡',n:'NAC',d:'600 mg'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'💤',n:'Magnesium Glycinate',d:'200 mg'}]},
+  ],
+  Wed:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'6:30–7:00',b:'early',l:'Early Morning',items:[{e:'🥦',n:'Sulforaphane Core',d:'½–1 tsp'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'},{e:'☀️',n:'Vitamin D3',d:'2000 IU'},{e:'🦐',n:'Astaxanthin',d:'8 mg'},{e:'💨',n:'NO Core',d:'½–1 tsp'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🛡',n:'NAC',d:'600 mg'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'🍯',n:'Brahma/Agastya/Amukkura Rasayanam',d:'1 tsp with milk'},{e:'💤',n:'Magnesium Glycinate',d:'200 mg'}]},
+  ],
+  Thu:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🛡',n:'NAC',d:'600 mg'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'💤',n:'Magnesium Glycinate',d:'200 mg'}]},
+  ],
+  Fri:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🍫',n:'Polyphenol Pulse',d:'½–1 tsp'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'🍯',n:'Brahma/Agastya/Amukkura Rasayanam',d:'1 tsp with milk'}]},
+  ],
+  Sat:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'6:30–7:00',b:'early',l:'Early Morning',items:[{e:'🥦',n:'Sulforaphane Core',d:'½–1 tsp'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'},{e:'☀️',n:'Vitamin D3',d:'2000 IU'},{e:'🦐',n:'Astaxanthin',d:'8 mg'},{e:'💨',n:'NO Core',d:'½–1 tsp'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🛡',n:'NAC',d:'600 mg'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'💤',n:'Magnesium Glycinate',d:'200 mg'}]},
+  ],
+  Sun:[
+    {t:'6:00–6:30',b:'waking',l:'On Waking',items:[{e:'🌿',n:'Triphala',d:'3–5 g'}]},
+    {t:'7:30–8:30',b:'breakfast',l:'Breakfast',items:[{e:'🥤',n:'Smoothie',d:'1 serving'},{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🔥',n:'Curcumin',d:'500 mg'},{e:'🧬',n:'Vitamin B12',d:'500 mcg'},{e:'⚡',n:'CoQ10',d:'100 mg'}]},
+    {t:'10:00–11:00',b:'midmorn',l:'Mid-Morning',items:[{e:'🧲',n:'Iron Bisglycinate',d:'25 mg'},{e:'🍊',n:'Vitamin C',d:'500 mg'}]},
+    {t:'12:00–12:20',b:'prelunch',l:'Pre-Lunch',items:[{e:'🌾',n:'Psyllium Husk',d:'5 g'},{e:'🌾',n:'Beta-glucan',d:'3 g'}]},
+    {t:'12:30–1:30',b:'lunch',l:'Lunch',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🧠',n:'Omega-3',d:'EPA 600 + DHA 400 mg'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'1500 mg'}]},
+    {t:'3:00–4:30',b:'afternoon',l:'Mid-Afternoon',items:[{e:'🍫',n:'Polyphenol Pulse',d:'½–1 tsp'}]},
+    {t:'6:30–7:30',b:'dinner',l:'Dinner',items:[{e:'✨',n:'Portfolio+',d:'2 Tbsp'},{e:'🩸',n:'Berberine',d:'500 mg'},{e:'🌱',n:'Plant Sterols',d:'500 mg'},{e:'💪',n:'Taurine',d:'1000 mg'},{e:'🫁',n:'Silymarin',d:'200 mg'},{e:'🌶',n:'BALT Powder',d:'1 tsp'}]},
+    {t:'9:30–10:30',b:'bedtime',l:'Bedtime',items:[{e:'💤',n:'Magnesium Glycinate',d:'200 mg'}]},
+  ],
+};
+
+const SUPPS = [
+  {e:'🌿',n:'Triphala',d:'3–5 g',f:'7×/wk',note:'On waking, empty stomach. Reduce dose if loose stools.'},
+  {e:'🥦',n:'Sulforaphane Core',d:'½–1 tsp',f:'5×/wk',note:'Mon/Tue/Wed/Thu/Sat. Empty stomach preferred. Skip on Polyphenol Pulse days.'},
+  {e:'✨',n:'Portfolio+',d:'2 Tbsp × 2/day',f:'14×/wk',note:'Breakfast + Lunch + Dinner. Never dry. Contains flaxseed, psyllium, sesame, sumac, oat bran, artichoke, bergamot, kelp.'},
+  {e:'🧠',n:'Omega-3 (BrainMD)',d:'EPA 600 + DHA 400 mg',f:'14×/wk',note:'Breakfast + Lunch. With fat-containing meals only.'},
+  {e:'🩸',n:'Berberine (Toniiq)',d:'500 mg',f:'14×/wk',note:'Breakfast + Dinner. With meals only. ≥2h from iron.'},
+  {e:'🔥',n:'Curcumin (NatureWise)',d:'500 mg',f:'7×/wk',note:'Breakfast. With fat. Piperine-enhanced.'},
+  {e:'🧬',n:'Vitamin B12',d:'500 mcg',f:'7×/wk',note:'Breakfast. Morning preferred for energy alignment.'},
+  {e:'⚡',n:'CoQ10 (Doctor\'s Best)',d:'100 mg',f:'7×/wk',note:'Breakfast. Kaneka ubiquinone. With meals, fat improves absorption.'},
+  {e:'🧲',n:'Iron Bisglycinate (Solgar)',d:'25 mg',f:'7×/wk',note:'Mid-morning with Vitamin C. ≥2h from fiber, tea, coffee, Portfolio+, magnesium.'},
+  {e:'🍊',n:'Vitamin C (Sports Research)',d:'500 mg',f:'7×/wk',note:'Always co-taken with iron. Liposomal. Recycles iron to ferrous form.'},
+  {e:'🌾',n:'Psyllium Husk',d:'5 g',f:'7×/wk',note:'Pre-lunch. ≥2h from iron and medications.'},
+  {e:'🌾',n:'Beta-glucan',d:'3 g',f:'7×/wk',note:'Pre-lunch. Same spacing rules as psyllium.'},
+  {e:'🌱',n:'Plant Sterols (LongLifeNutri)',d:'1500 mg lunch + 500 mg dinner',f:'14×/wk',note:'With meals only. ≥2h from iron.'},
+  {e:'☀️',n:'Vitamin D3 + K2 (Sports Research)',d:'2000 IU',f:'3× Mon/Wed/Sat',note:'With fat-containing meal. D3 125 mcg + K2 MK-7 100 mcg.'},
+  {e:'🦐',n:'Astaxanthin (Sports Research)',d:'8 mg',f:'3× Mon/Wed/Sat',note:'With fat meal. Algal oil. LDL membrane protection.'},
+  {e:'💨',n:'NO Core (Beetroot + Arugula)',d:'½–1 tsp',f:'3× Mon/Wed/Sat',note:'Daytime/lunch only. Never evening. Can be stimulating.'},
+  {e:'🛡',n:'NAC (Nutricost)',d:'600 mg',f:'5× Mon–Thu,Sat',note:'Mid-afternoon, away from heavy meals if possible.'},
+  {e:'🍫',n:'Polyphenol Pulse',d:'½–1 tsp',f:'2× Fri/Sun',note:'Mid-afternoon only. Max 2×/week. Skip sulforaphane these days.'},
+  {e:'💪',n:'Taurine (Nutricost)',d:'1000 mg',f:'7×/wk',note:'Dinner. Conjugates bile acids → increases cholesterol excretion.'},
+  {e:'🫁',n:'Silymarin (Zazzee)',d:'200 mg',f:'7×/wk',note:'Dinner. 30:1 extract. Hepatocyte membrane protection.'},
+  {e:'🌶',n:'BALT Powder',d:'1 tsp',f:'7×/wk',note:'Dinner. Black cumin + amla + turmeric + pippali blend. NRF2 + insulin sensitivity.'},
+  {e:'💤',n:'Magnesium Glycinate (Bronson)',d:'200 mg',f:'4× Tue/Thu/Sat/Sun',note:'Bedtime. Albion chelate. ≥2h from iron.'},
+  {e:'🍯',n:'Brahma/Agastya/Amukkura Rasayanam',d:'1 tsp with milk',f:'3× Mon/Wed/Fri',note:'Bedtime. Alternating rasayana on non-magnesium nights.'},
+];
+
+const CAVEATS = [
+  {e:'🧲',n:'Iron — No tea/coffee window',condition:'≥2–3h before AND after tea, coffee, cocoa',reason:'Tannins & catechins block iron absorption at the gut lumen'},
+  {e:'🧲',n:'Iron — No fiber together',condition:'≥2–3h from psyllium, beta-glucan, Portfolio+',reason:'Viscous fiber binds iron and accelerates gut transit'},
+  {e:'🧲',n:'Iron — No minerals together',condition:'≥2–3h from calcium, magnesium, zinc, dairy',reason:'Mineral competition at the duodenal transporter'},
+  {e:'🧲',n:'Iron — Always with Vitamin C',condition:'Co-take 500 mg Vitamin C every time',reason:'Vitamin C keeps iron in ferrous (absorbable) form'},
+  {e:'✨',n:'Portfolio+ — Meals only',condition:'Never dry-swallow · spread across meals not all at once',reason:'Fiber + sterols require dietary fat and food matrix to work'},
+  {e:'🥦',n:'Sulforaphane — Empty stomach',condition:'≥30 min before food, or skip',reason:'Food matrix blunts and delays NRF2 activation kinetics'},
+  {e:'🥦',n:'Sulforaphane — No Fri/Sun',condition:'Do not take on Polyphenol Pulse days',reason:'Stacking NRF2 + AMPK signals blunts both — hormetic lanes need separation'},
+  {e:'💨',n:'NO Core — Daytime only',condition:'Never after 4 PM',reason:'Nitric oxide is stimulating — disrupts sleep if taken late'},
+  {e:'🍫',n:'Polyphenol Pulse — Max 2×',condition:'Mid-afternoon · skip the week if a dose is missed',reason:'Hormesis requires spacing. Daily → noise, not signal.'},
+  {e:'🌿',n:'Triphala — Empty stomach',condition:'On waking only · reduce if loose stools appear',reason:'Predictable GI clearance and detox signaling on empty stomach'},
+];
+
+const SITUATIONS = [
+  {trigger:'Iron at 11 AM',title:'Tea & Coffee window',action:'No tea or coffee 9 AM–1 PM',why:'Protects absorption on both sides of the dosing window'},
+  {trigger:'Daily tea habit',title:'Shift tea timing',action:'Tea at 8:30 AM or after 1 PM',why:'Preserves iron window without eliminating tea entirely'},
+  {trigger:'Missed Sulforaphane',title:'Skip — do not catch up',action:'Skip entirely. No late dosing.',why:'Late dosing collides with lunch polyphenol lanes'},
+  {trigger:'Missed Polyphenol Pulse',title:'Skip the entire week',action:'Do not double-dose the following day',why:'Hormesis requires spacing — doubling defeats the signal'},
+  {trigger:'Constipation',title:'Reduce psyllium first',action:'Cut psyllium dose by half',why:'Primary driver in this protocol — most common cause'},
+  {trigger:'Loose stools',title:'Reduce triphala or Mg',action:'Halve triphala or skip magnesium that night',why:'These are the two main motility drivers in the stack'},
+  {trigger:'Travel day',title:'Priority core pack',action:'Portfolio+ + Omega-3 + Berberine only',why:'Highest ROI, lowest complexity. Everything else optional.'},
+  {trigger:'Illness / fever',title:'Pause signal lanes',action:'Hold Polyphenol Pulse + NO Core until recovered',why:'Avoid adding hormetic stress during acute immune response'},
+  {trigger:'Ferritin normalized ≥40',title:'Reduce iron frequency',action:'Drop to 3× per week',why:'Iron is corrective, not indefinite. Oxidation risk rises.'},
+  {trigger:'Sleep disruption',title:'Move NO Core earlier',action:'Shift to 10–11 AM instead of lunch',why:'Nitric oxide stimulation needs more buffer before sleep'},
+];
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+const screens = ['home','labs','protocol'];
+let history = ['home'];
+
+function navigate(id, label) {
+  screens.forEach(s => {
+    document.getElementById('screen-'+s).classList.remove('active');
+    const b = document.getElementById('nav-'+s);
+    if (b) b.classList.remove('active');
+  });
+  document.getElementById('screen-'+id).classList.add('active');
+  const b = document.getElementById('nav-'+id);
+  if (b) b.classList.add('active');
+  document.getElementById('hdr-label').textContent = label || 'Agni';
+  document.getElementById('back-btn').classList.toggle('vis', id !== 'home');
+  document.getElementById('content').scrollTop = 0;
+  if (history[history.length-1] !== id) history.push(id);
+}
+
+function goBack() {
+  history.pop();
+  const prev = history[history.length-1] || 'home';
+  history.pop();
+  const labels = {home:'Agni',labs:'Lab Results · Dec 2025',protocol:'SEP Protocol'};
+  navigate(prev, labels[prev]);
+}
+
+function openLabEntry() { navigate('labs','Lab Results · Dec 2025'); }
+function openProtocol(p, src) { navigate('protocol','SEP Protocol'); }
+
+/* ─── CLOCK ─────────────────────────────────────────────────── */
+function tick() {
+  const now = new Date();
+  document.getElementById('hdr-time').textContent =
+    now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+setInterval(tick,1000); tick();
+
+/* ─── PROTOCOL TABS ──────────────────────────────────────────── */
+function showPTab(id, btn) {
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ptab-section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ptab-'+id).classList.add('active');
+}
+
+/* ─── SCHEDULE ───────────────────────────────────────────────── */
+function showDay(day, btn) {
+  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDay(day);
+}
+
+function renderDay(day) {
+  const data = SCHEDULE[day] || [];
+  document.getElementById('sched-content').innerHTML = data.map(b => `
+    <div class="tblock">
+      <div class="tblock-hdr">
+        <div class="tbadge ${b.b}">${b.l}</div>
+        <div class="tclock">${b.t}</div>
+      </div>
+      ${b.items.map(i=>`
+        <div class="supp-row">
+          <div class="supp-em">${i.e}</div>
+          <div class="supp-name">${i.n}</div>
+          <div class="supp-dose">${i.d}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function initSchedule() {
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = days[new Date().getDay()];
+  const tabs = document.querySelectorAll('.dtab');
+  tabs.forEach(t => { if(t.textContent===today){ t.classList.add('active'); } });
+  renderDay(today);
+}
+
+/* ─── SUPPS ──────────────────────────────────────────────────── */
+function renderSupps() {
+  document.getElementById('supps-content').innerHTML = SUPPS.map(s=>`
+    <div class="xc">
+      <div class="xh" onclick="toggleX(this)">
+        <div class="xh-em">${s.e}</div>
+        <div class="xh-name">${s.n}</div>
+        <div class="xh-tag" style="background:rgba(78,201,184,0.12);color:var(--cyan)">${s.f}</div>
+        <div class="xh-arr">›</div>
+      </div>
+      <div class="xb">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--cyan2);margin-bottom:6px;">${s.d}</div>
+        ${s.note}
+      </div>
+    </div>`).join('');
+}
+
+/* ─── CAVEATS ────────────────────────────────────────────────── */
+function renderCaveats() {
+  document.getElementById('caveats-content').innerHTML = CAVEATS.map(c=>`
+    <div class="cav-card">
+      <div class="cav-hdr" onclick="toggleX(this)">
+        <div class="cav-em">${c.e}</div>
+        <div class="cav-name">${c.n}</div>
+        <div class="cav-arr">›</div>
+      </div>
+      <div class="cav-body">
+        <div class="cav-condition">${c.condition}</div>
+        <div class="cav-reason">⚗️ ${c.reason}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ─── SITUATIONS ─────────────────────────────────────────────── */
+function renderSituations() {
+  document.getElementById('situations-content').innerHTML = SITUATIONS.map(s=>`
+    <div class="sit-card">
+      <div class="sit-trigger">${s.trigger}</div>
+      <div class="sit-title">${s.title}</div>
+      <div class="sit-action">${s.action}</div>
+      <div class="sit-why">${s.why}</div>
+    </div>`).join('');
+}
+
+/* ─── EXPAND TOGGLE ──────────────────────────────────────────── */
+function toggleX(hdr) {
+  const open = hdr.classList.contains('open');
+  hdr.classList.toggle('open', !open);
+  hdr.nextElementSibling?.classList.toggle('open', !open);
+}
+
+/* ─── INIT ───────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  initSchedule();
+  renderSupps();
+  renderCaveats();
+  renderSituations();
+});
+</script>
+</body>
+</html>
