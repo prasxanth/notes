@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Yoga Sudhakara">
+<meta name="theme-color" content="#0d0d0b">
+<title>Yoga Sudhakara · Patañjala Yoga Sūtrāṇi</title>
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23084040'/%3E%3Crect width='180' height='180' rx='40' fill='url(%23g)'/%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='35%25' r='65%25'%3E%3Cstop offset='0%25' stop-color='%231D9E75'/%3E%3Cstop offset='100%25' stop-color='%23083A28'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ctext x='90' y='128' font-family='serif' font-size='108' text-anchor='middle' fill='white' opacity='0.9'%3Eॐ%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --bg:      #0d0d0b;
+  --bg2:     #141412;
+  --bg3:     #1c1c19;
+  --bg4:     #232320;
+  --bg5:     #2a2a26;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #e8e4d8;
+  --text2:   #a8a49a;
+  --text3:   #666260;
+  --gold:    #c8a96e;
+  --gold2:   #e8c990;
+  --teal:    #5DCAA5;
+  --teal2:   #9FE1CB;
+  --purple:  #8F87E0;
+  --purple2: #CECBF6;
+  --coral:   #E07060;
+  --amber:   #D4901A;
+  --amber2:  #FAC775;
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+  --safe-t:  env(safe-area-inset-top, 0px);
+  --sans:    'Nunito', system-ui, sans-serif;
+  --devanagari: 'Tiro Devanagari Sanskrit', serif;
+  --serif:   'Playfair Display', Georgia, serif;
+  --mono:    'DM Mono', monospace;
+  --nav-h:   64px;
+  --r-sm:    8px;
+  --r-md:    12px;
+  --r-lg:    16px;
+}
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; font-size: 15px; line-height: 1.6; }
+
+/* ─── APP SHELL ──────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.status-bar { height: var(--safe-t); background: var(--bg); flex-shrink: 0; }
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+.app-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.app-header-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; white-space: nowrap; opacity: 0.5; flex: 1; }
+.app-header-logo { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--teal2); letter-spacing: 0.02em; white-space: nowrap; flex-shrink: 0; padding-left: 1.5ch; }
+.app-header-time { font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--text2); white-space: nowrap; flex: 1; text-align: right; }
+
+/* ─── CONTENT AREA ───────────────────────────────────────── */
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+.screen { display: none; min-height: 100%; }
+.screen.active { display: block; }
+
+/* ─── BOTTOM NAV ─────────────────────────────────────────── */
+.bottom-nav { flex-shrink: 0; display: flex; background: var(--bg2); border-top: 1px solid var(--border2); padding-bottom: var(--safe-b); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 9px 4px; border: none; background: transparent; cursor: pointer; transition: opacity 0.15s; }
+.nav-btn:active { opacity: 0.55; }
+.nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+.nav-icon svg { width: 20px; height: 20px; }
+.nav-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); transition: color 0.15s; }
+.nav-btn.active .nav-label { color: var(--teal); }
+.nav-btn.active .nav-icon svg { stroke: var(--teal); }
+.nav-btn:not(.active) .nav-icon svg { stroke: var(--text3); }
+
+/* ─── SHARED COMPONENTS ──────────────────────────────────── */
+.section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; }
+.screen-header { margin-bottom: 20px; }
+.screen-header h2 { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--teal2); margin-bottom: 4px; }
+.screen-header p { font-size: 13px; color: var(--text3); font-style: italic; }
+
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); }
+.card-tap { cursor: pointer; transition: background 0.15s; }
+.card-tap:active { background: var(--bg3); }
+
+/* Expandable card */
+.x-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.x-hdr { display: flex; align-items: center; gap: 10px; padding: 15px 16px; cursor: pointer; transition: background 0.15s; }
+.x-hdr:active { background: var(--bg3); }
+.x-hdr.open { background: var(--bg3); border-bottom: 1px solid var(--border); }
+.x-num { font-family: var(--mono); font-size: 9px; color: var(--text3); min-width: 16px; }
+.x-name { font-size: 15px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+.x-tag { font-family: var(--mono); font-size: 9px; color: var(--teal); background: rgba(93,202,165,0.12); padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.x-arr { color: var(--text3); font-size: 12px; transition: transform 0.25s; flex-shrink: 0; }
+.x-hdr.open .x-arr { transform: rotate(90deg); }
+.x-body { display: none; padding: 16px 18px 20px; }
+.x-body.open { display: block; }
+
+/* Info box */
+.info-box { background: var(--bg3); border-radius: var(--r-sm); padding: 12px 14px; font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+.info-box strong { color: var(--teal2); font-weight: 600; }
+.info-box em { color: var(--gold2); font-style: normal; }
+
+/* Verse */
+.v-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+.v-sanskrit { font-family: var(--devanagari); font-size: 18px; line-height: 2.1; color: var(--teal2); border-left: 2px solid var(--teal); padding-left: 14px; margin-bottom: 10px; }
+.v-translit { font-family: var(--mono); font-size: 11px; color: var(--text2); line-height: 1.9; padding-left: 16px; margin-bottom: 14px; }
+
+/* WBW table */
+.wbw-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+.wbw { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.wbw th { font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border); }
+.wbw td { padding: 7px 8px; vertical-align: top; border-bottom: 1px solid var(--border); line-height: 1.45; font-size: 13px; }
+.wbw tr:last-child td { border-bottom: none; }
+.wbw td:first-child { font-family: var(--devanagari); color: var(--teal); font-size: 16px; }
+.wbw td.lat { font-family: var(--serif); font-style: italic; font-size: 14px; }
+.wbw td:nth-child(2) { font-family: var(--mono); font-size: 10px; color: var(--text2); }
+.wbw td:nth-child(3) { color: var(--text2); }
+
+/* Translation */
+.transl { background: var(--bg4); border-left: 2px solid var(--purple); border-radius: 0 6px 6px 0; padding: 11px 14px; margin-bottom: 14px; font-size: 13px; color: var(--text2); line-height: 1.7; font-style: italic; }
+.transl strong { color: var(--purple2); font-style: normal; font-weight: 600; }
+.signif { font-size: 13px; color: var(--text3); line-height: 1.7; padding-left: 10px; border-left: 1px solid var(--border); margin-top: 4px; }
+
+/* Commentary note */
+.w-note { border: 1px solid rgba(93,202,165,0.25); background: rgba(93,202,165,0.06); border-radius: var(--r-md); padding: 14px 16px; font-size: 13px; color: var(--teal2); line-height: 1.7; font-style: italic; text-align: center; margin-top: 14px; }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* Sutra card */
+.sutra-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.sutra-hdr { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; transition: background 0.15s; }
+.sutra-hdr:active { background: var(--bg3); }
+.sutra-hdr.open { background: var(--bg3); border-bottom: 1px solid var(--border); }
+.sutra-badge { font-family: var(--mono); font-size: 8px; color: var(--teal); background: rgba(93,202,165,0.12); padding: 3px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.sutra-title { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+.sutra-arr { color: var(--text3); font-size: 12px; transition: transform 0.25s; flex-shrink: 0; }
+.sutra-hdr.open .sutra-arr { transform: rotate(90deg); }
+.sutra-body { display: none; padding: 16px 18px 20px; }
+.sutra-body.open { display: block; }
+.s-sanskrit { font-family: var(--devanagari); font-size: 17px; line-height: 2.0; color: var(--teal2); border-left: 2px solid var(--teal); padding-left: 14px; margin-bottom: 10px; }
+.s-translit { font-family: var(--mono); font-size: 11px; color: var(--text2); line-height: 1.9; padding-left: 16px; margin-bottom: 12px; }
+.s-english { background: var(--bg4); border-left: 2px solid var(--purple); border-radius: 0 6px 6px 0; padding: 11px 14px; margin-bottom: 12px; font-size: 13px; color: var(--text2); line-height: 1.7; }
+.s-insight { font-size: 13px; color: var(--text3); line-height: 1.7; padding-left: 10px; border-left: 1px solid var(--border); margin-top: 4px; }
+.s-commentary { background: var(--bg3); border-radius: var(--r-sm); padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.75; margin-bottom: 12px; border-left: 2px solid var(--amber); }
+.s-commentary strong { color: var(--amber2); }
+
+/* Mahasutra hero */
+.mahasutra-hero {
+  background: var(--bg3);
+  border: 1px solid rgba(93,202,165,0.2);
+  border-radius: var(--r-lg);
+  padding: 18px 18px 16px;
+  margin-bottom: 18px;
+}
+.ms-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; color: var(--teal); text-transform: uppercase; margin-bottom: 10px; }
+.ms-sanskrit { font-family: var(--devanagari); font-size: 18px; line-height: 2.0; color: var(--teal2); margin-bottom: 10px; }
+.ms-english { font-size: 13px; color: var(--text2); line-height: 1.75; font-style: italic; }
+
+/* Tabs */
+.wit-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.wit-tab { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.wit-tab.active { color: var(--teal); border-color: rgba(93,202,165,0.4); background: rgba(93,202,165,0.08); }
+.wit-section { display: none; }
+.wit-section.active { display: block; }
+
+/* Chapter tabs */
+.ch-tabs { display: flex; gap: 6px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 2px; }
+.ch-tab { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 13px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+.ch-tab.active { color: var(--teal); border-color: rgba(93,202,165,0.4); background: rgba(93,202,165,0.08); }
+.ch-section { display: none; }
+.ch-section.active { display: block; }
+
+/* Chapter header badge */
+.ch-phase { font-family: var(--mono); font-size: 9px; color: var(--teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; padding: 6px 12px; background: rgba(93,202,165,0.08); border-radius: var(--r-sm); border: 1px solid rgba(93,202,165,0.2); display: inline-block; }
+
+/* Class item */
+.class-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.class-hdr { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; transition: background 0.15s; }
+.class-hdr:active { background: var(--bg3); }
+.class-hdr.open { background: var(--bg3); border-bottom: 1px solid var(--border); }
+.class-num { font-family: var(--mono); font-size: 9px; color: var(--text3); min-width: 22px; }
+.class-name { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+.class-sutras { font-family: var(--mono); font-size: 9px; color: var(--teal); background: rgba(93,202,165,0.10); padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.class-arr { color: var(--text3); font-size: 12px; transition: transform 0.25s; flex-shrink: 0; }
+.class-hdr.open .class-arr { transform: rotate(90deg); }
+.class-body { display: none; padding: 16px 18px 20px; }
+.class-body.open { display: block; }
+
+/* Progress bar */
+.prob-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.prob-label { font-family: var(--mono); font-size: 9px; color: var(--text3); min-width: 110px; letter-spacing: 0.04em; }
+.prob-track { flex: 1; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.prob-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.prob-val { font-family: var(--mono); font-size: 9px; color: var(--text3); min-width: 32px; text-align: right; }
+
+/* Home screen */
+.home-wrap { padding: 24px 18px 24px; }
+.home-greeting { margin-bottom: 24px; }
+.home-greeting-time { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; margin-bottom: 5px; }
+.home-greeting-text { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--teal2); line-height: 1.2; }
+
+.course-banner { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r-lg); padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.course-banner:active { opacity: 0.75; }
+.course-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--teal); animation: pulse 2.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+.course-banner-text { flex: 1; }
+.course-banner-label { font-family: var(--mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+.course-banner-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.course-banner-arrow { color: var(--text3); font-size: 16px; }
+
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.module-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 14px 14px; cursor: pointer; transition: background 0.15s, border-color 0.15s; min-height: 105px; display: flex; flex-direction: column; justify-content: space-between; }
+.module-card:active { background: var(--bg3); border-color: var(--border2); }
+.module-icon { font-size: 20px; margin-bottom: 8px; line-height: 1; }
+.module-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.module-desc { font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 0.05em; }
+.module-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 8px; align-self: flex-start; }
+.badge-teal { background: rgba(93,202,165,0.12); color: var(--teal); }
+.badge-purple { background: rgba(143,135,224,0.12); color: var(--purple2); }
+.badge-amber { background: rgba(212,144,26,0.12); color: var(--amber2); }
+.badge-coral { background: rgba(224,112,96,0.12); color: var(--coral); }
+
+/* Wrap padding */
+.wit-wrap { padding: 20px 18px 32px; }
+
+/* More screen */
+.more-wrap { padding: 20px 18px 32px; }
+.more-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: background 0.15s; }
+.more-card:active { background: var(--bg3); }
+.more-card-icon { font-size: 20px; flex-shrink: 0; width: 30px; text-align: center; }
+.more-card-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.more-card-desc { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 2px; }
+.more-card-tag { font-family: var(--mono); font-size: 8px; padding: 3px 8px; border-radius: 4px; margin-left: auto; flex-shrink: 0; }
+.tag-active { background: rgba(93,202,165,0.12); color: var(--teal); }
+
+/* Teacher + lineage card */
+.lineage-card { background: var(--bg3); border: 1px solid rgba(93,202,165,0.15); border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 16px; }
+.lineage-card h3 { font-family: var(--serif); font-size: 17px; color: var(--teal2); margin-bottom: 6px; }
+.lineage-card p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* Overview stats row */
+.stats-row { display: flex; gap: 8px; margin-bottom: 18px; }
+.stat-pill { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 8px; text-align: center; }
+.stat-num { font-family: var(--serif); font-size: 22px; color: var(--teal2); font-weight: 400; line-height: 1; }
+.stat-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="status-bar"></div>
+
+  <!-- ── HEADER ──────────────────────────────────── -->
+  <header class="app-header">
+    <span class="app-header-label">Parampara Rishividya</span>
+    <span class="app-header-logo">Yoga Sudhākara</span>
+    <span class="app-header-time" id="hdr-time">--:--</span>
+  </header>
+
+  <div id="content">
+
+    <!-- ══ HOME ══════════════════════════════════════ -->
+    <div class="screen active" id="screen-home">
+      <div class="home-wrap">
+        <div class="home-greeting">
+          <div class="home-greeting-time" id="greeting-period">Welcome</div>
+          <div class="home-greeting-text">Yoga Sudhākara</div>
+        </div>
+
+        <div class="course-banner" onclick="navigate('overview')">
+          <div class="course-dot"></div>
+          <div class="course-banner-text">
+            <div class="course-banner-label">In Progress</div>
+            <div class="course-banner-name">Samādhi Pāda — Class 1 active</div>
+          </div>
+          <div class="course-banner-arrow">›</div>
+        </div>
+
+        <div class="section-label" style="margin-bottom:12px;">Course chapters</div>
+        <div class="module-grid">
+          <div class="module-card" onclick="navigate('ch1')">
+            <div class="module-icon">🧘</div>
+            <div class="module-name">Samādhi Pāda</div>
+            <div class="module-desc">Absorption · 51 sūtras</div>
+            <span class="module-badge badge-teal">Chapter I</span>
+          </div>
+          <div class="module-card" onclick="navigate('ch2')">
+            <div class="module-icon">🔥</div>
+            <div class="module-name">Sādhana Pāda</div>
+            <div class="module-desc">Practice · 55 sūtras</div>
+            <span class="module-badge badge-amber">Chapter II</span>
+          </div>
+          <div class="module-card" onclick="navigate('ch3')">
+            <div class="module-icon">⚡</div>
+            <div class="module-name">Vibhūti Pāda</div>
+            <div class="module-desc">Powers · 56 sūtras</div>
+            <span class="module-badge badge-purple">Chapter III</span>
+          </div>
+          <div class="module-card" onclick="navigate('ch4')">
+            <div class="module-icon">∞</div>
+            <div class="module-name">Kaivalya Pāda</div>
+            <div class="module-desc">Liberation · 34 sūtras</div>
+            <span class="module-badge badge-coral">Chapter IV</span>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-bottom:12px;">Quick access</div>
+        <div class="module-grid">
+          <div class="module-card" onclick="navigate('overview')">
+            <div class="module-icon">📜</div>
+            <div class="module-name">Course Overview</div>
+            <div class="module-desc">Teacher · Lineage · Structure</div>
+            <span class="module-badge badge-teal">Intro</span>
+          </div>
+          <div class="module-card" onclick="navigate('reference')">
+            <div class="module-icon">🔍</div>
+            <div class="module-name">Sūtra Index</div>
+            <div class="module-desc">All 196 sūtras · Quick ref</div>
+            <span class="module-badge badge-amber">Reference</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ OVERVIEW ═══════════════════════════════════ -->
+    <div class="screen" id="screen-overview">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Course Overview</h2>
+          <p>पातञ्जल-योग-सूत्राणि · योग-सुधाकरः · 45 कक्षाः</p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-pill"><div class="stat-num">196</div><div class="stat-lbl">Sūtras</div></div>
+          <div class="stat-pill"><div class="stat-num">4</div><div class="stat-lbl">Chapters</div></div>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Root Text</div>
+          <div class="ms-sanskrit">योगश्चित्तवृत्तिनिरोधः</div>
+          <div class="ms-english">Yoga is the cessation of the modifications of the mind. — Patañjali YS 1.2</div>
+        </div>
+
+        <div class="lineage-card">
+          <h3>Swami Paramahamsananda Sarasvatī</h3>
+          <p>The teacher of this course, transmitting the Yoga Sudhākara commentary in the living oral tradition of Parampara Rishividya. Teaching in Sanskrit and Tamil with English exposition, the Swami follows the Advaita Vedānta reading of Patañjali — viewing Kaivalya as non-different from Brahman-realization rather than the dualistic Puruṣa-isolation of classical Sāṃkhya-Yoga.</p>
+        </div>
+
+        <div class="lineage-card" style="border-color:rgba(200,169,110,0.15);">
+          <h3 style="color:var(--gold2);">Sadasiva Brahmendra (Yoga Sudhākara)</h3>
+          <p>17th-century Advaita saint and disciple of Paramasivendra Sarasvatī (57th Śaṅkarācārya of Kāñcī Kāmakoṭi Pīṭham). His samādhi is at Nerur near Trichy. The Yoga Sudhākara — "Ambrosia of Yoga" — is his Sanskrit commentary on Patañjali, reading each sūtra through a non-dual, Advaitin lens. His other works include the Ātmavidyā Vilāsam and famous kīrtanas like "Sarvam Brahmaṃayam."</p>
+        </div>
+
+        <div class="section-label" style="margin-bottom:12px;">What makes Yoga Sudhākara distinctive</div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleCard(this)">
+            <div class="sutra-badge">Advaita lens</div>
+            <div class="sutra-title">Non-dual reading of Patañjali — Kaivalya as Brahman</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="s-commentary"><strong>Sadasiva Brahmendra's radical move:</strong> Classical Sāṃkhya-Yoga treats Kaivalya as the isolation of Puruṣa from Prakṛti — a dualistic final state. The Yoga Sudhākara re-reads this as Advaitic: the "isolation" is really the recognition that Puruṣa alone is, that Prakṛti was never separate — identical to the Vedāntic realization of Ātman as Brahman.</div>
+            <div class="s-insight">This makes the Yoga Sutras a fully Vedantic text in Sadasiva Brahmendra's hands — continuous with Śaṅkara's Advaita rather than standing apart from it. Swami Paramahamsananda Sarasvatī carries this reading into each class.</div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleCard(this)">
+            <div class="sutra-badge">Avadhūta voice</div>
+            <div class="sutra-title">Commentary by a realized avadhūta — not a scholar</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="s-commentary">Sadasiva Brahmendra was a wandering avadhūta — beyond social convention, often found naked in trance near the Kāverī river. His commentary is not academic exposition but the direct speech of one who lived Samādhi. Paramahansa Yogananda mentions his jīva samādhi site in the <em>Autobiography of a Yogi</em>.</div>
+            <div class="s-insight">The Swami's teaching transmits this avadhūta quality: emphasis on direct experience over philosophical debate, on silence as the deepest commentary, and on the teacher's state as the primary transmission.</div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleCard(this)">
+            <div class="sutra-badge">Playlist map</div>
+            <div class="sutra-title">Sūtra distribution across the four chapters</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="info-box">Samādhi Pāda receives the deepest treatment in the Yoga Sudhākara — Sadasiva Brahmendra's Advaitic commentary is most extensive here. Later pādas are covered with concentrated but fewer sūtra cards. Each unit combines: sūtra recitation in Sanskrit, word-by-word analysis, Yoga Sudhākara commentary, and a contemplation anchor.</div>
+            <div class="prob-row"><span class="prob-label">Samādhi Pāda (Ch.I)</span><div class="prob-track"><div class="prob-fill" style="width:45%;background:var(--teal)"></div></div><span class="prob-val">deepest</span></div>
+            <div class="prob-row"><span class="prob-label">Sādhana Pāda (Ch.II)</span><div class="prob-track"><div class="prob-fill" style="width:33%;background:var(--amber)"></div></div><span class="prob-val">full</span></div>
+            <div class="prob-row"><span class="prob-label">Vibhūti Pāda (Ch.III)</span><div class="prob-track"><div class="prob-fill" style="width:18%;background:var(--purple)"></div></div><span class="prob-val">focused</span></div>
+            <div class="prob-row"><span class="prob-label">Kaivalya Pāda (Ch.IV)</span><div class="prob-track"><div class="prob-fill" style="width:11%;background:var(--coral)"></div></div><span class="prob-val">concise</span></div>
+          </div>
+        </div>
+
+        <div class="sutra-card">
+          <div class="sutra-hdr" onclick="toggleCard(this)">
+            <div class="sutra-badge">Study method</div>
+            <div class="sutra-title">How to use this course companion</div>
+            <div class="sutra-arr">›</div>
+          </div>
+          <div class="sutra-body">
+            <div class="s-commentary"><strong>Before each class:</strong> Read the sūtras for that session in transliteration and translation. Open the relevant class card here to review the key Sanskrit terms.<br><br><strong>During class:</strong> Note the Swami's specific additions from the Yoga Sudhākara commentary — these go beyond standard Patañjali expositions.<br><br><strong>After class:</strong> Return to this app for word-by-word breakdowns, Sadasiva Brahmendra's commentary points, and the contemplation anchor for the session.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CHAPTER I — SAMĀDHI PĀDA ══════════════════ -->
+    <div class="screen" id="screen-ch1">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Samādhi Pāda</h2>
+          <p>समाधिपादः · Chapter I · 51 Sūtras</p>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Chapter theme</div>
+          <div class="ms-sanskrit">अथ योगानुशासनम्</div>
+          <div class="ms-english">Now begins the authoritative teaching on Yoga. This chapter addresses the advanced seeker already established in sattva, explaining the nature and stages of Samādhi — the ultimate aim of all yogic practice.</div>
+        </div>
+
+        <div class="ch-tabs" id="ch1-tabs">
+          <button class="ch-tab active" onclick="switchChTab('ch1','u1',this)">Unit 1</button>
+          <button class="ch-tab" onclick="switchChTab('ch1','u2',this)">Unit 2</button>
+          <button class="ch-tab" onclick="switchChTab('ch1','u3',this)">Unit 3</button>
+          <button class="ch-tab" onclick="switchChTab('ch1','u4',this)">Unit 4</button>
+          <button class="ch-tab" onclick="switchChTab('ch1','u5',this)">Unit 5</button>
+        </div>
+
+        <!-- UNIT 1 -->
+        <div class="ch-section active" id="ch1-u1">
+          <div class="ch-phase">Unit 1 · Sūtras 1.1–1.4 · The Gateway — What Yoga Is</div>
+
+          <div class="mahasutra-hero" style="margin-bottom:14px;">
+            <div class="ms-label">Unit insight</div>
+            <div class="ms-english">Three sūtras contain the entire teaching. 1.1 says when. 1.2 says what. 1.3 says what results. 1.4 diagnoses the problem. Master these four and the remaining 192 sūtras are commentary.</div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.1</div>
+              <div class="class-name">Atha Yogānuśāsanam — Now begins Yoga</div>
+              <div class="class-sutras">Opening sūtra</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">अथ योगानुशासनम्</div>
+              <div class="v-translit">atha yogānuśāsanam</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>अथ</td><td>atha</td><td>now — presupposes prior preparation; also an auspicious opening particle</td></tr>
+                <tr><td>योग</td><td>yoga</td><td>samādhi; from root yuj — concentration/union; not merely posture</td></tr>
+                <tr><td>अनुशासनम्</td><td>anuśāsanam</td><td>authoritative instruction following a lineage (anu = in the tradition of)</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Now begins the authoritative instruction on Yoga.</div>
+              <div class="s-commentary"><strong>Yoga Sudhākara key insight:</strong> <em>Atha</em> is the critical word. This text is not for beginners — it is for one whose preliminary disciplines (yama, niyama, āsana, prāṇāyāma) are already established. Sadasiva Brahmendra opens by announcing that Samādhi has two forms — Samprajñāta (conscious) and Asamprajñāta (super-conscious) — before even defining yoga. The destination is named before the path.</div>
+              <div class="sutra-card" style="margin-top:12px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Five states of citta</div>
+                  <div class="sutra-title">The map of the mind — where you are, where yoga begins</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <table class="wbw"><thead><tr><th>State</th><th>IAST</th><th>Character</th></tr></thead><tbody>
+                    <tr><td>क्षिप्त</td><td>kṣipta</td><td>Distracted — rajas dominant; chasing sense objects</td></tr>
+                    <tr><td>मूढ</td><td>mūḍha</td><td>Deluded — tamas dominant; inertia and delusion</td></tr>
+                    <tr><td>विक्षिप्त</td><td>vikṣipta</td><td>Scattered — occasional sattva; can concentrate briefly</td></tr>
+                    <tr><td>एकाग्र</td><td>ekāgra</td><td>One-pointed — sattva dominant; Samprajñāta samādhi possible here</td></tr>
+                    <tr><td>निरुद्ध</td><td>niruddha</td><td>Fully restrained — only saṃskāras remain; Asamprajñāta samādhi</td></tr>
+                  </tbody></table>
+                  <div class="s-insight">Yoga proper operates only in ekāgra and niruddha states. The first three states are not yogic — they are the condition the practice aims to overcome. This is why Patañjali begins with <em>atha</em> — "now, after prior preparation."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.2</div>
+              <div class="class-name">Yogaś Citta-Vṛtti-Nirodhaḥ — The Definition</div>
+              <div class="class-sutras">Core definition</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">योगश्चित्तवृत्तिनिरोधः</div>
+              <div class="v-translit">yogaś citta-vṛtti-nirodhaḥ</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>चित्त</td><td>citta</td><td>total mind-field: buddhi (intellect) + ahaṃkāra (ego) + manas (lower mind)</td></tr>
+                <tr><td>वृत्ति</td><td>vṛtti</td><td>modifications; fluctuations; waves; any mental activity whatsoever</td></tr>
+                <tr><td>निरोधः</td><td>nirodhaḥ</td><td>cessation; complete dissolution — not suppression (from ni + rudh: to confine until it stops)</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Yoga is the cessation of the modifications of the mind-field.</div>
+              <div class="s-commentary"><strong>Yoga Sudhākara — the Advaitic reading:</strong> <em>Nirodha</em> does not mean suppression (which creates rebound) but complete dissolution. When vṛttis dissolve, what remains is not a blank — it is pure consciousness that was always present but obscured. The vṛttis were never modifications of consciousness itself — only of the apparent mind-instrument. This distinction is Sadasiva Brahmendra's crucial contribution: cessation reveals, not creates. Liberation is already present; yoga removes what hides it.</div>
+              <div class="w-note">"The vṛttis are like clouds. The sky was never absent — only hidden. Nirodha is not making the sky; it is clearing the clouds."</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.3–1.4</div>
+              <div class="class-name">The Seer Revealed and the Seer Confused</div>
+              <div class="class-sutras">Two states</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-label">Sūtra 1.3</div>
+              <div class="v-sanskrit">तदा द्रष्टुः स्वरूपेऽवस्थानम्</div>
+              <div class="v-translit">tadā draṣṭuḥ svarūpe'vasthānam</div>
+              <div class="transl"><strong>Translation:</strong> Then the Seer abides in its own nature.</div>
+              <div class="s-commentary"><strong>Key insight:</strong> <em>Svarūpa</em> (own nature) is not a new state reached — it is what the Seer always was. Yoga does not produce the Seer; it removes the misidentification that was hiding it. Sadasiva Brahmendra equates this svarūpa with Brahman — the Seer's own nature is not individual consciousness but universal consciousness. The individual and the universal were never actually separate.</div>
+              <hr class="divider">
+              <div class="v-label">Sūtra 1.4</div>
+              <div class="v-sanskrit">वृत्तिसारूप्यमितरत्र</div>
+              <div class="v-translit">vṛtti-sārūpyam itaratra</div>
+              <div class="transl"><strong>Translation:</strong> Otherwise, the Seer appears to take the form of the modifications.</div>
+              <div class="s-commentary"><strong>The diagnosis of saṃsāra:</strong> <em>Sārūpya</em> = seeming-sameness. Pure consciousness does not actually change — it only appears to take the shape of each thought, emotion, and memory that arises. This is <em>vivartavāda</em> (apparent transformation without real change) — the Advaitic doctrine applied to yoga. The entire problem of existence is contained here: not sin, not weakness, not karma — only a case of mistaken identity. Kaivalya (liberation) is therefore not an achievement but a recognition: "I was never the vṛtti."</div>
+              <div class="w-note">"1.3 is the goal. 1.4 is the problem. 1.2 is the method. Together they are the entire teaching — the remaining 192 sūtras are elaboration."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNIT 2 -->
+        <div class="ch-section" id="ch1-u2">
+          <div class="ch-phase">Unit 2 · Sūtras 1.5–1.16 · The Five Vṛttis and the Twin Pillars</div>
+
+          <div class="mahasutra-hero" style="margin-bottom:14px;">
+            <div class="ms-label">Unit insight</div>
+            <div class="ms-english">Patañjali catalogues what the mind does (five vṛttis), then gives the only two means of stopping it (abhyāsa + vairāgya). Understanding why even valid cognition must cease — and what supreme dispassion actually is — is the heart of this unit.</div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.5–1.11</div>
+              <div class="class-name">The Five Vṛttis — What the Mind Does</div>
+              <div class="class-sutras">Types of modification</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">वृत्तयः पञ्चतय्यः क्लिष्टाक्लिष्टाः</div>
+              <div class="v-translit">vṛttayaḥ pañcatayyaḥ kliṣṭākliṣṭāḥ</div>
+              <div class="transl"><strong>Translation:</strong> The modifications are fivefold — painful and non-painful.</div>
+              <table class="wbw"><thead><tr><th>Vṛtti</th><th>IAST</th><th>Nature</th></tr></thead><tbody>
+                <tr><td>प्रमाण</td><td>pramāṇa</td><td>Valid cognition — perception, inference, testimony. Still a modification — must cease.</td></tr>
+                <tr><td>विपर्यय</td><td>viparyaya</td><td>Error — mistaking rope for snake; world for Brahman. The root ignorance made concrete.</td></tr>
+                <tr><td>विकल्प</td><td>vikalpa</td><td>Imagination — verbal knowledge without existing object. Includes much of "thinking."</td></tr>
+                <tr><td>निद्रा</td><td>nidrā</td><td>Sleep — modification based on the absence of mental content. Not liberation.</td></tr>
+                <tr><td>स्मृति</td><td>smṛti</td><td>Memory — recollection of past experience coloring the present moment.</td></tr>
+              </tbody></table>
+              <div class="s-commentary"><strong>Yoga Sudhākara — the radical point:</strong> Even <em>pramāṇa</em> (valid cognition) is a vṛtti to be transcended. Even the correct thought "I am Brahman" is still a thought. Yoga requires the cessation of this thought too — because what that thought points to cannot itself be a thought. The direct recognition that remains when all five vṛttis have ceased is what Sadasiva Brahmendra calls the Advaitic completion of yoga. This is why yoga and jñāna converge: both aim beyond all mental content.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.12–1.14</div>
+              <div class="class-name">Abhyāsa — What Practice Actually Means</div>
+              <div class="class-sutras">The first pillar</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">अभ्यासवैराग्याभ्यां तन्निरोधः</div>
+              <div class="v-translit">abhyāsa-vairāgyābhyāṃ tan-nirodhaḥ</div>
+              <div class="transl"><strong>Translation:</strong> The cessation of modifications comes through practice and dispassion.</div>
+              <div class="s-commentary"><strong>What abhyāsa is:</strong> The repeated effort to return the mind to steadiness that naturally flows outward. Not a technique — a disposition. Sūtra 1.14 defines it precisely: <em>sa tu dīrgha-kāla nairantarya sat-kāra-ādara-sevito dṛḍha-bhūmiḥ</em> — practice becomes firm-grounded when pursued over long time, without interruption, and with reverence and devotion. Any single one of these three without the others does not establish yoga.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Yoga Sudhākara</div>
+                  <div class="sutra-title">Why time cannot be shortcut — Sadasiva Brahmendra's analogy</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <div class="s-commentary">Sadasiva Brahmendra: expecting samādhi in a few months is "as absurd as saying: there are only four Vedas, yet five days have passed since my son left to study them, and he still has not returned." The depth of saṃskāras (latent impressions) accumulated over lifetimes requires proportional sustained effort to dissolve. There is no shortcut — only the shortcut of not wasting time.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.15–1.16</div>
+              <div class="class-name">Vairāgya — Dispassion, Lower and Supreme</div>
+              <div class="class-sutras">The second pillar</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">दृष्टानुश्रविकविषयवितृष्णस्य वशीकारसंज्ञा वैराग्यम्।<br>तत्परं पुरुषख्यातेर्गुणवैतृष्ण्यम्॥</div>
+              <div class="v-translit">dṛṣṭānuśravika-viṣaya-vitṛṣṇasya vaśīkāra-saṃjñā vairāgyam |<br>tat-paraṃ puruṣa-khyāter guṇa-vaitṛṣṇyam ||</div>
+              <div class="transl"><strong>Translation (1.15):</strong> Dispassion is the consciousness of mastery — no craving for seen or revealed (scriptural) objects.<br><strong>Translation (1.16):</strong> The higher dispassion arises from the discernment of Puruṣa — freedom from craving even for the guṇas themselves.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Four stages</div>
+                  <div class="sutra-title">The four degrees of apara-vairāgya (lower dispassion)</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <table class="wbw"><thead><tr><th>Stage</th><th>IAST</th><th>What happens</th></tr></thead><tbody>
+                    <tr><td>यतमान</td><td>yatamāna</td><td>Striving — discriminating essential from non-essential, with teacher's help</td></tr>
+                    <tr><td>व्यतिरेक</td><td>vyatireka</td><td>Discernment — separating ripened desires from those still dormant</td></tr>
+                    <tr><td>एकेन्द्रियत्व</td><td>ekendriyatva</td><td>Single-sense — only trace curiosity remains, active craving gone</td></tr>
+                    <tr><td>वशीकार</td><td>vaśīkāra</td><td>Complete mastery — zero craving; apara-vairāgya complete</td></tr>
+                  </tbody></table>
+                  <div class="s-commentary"><strong>Para-vairāgya (supreme dispassion):</strong> Sadasiva Brahmendra's decisive point — this is not an achievement but a recognition. When Puruṣa (pure consciousness) is directly known, craving ceases not through will but through understanding. The one who would crave is seen through. This supreme dispassion is functionally identical to Śaṅkara's viveka (discrimination between Real and unreal) — the point where yoga and Advaita Vedānta meet.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNIT 3 -->
+        <div class="ch-section" id="ch1-u3">
+          <div class="ch-phase">Unit 3 · Sūtras 1.17–1.22 · Stages of Samādhi — Sabīja</div>
+
+          <div class="mahasutra-hero" style="margin-bottom:14px;">
+            <div class="ms-label">Unit insight</div>
+            <div class="ms-english">Patañjali maps the progressive deepening of samādhi through four conscious stages — each more subtle than the last. The key: even bliss (ānanda) and the pure I-sense (asmitā) are still vṛttis, still sabīja (with seed). Until the seed itself is roasted, liberation is not complete.</div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.17</div>
+              <div class="class-name">Samprajñāta Samādhi — Four Stages of Conscious Absorption</div>
+              <div class="class-sutras">Sabīja samādhi</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">वितर्कविचारानन्दास्मितारूपानुगमात्सम्प्रज्ञातः</div>
+              <div class="v-translit">vitarka-vicāra-ānanda-asmitā-rūpa-anugamāt samprajñātaḥ</div>
+              <div class="transl"><strong>Translation:</strong> Samprajñāta samādhi is accompanied by gross examination (vitarka), subtle reflection (vicāra), joy (ānanda), or pure I-am-ness (asmitā).</div>
+              <table class="wbw"><thead><tr><th>Stage</th><th>Object</th><th>What the mind merges with</th></tr></thead><tbody>
+                <tr><td>सवितर्क</td><td>Gross form</td><td>Concentration with gross examination — mind cognizes the object in its concrete aspect including word and meaning</td></tr>
+                <tr><td>निर्वितर्क</td><td>Gross form alone</td><td>Word and ordinary meaning drop away — only the object's pure essence remains, memory dormant</td></tr>
+                <tr><td>सविचार</td><td>Subtle element</td><td>Concentration moves to the tanmātras (subtle sense-essences); time and space still present</td></tr>
+                <tr><td>निर्विचार</td><td>Subtle alone</td><td>Time, space, and causation drop away — pure essence of subtle element; this is the threshold of nirbīja</td></tr>
+              </tbody></table>
+              <div class="s-commentary"><strong>Yoga Sudhākara — ānanda and asmitā:</strong> Beyond nirvicāra, two more sabīja stages remain: <em>sānanda</em> (samādhi with bliss — absorption in the sattva of the sense-organs) and <em>sāsmitā</em> (samādhi with pure I-am-ness — the subtlest possible mental modification). Sadasiva Brahmendra warns: even this exquisite bliss and pure "I am" are still objects of awareness, still vṛttis. Mistaking sānanda for liberation is the most refined error on the path — the one most likely to trap the advanced practitioner.</div>
+              <div class="w-note">"Even the experience of bliss is a vṛtti. Even the sense 'I am' is still an object of awareness. The final state has no experience, no experiencer — only awareness itself."</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.18–1.22</div>
+              <div class="class-name">Asamprajñāta Samādhi and the Five Qualities Required</div>
+              <div class="class-sutras">Super-conscious samādhi</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">विरामप्रत्ययाभ्यासपूर्वः संस्कारशेषोऽन्यः</div>
+              <div class="v-translit">virāma-pratyaya-abhyāsa-pūrvaḥ saṃskāra-śeṣo'nyaḥ</div>
+              <div class="transl"><strong>Translation:</strong> The other samādhi (asamprajñāta) is preceded by the practice of the cessation-intention; only latent impressions (saṃskāras) remain.</div>
+              <div class="s-commentary"><strong>What makes asamprajñāta different:</strong> No active cognition, no bliss experience, no I-sense — only saṃskāras remain as bare potential, not active modification. This is not unconsciousness — it is the most intense wakefulness without any object. The Māṇḍūkya Upaniṣad calls this turīya-adjacent: the state closest to pure awareness before the last veil lifts. Sadasiva Brahmendra himself inhabited this state on the Kāverī's banks — body found apparently lifeless for extended periods.</div>
+              <hr class="divider">
+              <div class="v-label">Sūtra 1.20 — Five qualities for asamprajñāta</div>
+              <div class="v-sanskrit">श्रद्धावीर्यस्मृतिसमाधिप्रज्ञापूर्वक इतरेषाम्</div>
+              <div class="v-translit">śraddhā-vīrya-smṛti-samādhi-prajñā-pūrvaka itareṣām</div>
+              <div class="transl"><strong>Translation:</strong> For others, it is preceded by faith, energy, memory, samādhi, and wisdom.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Five qualities</div>
+                  <div class="sutra-title">Śraddhā through Prajñā — the inner equipment required</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <table class="wbw"><thead><tr><th>Quality</th><th>IAST</th><th>Yoga Sudhākara meaning</th></tr></thead><tbody>
+                    <tr><td>श्रद्धा</td><td>śraddhā</td><td>Faith — not blind belief but living conviction from recognizing the teaching resonates with direct experience</td></tr>
+                    <tr><td>वीर्य</td><td>vīrya</td><td>Energy/heroism — sustained effort that does not flag when the path becomes subtle</td></tr>
+                    <tr><td>स्मृति</td><td>smṛti</td><td>Memory — continuous recollection of the goal; not forgetting what one is practicing toward</td></tr>
+                    <tr><td>समाधि</td><td>samādhi</td><td>The one-pointedness already established in samprajñāta stages</td></tr>
+                    <tr><td>प्रज्ञा</td><td>prajñā</td><td>Wisdom — discriminative insight born from samādhi, not from study alone</td></tr>
+                  </tbody></table>
+                  <div class="s-insight">These five are interdependent: without śraddhā, vīrya cannot sustain; without vīrya, smṛti lapses; without smṛti, samādhi fragments; without samādhi, prajñā remains theoretical. The sequence is also a diagnostic: wherever the practice stalls, locate which of the five is weak.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNIT 4 -->
+        <div class="ch-section" id="ch1-u4">
+          <div class="ch-phase">Unit 4 · Sūtras 1.23–1.32 · Īśvara Praṇidhāna and Oṃkāra</div>
+
+          <div class="mahasutra-hero" style="margin-bottom:14px;">
+            <div class="ms-label">Unit insight</div>
+            <div class="ms-english">Patañjali offers an alternative path for those who cannot yet directly practice the samādhi stages: surrender to Īśvara through Oṃkāra. Sadasiva Brahmendra's Advaitic reading makes Īśvara not an external being but the ground consciousness — making surrender the dropping of the false self that imagined itself separate.</div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.24–1.26</div>
+              <div class="class-name">Īśvara — The Untouched Puruṣa</div>
+              <div class="class-sutras">Nature of the Lord</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">क्लेशकर्मविपाकाशयैरपरामृष्टः पुरुषविशेष ईश्वरः</div>
+              <div class="v-translit">kleśa-karma-vipāka-āśayair aparāmṛṣṭaḥ puruṣa-viśeṣa īśvaraḥ</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>क्लेश</td><td>kleśa</td><td>afflictions (avidyā, asmitā, rāga, dveṣa, abhiniveśa)</td></tr>
+                <tr><td>कर्म</td><td>karma</td><td>action and accumulated impressions</td></tr>
+                <tr><td>विपाक</td><td>vipāka</td><td>fruits/results of karma</td></tr>
+                <tr><td>अपरामृष्टः</td><td>aparāmṛṣṭaḥ</td><td>untouched; uncontaminated — never entered into karma's field</td></tr>
+                <tr><td>पुरुषविशेष</td><td>puruṣa-viśeṣa</td><td>a special Puruṣa — distinguished by being eternally free, never bound</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Īśvara is a special Puruṣa untouched by afflictions, actions, their fruits, and latent impressions.</div>
+              <div class="s-commentary"><strong>Yoga Sudhākara — the Advaitic Īśvara:</strong> Sadasiva Brahmendra's decisive move: Īśvara is not a separate being outside the seeker — he is the ground Puruṣa, the consciousness that was never contaminated because it was never actually within time, action, or matter. The difference between Īśvara and the jīva (individual soul) is not metaphysical — it is epistemic. Īśvara knows itself as Puruṣa; the jīva forgets. Praṇidhāna (surrender) is therefore the dropping of the false identity, not petition to an external lord. Bhakti and jñāna converge here.</div>
+              <div class="s-commentary" style="margin-top:10px;"><strong>Sūtra 1.26 — Guru of all gurus:</strong> Īśvara is <em>sarvajña-bīja</em> (seed of all-knowing), the teacher of even the ancient masters, "not limited by time." Sadasiva Brahmendra connects this to Dakṣiṇāmūrti — Śiva teaching in silence. His teaching is not words but the direct transmission of the witness-state. This is the metaphysical basis of the guru-śiṣya relationship in this tradition.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.27–1.29</div>
+              <div class="class-name">Praṇava — Oṃkāra as the Expression of Īśvara</div>
+              <div class="class-sutras">Oṃ and its practice</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">तस्य वाचकः प्रणवः।<br>तज्जपस्तदर्थभावनम्।<br>ततः प्रत्यक्चेतनाधिगमोऽप्यन्तरायाभावश्च॥</div>
+              <div class="v-translit">tasya vācakaḥ praṇavaḥ |<br>taj-japas tad-artha-bhāvanam |<br>tataḥ pratyak-cetanā-adhigamo'py antarāya-abhāvaś ca ||</div>
+              <div class="transl"><strong>1.27:</strong> His expression is the Praṇava (Oṃ).<br><strong>1.28:</strong> Its repetition with contemplation of its meaning [is prescribed].<br><strong>1.29:</strong> From this, inward-turned consciousness arises, and obstacles disappear.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Oṃkāra structure</div>
+                  <div class="sutra-title">Māṇḍūkya framework — the four levels of Oṃ</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <table class="wbw"><thead><tr><th>Sound</th><th>State</th><th>Consciousness level</th></tr></thead><tbody>
+                    <tr><td>अ (a)</td><td>Waking (jāgrat)</td><td>Viśva — gross body, outward awareness</td></tr>
+                    <tr><td>उ (u)</td><td>Dream (svapna)</td><td>Taijasa — subtle body, dream consciousness</td></tr>
+                    <tr><td>म (m)</td><td>Deep sleep (suṣupti)</td><td>Prājña — causal body, undifferentiated bliss</td></tr>
+                    <tr><td>Silence after</td><td>Turīya (fourth)</td><td>Pure awareness — beyond all three states, the witness-ground</td></tr>
+                  </tbody></table>
+                  <div class="s-commentary">Sadasiva Brahmendra: repetition of Oṃ with <em>artha-bhāvanā</em> (contemplation of this meaning) is not mere mantra-japa — it is a meditation on the complete structure of consciousness. Each cycle of Oṃ traces the journey from gross outward awareness through dream and sleep to the silent witness. The key term in 1.29 is <em>pratyak-cetanā</em> — inward-turned consciousness. This reversal of the outward-flowing mind is not created by the japa; it is the natural direction of consciousness when the outward craving relaxes. Oṃ is the vehicle; the silence after Oṃ is the destination.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.30–1.32</div>
+              <div class="class-name">Nine Obstacles and the Universal Remedy</div>
+              <div class="class-sutras">Obstacles to yoga</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">व्याधिस्त्यानसंशयप्रमादालस्याविरतिभ्रान्तिदर्शनालब्धभूमिकत्वानवस्थितत्वानि चित्तविक्षेपास्तेऽन्तरायाः</div>
+              <div class="v-translit">vyādhi-styāna-saṃśaya-pramāda-ālasya-avirati-bhrānti-darśana-alabdha-bhūmikatva-anavasthitatvāni citta-vikṣepās te'ntarāyāḥ</div>
+              <div class="transl"><strong>Translation:</strong> Disease, dullness, doubt, negligence, laziness, non-abstinence, false perception, non-attainment of a stage, instability — these are the nine obstacles, distractors of the mind.</div>
+              <table class="wbw"><thead><tr><th>Obstacle</th><th>IAST</th><th>What it actually is</th></tr></thead><tbody>
+                <tr><td>व्याधि</td><td>vyādhi</td><td>Physical illness — body interrupts meditation; solved by āsana, diet, prāṇāyāma</td></tr>
+                <tr><td>स्त्यान</td><td>styāna</td><td>Dullness — tamas crystallized; the mind knows the path but will not move</td></tr>
+                <tr><td>संशय</td><td>saṃśaya</td><td>Doubt — especially doubt of the path; self-reinforcing and most dangerous</td></tr>
+                <tr><td>प्रमाद</td><td>pramāda</td><td>Negligence — knowing what to do but not doing it; heedlessness</td></tr>
+                <tr><td>आलस्य</td><td>ālasya</td><td>Laziness — heaviness; body and mind resist the effort</td></tr>
+                <tr><td>अविरति</td><td>avirati</td><td>Non-abstinence — craving for sense-objects persists despite practice</td></tr>
+                <tr><td>भ्रान्तिदर्शन</td><td>bhrānti-darśana</td><td>False perception — delusion about one's actual level of attainment</td></tr>
+                <tr><td>अलब्धभूमिकत्व</td><td>alabdha-bhūmikatva</td><td>Non-attainment — unable to establish in any level of samādhi</td></tr>
+                <tr><td>अनवस्थितत्व</td><td>anavasthitatva</td><td>Instability — attaining a stage then falling back repeatedly</td></tr>
+              </tbody></table>
+              <div class="s-commentary"><strong>Sūtra 1.32 — The single remedy:</strong> <em>Eka-tattva-abhyāsa</em> — practice of one principle. Rather than attacking each obstacle separately, Sadasiva Brahmendra's remedy is radical simplicity: return to a single pointed practice. One mantra. One meditation object. One teaching from the guru. When the mind is fragmented, the remedy is not analysis of the fragmentation but return to unity. This principle — simplicity over complexity when scattered — is one of the most practically useful teachings in the entire text.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNIT 5 -->
+        <div class="ch-section" id="ch1-u5">
+          <div class="ch-phase">Unit 5 · Sūtras 1.33–1.51 · Stabilizing Practices and Nirbīja Samādhi</div>
+
+          <div class="mahasutra-hero" style="margin-bottom:14px;">
+            <div class="ms-label">Unit insight</div>
+            <div class="ms-english">Seven practices to stabilize the citta, followed by Patañjali's most precise technical description of how samādhi deepens through paired stages to the seedless, objectless absorption that is the threshold of Kaivalya. The crystal analogy (1.41) is Sadasiva Brahmendra's most quoted teaching in this chapter.</div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.33–1.39</div>
+              <div class="class-name">Seven Practices to Stabilize the Citta</div>
+              <div class="class-sutras">Mind-clearing methods</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">मैत्रीकरुणामुदितोपेक्षाणां सुखदुःखपुण्यापुण्यविषयाणां भावनातश्चित्तप्रसादनम्</div>
+              <div class="v-translit">maitrī-karuṇā-muditā-upekṣāṇāṃ sukha-duḥkha-puṇya-apuṇya-viṣayāṇāṃ bhāvanātaś citta-prasādanam</div>
+              <div class="transl"><strong>1.33:</strong> The mind becomes clear by cultivating friendliness (maitrī) toward the happy, compassion (karuṇā) toward the suffering, joy (muditā) toward the virtuous, and equanimity (upekṣā) toward the non-virtuous.</div>
+              <div class="s-commentary"><strong>Key insight — attitudes as technology, not morality:</strong> Sadasiva Brahmendra reads these four attitudes not as ethical prescriptions but as mind-calming mechanisms. Envy when seeing others' happiness creates agitation (rajas). Compassion instead of despair when seeing suffering keeps sattva intact. The four attitudes are chosen specifically because they are the four most common occasions for citta-disturbance in social life. This is practical psychology of citta-hygiene, not virtue ethics.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Six more practices</div>
+                  <div class="sutra-title">The remaining six stabilizing methods (1.34–1.39)</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <table class="wbw"><thead><tr><th>Sūtra</th><th>Practice</th><th>Mechanism</th></tr></thead><tbody>
+                    <tr><td>1.34</td><td>Prāṇāyāma</td><td>Exhalation and retention — prāṇa and citta are linked; stilling one stills the other</td></tr>
+                    <tr><td>1.35</td><td>Viṣayavatī</td><td>Intense focus on subtle sense-objects — draws scattered mind to a single point</td></tr>
+                    <tr><td>1.36</td><td>Jyotiṣmatī</td><td>Meditation on the luminous, sorrowless inner light — direct sattva contact</td></tr>
+                    <tr><td>1.37</td><td>Vīta-rāga citta</td><td>Meditation on a mind free from craving — a liberated being as object</td></tr>
+                    <tr><td>1.38</td><td>Svapna-nidrā</td><td>Using dream and sleep states as meditation support — borderline states are accessible</td></tr>
+                    <tr><td>1.39</td><td>Yathābhimata</td><td>Whatever is agreeable to the seeker — any effective object of concentration</td></tr>
+                  </tbody></table>
+                  <div class="s-insight">Sadasiva Brahmendra's principle: any of the seven will work if pursued with abhyāsa and vairāgya together. The path is pluralistic in method, singular in destination. The seventh (yathābhimata) is the most permissive — Patañjali explicitly allows the seeker's own temperament to guide the choice of practice.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.40–1.45</div>
+              <div class="class-name">Samāpatti — Crystal-like Absorption</div>
+              <div class="class-sutras">The coalescence teaching</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">क्षीणवृत्तेरभिजातस्येव मणेर्ग्रहीतृग्रहणग्राह्येषु तत्स्थतदञ्जनता समापत्तिः</div>
+              <div class="v-translit">kṣīṇa-vṛtter abhijātasyeva maṇer grahītṛ-grahaṇa-grāhyeṣu tat-stha-tad-añjanatā samāpattiḥ</div>
+              <div class="transl"><strong>Translation:</strong> When modifications are diminished, the mind becomes like a transparent crystal — taking on the color of whatever is near it (the knower, the knowing, the known). This is samāpatti (coalescence).</div>
+              <div class="s-commentary"><strong>Yoga Sudhākara — the crystal teaching:</strong> The mind in samāpatti is like a crystal placed on a red surface — it appears red, but its own crystalline nature is unaltered. The mind "becomes" the object without being it, without pure consciousness itself being modified. This is Sadasiva Brahmendra's most precise statement on the samādhi paradox. When samāpatti is applied to the final object — Puruṣa itself — the crystal cognizes its own luminosity. There is no separate object. The knower, knowing, and known collapse into one. This is the threshold of Kaivalya.</div>
+              <div class="w-note">"In samāpatti, the meditator vanishes into the meditation. This is not a problem — it is the goal. The 'you' that feared vanishing was the veil, not the Seer."</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">1.46–1.51</div>
+              <div class="class-name">Nirbīja Samādhi — The Seedless State</div>
+              <div class="class-sutras">Final samādhi of Ch.I</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-sanskrit">तस्यापि निरोधे सर्वनिरोधान्निर्बीजः समाधिः</div>
+              <div class="v-translit">tasyāpi nirodhe sarva-nirodhān nirbījaḥ samādhiḥ</div>
+              <div class="transl"><strong>Translation:</strong> When even this (the impression of samādhi itself) is restrained, seedless samādhi arises from complete cessation of all.</div>
+              <div class="s-commentary"><strong>The final dissolution:</strong> Sabīja samādhi leaves an impression — "I was in samādhi." This impression (saṃskāra) is itself a seed. While a seed remains, re-germination into saṃsāra is possible. Nirbīja is when the last seed is destroyed at its root — not suppressed but roasted, incapable of sprouting again. Sadasiva Brahmendra's Advaitic equivalence: nirbīja samādhi = Kaivalya in Yoga language = Brahman-realization in Vedānta language = turīya in Upaniṣadic language. These are not different states described in different traditions — they are one recognition expressed in four vocabularies.</div>
+              <div class="sutra-card" style="margin-top:10px;">
+                <div class="sutra-hdr" onclick="toggleSutra(this)">
+                  <div class="sutra-badge">Ṛtambharā prajñā</div>
+                  <div class="sutra-title">Sūtras 1.48–1.50 — Truth-bearing wisdom</div>
+                  <div class="sutra-arr">›</div>
+                </div>
+                <div class="sutra-body">
+                  <div class="v-sanskrit">ऋतम्भरा तत्र प्रज्ञा</div>
+                  <div class="v-translit">ṛtambharā tatra prajñā</div>
+                  <div class="transl"><strong>Translation:</strong> There (in nirvicāra samādhi), the wisdom is ṛtambharā — truth-bearing.</div>
+                  <div class="s-commentary">Ṛtambharā prajñā is the wisdom that arises from direct samādhi — not inference, not scripture, not reasoning. It is described as <em>viśeṣārthatvāt</em> (having a specific, unique content) distinguished from ordinary knowledge. This wisdom directly contradicts the accumulated saṃskāras of ignorance — and the saṃskāra born from it overpowers all previous saṃskāras. This is the penultimate stage before nirbīja: wisdom strong enough to uproot its own root.</div>
+                </div>
+              </div>
+              <div class="w-note">"Nirbīja is not an experience. It is the final recognition that there was never a seed — the Seer was always already seedless, timeless, untouched. The seeking ends not because it succeeded but because it is seen through."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CHAPTER II — SĀDHANA PĀDA ══════════════════ -->
+    <div class="screen" id="screen-ch2">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Sādhana Pāda</h2>
+          <p>साधनपादः · Chapter II · 55 Sūtras</p>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Chapter theme</div>
+          <div class="ms-sanskrit">तपःस्वाध्यायेश्वरप्रणिधानानि क्रियायोगः</div>
+          <div class="ms-english">Austerity, self-study, and surrender to Īśvara constitute Kriyā Yoga. This chapter descends from the heights of Chapter I to address the practitioner who has not yet stabilized in samādhi — providing the complete systematic method.</div>
+        </div>
+
+        <div class="ch-tabs" id="ch2-tabs">
+          <button class="ch-tab active" onclick="switchChTab('ch2','u1',this)">Unit 1</button>
+          <button class="ch-tab" onclick="switchChTab('ch2','u2',this)">Unit 2</button>
+          <button class="ch-tab" onclick="switchChTab('ch2','u3',this)">Unit 3</button>
+        </div>
+
+        <div class="ch-section active" id="ch2-u1">
+          <div class="ch-phase">Unit 1 · Sūtras 2.1–2.27 · Kriyā Yoga and the Kleśas</div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">01</div>
+              <div class="class-name">Kriyā Yoga — The Yoga of Action</div>
+              <div class="class-sutras">YS 2.1–2.2</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> Why Chapter II opens with Kriyā Yoga rather than continuing the samādhi discussion. Sadasiva Brahmendra explains the logic: if the seeker is not yet in ekāgra citta, direct samādhi instruction is futile. Kriyā Yoga is the preparatory practice that purifies the citta enough for Chapter I's teachings to take root.</div>
+
+              <div class="v-label">Sūtra 2.1</div>
+              <div class="v-sanskrit">तपःस्वाध्यायेश्वरप्रणिधानानि क्रियायोगः</div>
+              <div class="v-translit">tapaḥ-svādhyāya-īśvara-praṇidhānāni kriyā-yogaḥ</div>
+              <div class="wbw-label">Word by word</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>तपस्</td><td>tapas</td><td>austerity; heat; disciplined endurance; burning up of impurities</td></tr>
+                <tr><td>स्वाध्याय</td><td>svādhyāya</td><td>self-study; study of sacred texts; inquiry into the nature of the Self</td></tr>
+                <tr><td>ईश्वरप्रणिधान</td><td>īśvara-praṇidhāna</td><td>surrender to Īśvara; dedication of all action to the Lord</td></tr>
+                <tr><td>क्रियायोगः</td><td>kriyā-yogaḥ</td><td>yoga of action; active or preparatory yoga</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Austerity, self-study, and surrender to Īśvara constitute Kriyā Yoga.</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra emphasizes that these three are not sequential but simultaneous — a single integrated practice. Tapas purifies the body-mind. Svādhyāya redirects the intellect toward the Real. Īśvara-praṇidhāna dissolves the ego-sense that would otherwise appropriate the fruits of practice. The Swami: Sadasiva Brahmendra — himself a practitioner who lived in naked samādhi — insists that Kriyā Yoga is not inferior to the samādhi described in Chapter I. It is the same yoga in active form, appropriate for the vast majority of practitioners.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">02</div>
+              <div class="class-name">The Five Kleśas — Afflictions at the Root</div>
+              <div class="class-sutras">YS 2.3–2.9</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> The five kleśas as the root cause of all suffering. Sadasiva Brahmendra's commentary places <em>avidyā</em> (ignorance) not as one kleśa among five but as the ground from which all four others grow — making its removal the singular task of the entire yogic path.</div>
+
+              <div class="v-label">Sūtra 2.3 — The Five Kleśas</div>
+              <div class="v-sanskrit">अविद्यास्मितारागद्वेषाभिनिवेशाः क्लेशाः</div>
+              <div class="v-translit">avidyā-asmitā-rāga-dveṣa-abhiniveśāḥ kleśāḥ</div>
+              <div class="transl"><strong>Translation:</strong> Ignorance, I-am-ness, desire, aversion, and clinging to life are the afflictions.</div>
+
+              <table class="wbw"><thead><tr><th>Kleśa</th><th>IAST</th><th>Yoga Sudhākara commentary</th></tr></thead><tbody>
+                <tr><td>अविद्या</td><td>avidyā</td><td>Root affliction — mistaking the impermanent for permanent, impure for pure, painful for pleasant, non-Self for Self</td></tr>
+                <tr><td>अस्मिता</td><td>asmitā</td><td>I-am-ness — the misidentification of pure consciousness (draṣṭā) with the instrument of seeing (buddhi)</td></tr>
+                <tr><td>राग</td><td>rāga</td><td>Desire — the residual craving following pleasure; the coloring of mind toward the pleasant</td></tr>
+                <tr><td>द्वेष</td><td>dveṣa</td><td>Aversion — the residual repulsion following pain; the coloring of mind against the unpleasant</td></tr>
+                <tr><td>अभिनिवेश</td><td>abhiniveśa</td><td>Clinging to life — the instinctive fear of death, present even in the learned; most tenacious kleśa</td></tr>
+              </tbody></table>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara — avidyā as the field:</strong> Sūtra 2.4 says avidyā is the "field" (kṣetra) of the other kleśas — dormant, attenuated, interrupted, or fully active. Sadasiva Brahmendra: this means the other four kleśas are not independent problems — they are faces of the single error of mistaking the non-Self for Self. The cure is therefore singular: viveka-khyāti (discriminative awareness between Real and unreal). The Swami: this is where Yoga and Advaita merge completely — the sole remedy in both is discrimination.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">03</div>
+              <div class="class-name">Karma, Suffering, and Viveka-Khyāti</div>
+              <div class="class-sutras">YS 2.12–2.27</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> How kleśas generate karmic accumulation, how all experience is ultimately painful for the discriminating intelligence, and how viveka-khyāti (unbroken discriminative awareness) is the only means of liberation.</div>
+
+              <div class="v-label">Sūtra 2.15 — All is Suffering (for the discriminating)</div>
+              <div class="v-sanskrit">परिणामतापसंस्कारदुःखैर्गुणवृत्तिविरोधाच्च दुःखमेव सर्वं विवेकिनः</div>
+              <div class="v-translit">pariṇāma-tāpa-saṃskāra-duḥkhair guṇa-vṛtti-virodhāc ca duḥkham eva sarvaṃ vivekinaḥ</div>
+              <div class="transl"><strong>Translation:</strong> For the discriminating, everything is indeed suffering — due to the pain of change, anxiety, latent impressions, and the conflict of the guṇas.</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra does not read this as pessimism but as precision. The Swami: only the one who has tasted the bliss of samādhi — even briefly — recognizes that all ordinary experience is tinged with the subtle pain of impermanence. This recognition is not depressing; it is liberating. It is the force that drives the seeker from the peripheral enjoyments of vikṣipta mind to the steady focus required for samādhi.</div>
+
+              <div class="v-label">Sūtra 2.26 — The Remedy</div>
+              <div class="v-sanskrit">विवेकख्यातिरविप्लवा हानोपायः</div>
+              <div class="v-translit">viveka-khyātir aviplavā hāna-upāyaḥ</div>
+              <div class="transl"><strong>Translation:</strong> Uninterrupted discriminative awareness is the means of cessation [of suffering].</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara — the key word aviplavā:</strong> "Uninterrupted" — not occasional flashes of discrimination but the continuous, steady background recognition of the distinction between Puruṣa and Prakṛti (or Ātman and the world). Sadasiva Brahmendra: this unbroken quality is what makes it a means of liberation rather than just philosophy. The Swami: this is why practice must be <em>dīrgha-kāla</em> (long-term) and <em>nairantarya</em> (uninterrupted) as in YS 1.14 — because an interrupted discrimination allows the kleśas to regrow.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ch-section" id="ch2-u2">
+          <div class="ch-phase">Unit 2 · Sūtras 2.28–2.45 · Aṣṭāṅga Yoga — The Eight Limbs</div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">04</div>
+              <div class="class-name">The Eight Limbs — Overview and Yama</div>
+              <div class="class-sutras">YS 2.28–2.35</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> Introduction of the complete aṣṭāṅga system and detailed treatment of the five yamas. Sadasiva Brahmendra reads the yamas not as ethical rules but as the natural expression of a mind whose rajas is reducing.</div>
+
+              <div class="v-label">Sūtra 2.29 — The Eight Limbs</div>
+              <div class="v-sanskrit">यमनियमासनप्राणायामप्रत्याहारधारणाध्यानसमाधयोऽष्टावङ्गानि</div>
+              <div class="v-translit">yama-niyama-āsana-prāṇāyāma-pratyāhāra-dhāraṇā-dhyāna-samādhayo'ṣṭāv aṅgāni</div>
+              <div class="transl"><strong>Translation:</strong> The eight limbs are: restraints (yama), observances (niyama), posture (āsana), breath-control (prāṇāyāma), withdrawal of senses (pratyāhāra), concentration (dhāraṇā), meditation (dhyāna), and absorption (samādhi).</div>
+
+              <table class="wbw"><thead><tr><th>Limb</th><th>IAST</th><th>Function</th></tr></thead><tbody>
+                <tr><td>यम</td><td>yama</td><td>Social restraints — purify action in the world; reduce rajas</td></tr>
+                <tr><td>नियम</td><td>niyama</td><td>Personal observances — purify inner life; build sattva</td></tr>
+                <tr><td>आसन</td><td>āsana</td><td>Posture — steady, comfortable seat enabling extended meditation</td></tr>
+                <tr><td>प्राणायाम</td><td>prāṇāyāma</td><td>Breath control — regulation of prāṇa to still the citta</td></tr>
+                <tr><td>प्रत्याहार</td><td>pratyāhāra</td><td>Sense withdrawal — senses cease following their objects</td></tr>
+                <tr><td>धारणा</td><td>dhāraṇā</td><td>Concentration — binding citta to a single point/area</td></tr>
+                <tr><td>ध्यान</td><td>dhyāna</td><td>Meditation — unbroken flow of attention to the object</td></tr>
+                <tr><td>समाधि</td><td>samādhi</td><td>Absorption — object alone shines; cognitive boundary dissolves</td></tr>
+              </tbody></table>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara — the limb metaphor:</strong> Sadasiva Brahmendra emphasizes that these are <em>aṅga</em> (limbs) — parts of one body, not sequential steps in a linear ladder. The Swami: this is why Sadasiva Brahmendra the avadhūta could live in samādhi while simultaneously embodying all the yamas naturally — not as discipline but as expression. For most practitioners, the limbs are sequential in emphasis; for the rare one, they co-arise.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">05</div>
+              <div class="class-name">Āsana, Prāṇāyāma, and Pratyāhāra</div>
+              <div class="class-sutras">YS 2.46–2.55</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> The last three outer limbs. Sadasiva Brahmendra's treatment of āsana is minimal — the commentary is deliberately brief because the Yoga Sudhākara is oriented toward the inner limbs. His prāṇāyāma commentary, however, is detailed and contains stages not found in Vyāsa.</div>
+
+              <div class="v-label">Sūtra 2.46–2.47 — Āsana</div>
+              <div class="v-sanskrit">स्थिरसुखमासनम्।<br>प्रयत्नशैथिल्यानन्तसमापत्तिभ्याम्॥</div>
+              <div class="v-translit">sthira-sukham āsanam |<br>prayatna-śaithilya-ananta-samāpattibhyām ||</div>
+              <div class="transl"><strong>Translation:</strong> Posture is steady and comfortable. [It is perfected] by relaxation of effort and by absorption in the infinite.</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra: āsana is mastered when two things coexist — effortlessness (prayatna-śaithilya) and meditation on the infinite (ananta-samāpatti). The Swami: this is why the avadhūta could meditate for days without discomfort — not through physical training but through the dissolution of bodily awareness in samādhi. The body is forgotten, not forced.</div>
+
+              <div class="v-label">Sūtra 2.49–2.52 — Prāṇāyāma Stages</div>
+              <div class="s-commentary"><strong>Yoga Sudhākara — detailed prāṇāyāma commentary:</strong> Sadasiva Brahmendra identifies three aspects of prāṇāyāma: external (bāhya), internal (ābhyantara), and restrained (stambha-vṛtti). He adds a fourth — <em>bāhyābhyantara-viṣaya-ākṣepī</em> — the prāṇāyāma that transcends the inner/outer distinction entirely. This fourth is the bridge to dhāraṇā. The Swami explains: this is the prāṇāyāma of the avadhūta — not controlled breathing but the natural pause of prāṇa in deep samādhi, described by Sadasiva Brahmendra from his own experience.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ch-section" id="ch2-u3">
+          <div class="ch-phase">Unit 3 · Aṣṭāṅga continued — Inner Limbs preview</div>
+          <div class="info-box" style="margin-bottom:16px;">The inner three limbs (dhāraṇā, dhyāna, samādhi) are introduced here and treated fully in Chapter III. Sadasiva Brahmendra's commentary at the end of Chapter II points forward — the outer limbs have prepared the vessel; now the inner limbs fill it.</div>
+          <div class="w-note">"The outer limbs are the banks of the river. The inner limbs are the river itself. Without banks, water spreads and becomes swamp. Without water, banks are merely walls of dried earth."<br>— Yoga Sudhākara teaching, as rendered by Swami Paramahamsananda Sarasvatī</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CHAPTER III — VIBHŪTI PĀDA ══════════════════ -->
+    <div class="screen" id="screen-ch3">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Vibhūti Pāda</h2>
+          <p>विभूतिपादः · Chapter III · 56 Sūtras</p>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Chapter theme</div>
+          <div class="ms-sanskrit">त्रयमेकत्र संयमः</div>
+          <div class="ms-english">The three together [dhāraṇā, dhyāna, samādhi] constitute saṃyama. This chapter reveals the extraordinary powers (vibhūtis/siddhis) that arise naturally from sustained saṃyama — and warns that they are obstacles to liberation if sought or clung to.</div>
+        </div>
+
+        <div class="ch-tabs" id="ch3-tabs">
+          <button class="ch-tab active" onclick="switchChTab('ch3','u1',this)">Unit 1</button>
+          <button class="ch-tab" onclick="switchChTab('ch3','u2',this)">Unit 2</button>
+        </div>
+
+        <div class="ch-section active" id="ch3-u1">
+          <div class="ch-phase">Unit 1 · Sūtras 3.1–3.16 · Saṃyama and Transformations</div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">01</div>
+              <div class="class-name">Dhāraṇā, Dhyāna, Samādhi — and Saṃyama</div>
+              <div class="class-sutras">YS 3.1–3.8</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-label">Sūtras 3.1–3.3 — The Inner Three</div>
+              <div class="v-sanskrit">देशबन्धश्चित्तस्य धारणा।<br>तत्र प्रत्ययैकतानता ध्यानम्।<br>तदेवार्थमात्रनिर्भासं स्वरूपशून्यमिव समाधिः॥</div>
+              <div class="v-translit">deśa-bandhaś cittasya dhāraṇā |<br>tatra pratyaya-ekatānatā dhyānam |<br>tad evārtha-mātra-nirbhāsaṃ svarūpa-śūnyam iva samādhiḥ ||</div>
+              <div class="wbw-label">Word by word — key terms</div>
+              <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+                <tr><td>देशबन्धः</td><td>deśa-bandhaḥ</td><td>binding to a place/point; fixing attention (dhāraṇā)</td></tr>
+                <tr><td>प्रत्ययैकतानता</td><td>pratyaya-ekatānatā</td><td>unbroken flow of one cognition; continuous meditation</td></tr>
+                <tr><td>अर्थमात्रनिर्भासम्</td><td>artha-mātra-nirbhāsam</td><td>object alone shines; only the meaning/essence visible</td></tr>
+                <tr><td>स्वरूपशून्यम्</td><td>svarūpa-śūnyam iva</td><td>as if empty of its own form; cognitive boundary dissolves</td></tr>
+              </tbody></table>
+              <div class="transl"><strong>Translation:</strong> Dhāraṇā is binding the mind to a place. Dhyāna is the unbroken flow of cognition there. Samādhi is when the object alone shines, as if empty of the mind's own form.</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara — saṃyama:</strong> Sadasiva Brahmendra: the three limbs are not separate practices but a single deepening — concentration (dhāraṇā) naturally deepens into meditation (dhyāna) which deepens into absorption (samādhi). Together they constitute saṃyama (3.4) — "flowing together seamlessly." The Swami: Sadasiva Brahmendra the avadhūta teaches saṃyama from direct experience — when concentration deepens enough, dhyāna is not a separate practice but the same attention sustained. Samādhi is not added — it is what dhyāna becomes when effort fully relaxes.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">02</div>
+              <div class="class-name">Three Transformations of Consciousness</div>
+              <div class="class-sutras">YS 3.9–3.16</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> Patañjali's technical analysis of how samādhi transforms the mind. Sadasiva Brahmendra's commentary here is the most philosophically demanding in Chapter III — he treats the three pariṇāmas (transformations) as a precise phenomenology of awakening.</div>
+
+              <div class="v-label">The three transformations (pariṇāmas)</div>
+              <table class="wbw"><thead><tr><th>Transformation</th><th>Sūtra</th><th>Description</th></tr></thead><tbody>
+                <tr><td>निरोधपरिणाम</td><td>3.9</td><td>Nirodha-pariṇāma — transformation of restraint; moment when the rising tendency of impressions is met by the subsiding tendency</td></tr>
+                <tr><td>समाधिपरिणाम</td><td>3.11</td><td>Samādhi-pariṇāma — transformation of samādhi; decrease of multiple-pointedness, increase of one-pointedness</td></tr>
+                <tr><td>एकाग्रतापरिणाम</td><td>3.12</td><td>Ekāgratā-pariṇāma — transformation of one-pointedness; past and present cognitions become equal</td></tr>
+              </tbody></table>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra reads these three as stages in the dissolution of the knower-known distinction. In nirodha-pariṇāma, the practitioner consciously restrains. In samādhi-pariṇāma, the restraint becomes natural and effortless. In ekāgratā-pariṇāma, even the distinction between past and present collapses — there is only the eternal now of awareness. The Swami: this is why Sadasiva Brahmendra could be seen simultaneously in multiple places — from the ekāgratā-pariṇāma, time itself becomes fluid.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ch-section" id="ch3-u2">
+          <div class="ch-phase">Unit 2 · Sūtras 3.17–3.56 · Siddhis and the Final Warning</div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">03</div>
+              <div class="class-name">Siddhis — Powers from Saṃyama</div>
+              <div class="class-sutras">YS 3.17–3.49</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="info-box"><strong>Class focus:</strong> The extraordinary powers that arise as side-effects of sustained saṃyama. Sadasiva Brahmendra's treatment is unique: as an avadhūta who himself manifested siddhis (including bilocation as mentioned in the Autobiography of a Yogi), he speaks with authority — and his primary message is warning, not instruction.</div>
+
+              <div class="section-label">Selected siddhis from saṃyama</div>
+              <table class="wbw"><thead><tr><th>Sūtra</th><th>Object of Saṃyama</th><th>Resulting Siddhi</th></tr></thead><tbody>
+                <tr><td>3.17</td><td>Distinction between word/meaning/cognition</td><td>Understanding the cries of all beings</td></tr>
+                <tr><td>3.18</td><td>Latent impressions (saṃskāras)</td><td>Knowledge of previous births</td></tr>
+                <tr><td>3.19</td><td>Another's cognition</td><td>Knowledge of others' minds</td></tr>
+                <tr><td>3.25</td><td>Strength of elephant</td><td>Physical strength of elephant</td></tr>
+                <tr><td>3.32</td><td>Light in the crown (mūrdha-jyotiṣ)</td><td>Vision of perfected beings (siddhas)</td></tr>
+                <tr><td>3.34</td><td>Heart</td><td>Knowledge of the mind</td></tr>
+                <tr><td>3.39</td><td>Samāna prāṇa</td><td>Blazing luminosity</td></tr>
+                <tr><td>3.42</td><td>Relation between body and ākāśa</td><td>Levitation; walking on water</td></tr>
+              </tbody></table>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara — the avadhūta's warning:</strong> Sadasiva Brahmendra acknowledges these siddhis are real — he refuses to rationalize them away. But his commentary on each is consistent: the siddhi is a sign that saṃyama is deepening, not the goal. When the seeker pauses to exercise the siddhi, saṃyama breaks, and the deepening stops. The Swami: Sadasiva Brahmendra himself reportedly ignored the most spectacular manifestations — he would be seen in Kāśi, Mathurā, and Rāmeśvaram simultaneously, and would not acknowledge it. The siddhi was a side-effect; his attention remained on the Self.</div>
+            </div>
+          </div>
+
+          <div class="class-item">
+            <div class="class-hdr" onclick="toggleClass(this)">
+              <div class="class-num">04</div>
+              <div class="class-name">The Final Warning — Viveka-Khyāti Alone</div>
+              <div class="class-sutras">YS 3.50–3.56</div>
+              <div class="class-arr">›</div>
+            </div>
+            <div class="class-body">
+              <div class="v-label">Sūtra 3.51 — The Critical Warning</div>
+              <div class="v-sanskrit">स्थान्युपनिमन्त्रणे सङ्गस्मयाकरणं पुनरनिष्टप्रसङ्गात्</div>
+              <div class="v-translit">sthāny-upanimantraṇe saṅga-smayākaraṇaṃ punar aniṣṭa-prasaṅgāt</div>
+              <div class="transl"><strong>Translation:</strong> When invited by celestial beings, no attachment or pride should arise — for the undesirable can recur.</div>
+
+              <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra's most pointed warning: even celestial beings (sthānis) may invite the advanced yogī to enjoy their states. This is a metaphor for the temptation of spiritual achievement — bliss states, powers, the respect of others, the feeling of having "arrived." Any of these, if clung to, re-seeds the bondage that the practice was dissolving. The Swami closes Chapter III with this: "The siddhi is the last test, not the reward. The reward is what remains when even the siddhi is released."</div>
+
+              <div class="v-label">Sūtra 3.55 — The Final Goal</div>
+              <div class="v-sanskrit">तारकं सर्वविषयं सर्वथाविषयमक्रमं चेति विवेकजं ज्ञानम्</div>
+              <div class="v-translit">tārakaṃ sarva-viṣayaṃ sarvathā-viṣayam akramaṃ ceti viveka-jaṃ jñānam</div>
+              <div class="transl"><strong>Translation:</strong> The knowledge born of discrimination is the liberator — covering all objects, all conditions, all time simultaneously.</div>
+
+              <div class="w-note">"Viveka-khyāti alone is the path. All siddhis are either stepping stones or stumbling blocks — nothing in between. The avadhūta knows this because he has walked past them all."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CHAPTER IV — KAIVALYA PĀDA ══════════════════ -->
+    <div class="screen" id="screen-ch4">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Kaivalya Pāda</h2>
+          <p>कैवल्यपादः · Chapter IV · 34 Sūtras</p>
+        </div>
+
+        <div class="mahasutra-hero">
+          <div class="ms-label">Chapter theme — Final resolution</div>
+          <div class="ms-sanskrit">पुरुषार्थशून्यानां गुणानां प्रतिप्रसवः कैवल्यम्</div>
+          <div class="ms-english">Kaivalya is the return of the guṇas to their origin when they are empty of purpose for the Puruṣa — or the establishment of consciousness in its own nature. This is the goal toward which all four chapters have been moving.</div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-hdr" onclick="toggleClass(this)">
+            <div class="class-num">01</div>
+            <div class="class-name">Sources of Powers and the Creation of Multiple Minds</div>
+            <div class="class-sutras">YS 4.1–4.11</div>
+            <div class="class-arr">›</div>
+          </div>
+          <div class="class-body">
+            <div class="info-box"><strong>Class focus:</strong> The chapter opens by returning to siddhis — but now to explain their deeper metaphysics. Sadasiva Brahmendra expands significantly here on the role of Prakṛti in creating the illusion of multiple minds.</div>
+
+            <div class="v-label">Sūtra 4.1 — Five sources of powers</div>
+            <div class="v-sanskrit">जन्मौषधिमन्त्रतपःसमाधिजाः सिद्धयः</div>
+            <div class="v-translit">janma-auṣadhi-mantra-tapaḥ-samādhi-jāḥ siddhayaḥ</div>
+            <div class="transl"><strong>Translation:</strong> Powers arise from birth, herbs, mantra, austerity, and samādhi.</div>
+
+            <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra notes that only samādhi-born siddhis are truly stable — the others are temporary and can become obstacles because they arise without the corresponding purification of the citta. The Swami: this explains why Sadasiva Brahmendra himself could manifest powers while remaining unattached — they were samādhi-born, arising from the natural fullness of realized consciousness, not from effort or craving.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-hdr" onclick="toggleClass(this)">
+            <div class="class-num">02</div>
+            <div class="class-name">The Mind, Consciousness, and the Nature of Objects</div>
+            <div class="class-sutras">YS 4.12–4.24</div>
+            <div class="class-arr">›</div>
+          </div>
+          <div class="class-body">
+            <div class="info-box"><strong>Class focus:</strong> Patañjali's metaphysics of time, objects, and the relationship between pure consciousness and the mind. Sadasiva Brahmendra's commentary here is explicitly Advaitic, drawing extensively on Śaṅkara's analysis of adhyāsa (superimposition).</div>
+
+            <div class="v-label">Sūtra 4.18 — Consciousness is always the knower of the mind</div>
+            <div class="v-sanskrit">सदा ज्ञाताश्चित्तवृत्तयस्तत्प्रभोः पुरुषस्यापरिणामित्वात्</div>
+            <div class="v-translit">sadā jñātāś citta-vṛttayas tat-prabhoḥ puruṣasya apariṇāmitvāt</div>
+            <div class="transl"><strong>Translation:</strong> The modifications of the mind are always known to their master, Puruṣa, because of Puruṣa's unchangeable nature.</div>
+
+            <div class="s-commentary"><strong>Yoga Sudhākara — the unchangeable witness:</strong> This sūtra is Sadasiva Brahmendra's proof-text for the witness-consciousness teaching. Puruṣa knows all modifications of the mind because it is <em>apariṇāmī</em> — unchanging. Only the unchanging can be the stable ground of knowledge. The changing mind cannot know itself — it requires the unchanging witness. The Swami: this is precisely the Advaitic teaching of the <em>sākṣin</em> (witness). Sadasiva Brahmendra reads Patañjali's Puruṣa as functionally identical to Śaṅkara's Sākṣin-Ātman.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-hdr" onclick="toggleClass(this)">
+            <div class="class-num">03</div>
+            <div class="class-name">Dharmamegha Samādhi — The Cloud of Virtue</div>
+            <div class="class-sutras">YS 4.25–4.32</div>
+            <div class="class-arr">›</div>
+          </div>
+          <div class="class-body">
+            <div class="v-label">Sūtra 4.29 — Dharmamegha Samādhi</div>
+            <div class="v-sanskrit">प्रसंख्यानेऽप्यकुसीदस्य सर्वथा विवेकख्यातेर्धर्ममेघः समाधिः</div>
+            <div class="v-translit">prasaṃkhyāne'py akusīdasya sarvathā viveka-khyāter dharma-meghaḥ samādhiḥ</div>
+            <div class="transl"><strong>Translation:</strong> For one who has no interest even in the highest discriminative knowledge, dharmamegha (cloud of virtue/dharma) samādhi arises from uninterrupted viveka-khyāti.</div>
+
+            <div class="s-commentary"><strong>Yoga Sudhākara — the penultimate state:</strong> Sadasiva Brahmendra: dharmamegha samādhi is the state just before Kaivalya. "Cloud of dharma" — virtue rains down spontaneously, the fruits of all prior practice pour out, and the kleśas and karmas are destroyed at their root. The Swami: this is the state Sadasiva Brahmendra inhabited near the end of his earthly life — from which he would fall into extended samādhi on the Kāverī's banks, his body found apparently lifeless, reviving later. Not performance, not attainment — simply the natural overflow of a consciousness that had dissolved its last obstruction.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-hdr" onclick="toggleClass(this)">
+            <div class="class-num">04</div>
+            <div class="class-name">Kaivalya — Absolute Freedom</div>
+            <div class="class-sutras">YS 4.33–4.34</div>
+            <div class="class-arr">›</div>
+          </div>
+          <div class="class-body">
+            <div class="info-box"><strong>Class focus:</strong> The final two sūtras of the Yoga Sutras — and Sadasiva Brahmendra's climactic commentary reading Kaivalya as non-different from Brahman-realization. This is the distinctive signature of the Yoga Sudhākara.</div>
+
+            <div class="v-label">Sūtra 4.33 — Krama (sequence) ends</div>
+            <div class="v-sanskrit">क्षणप्रतियोगी परिणामापरान्तनिर्ग्राह्यः क्रमः</div>
+            <div class="v-translit">kṣaṇa-pratiyogī pariṇāma-aparānta-nirgrāhyaḥ kramaḥ</div>
+            <div class="transl"><strong>Translation:</strong> Sequence is the succession of moments, recognized at the end of a transformation.</div>
+
+            <div class="s-commentary"><strong>Yoga Sudhākara:</strong> Sadasiva Brahmendra: in Kaivalya, sequence (krama) ceases. The yogī lives in the eternal now — the sukṣmaṃ of pure consciousness where past, present, and future are equally known without succession. This is the technical basis for Sadasiva Brahmendra's known bilocation — from outside krama, presence is not limited to one body in one place.</div>
+
+            <div class="v-label">Sūtra 4.34 — Kaivalya</div>
+            <div class="v-sanskrit">पुरुषार्थशून्यानां गुणानां प्रतिप्रसवः कैवल्यं स्वरूपप्रतिष्ठा वा चितिशक्तिरिति</div>
+            <div class="v-translit">puruṣa-artha-śūnyānāṃ guṇānāṃ pratiprasavaḥ kaivalyaṃ svarūpa-pratiṣṭhā vā citi-śaktir iti</div>
+            <div class="wbw-label">Word by word</div>
+            <table class="wbw"><thead><tr><th>Sanskrit</th><th>IAST</th><th>Meaning</th></tr></thead><tbody>
+              <tr><td>पुरुषार्थशून्यानाम्</td><td>puruṣa-artha-śūnyānām</td><td>empty of purpose for Puruṣa; guṇas having no more work to do</td></tr>
+              <tr><td>गुणानाम्</td><td>guṇānām</td><td>of the guṇas (sattva, rajas, tamas)</td></tr>
+              <tr><td>प्रतिप्रसवः</td><td>pratiprasavaḥ</td><td>return to origin; involution; counter-movement back to the source</td></tr>
+              <tr><td>कैवल्यम्</td><td>kaivalyam</td><td>aloneness; absolute freedom; liberation (kevala = alone)</td></tr>
+              <tr><td>स्वरूपप्रतिष्ठा</td><td>svarūpa-pratiṣṭhā</td><td>establishment in one's own nature; abiding as the Self</td></tr>
+              <tr><td>चितिशक्तिः</td><td>citi-śaktiḥ</td><td>the power of consciousness; pure awareness as the final ground</td></tr>
+            </tbody></table>
+            <div class="transl"><strong>Translation:</strong> Kaivalya is the return of the guṇas to their origin when they are empty of purpose for Puruṣa — or the establishment of citi-śakti (pure consciousness-power) in its own nature.</div>
+
+            <div class="s-commentary"><strong>Yoga Sudhākara — the final commentary:</strong> Sadasiva Brahmendra's decisive Advaitic reading: the phrase "svarūpa-pratiṣṭhā vā citi-śaktiḥ" — "or the establishment of the power of consciousness in its own nature" — is not an alternative definition but the deeper definition. Kaivalya is not the isolation of Puruṣa from Prakṛti (as classical Sāṃkhya-Yoga holds) but the recognition of citi-śakti as the only reality. Prakṛti was never separate — it was always an appearance within consciousness. When this is directly known, guṇas do not "return" anywhere — they are seen as they always were: movements within the ocean of pure awareness. The Swami: this is the complete equation — Kaivalya = Brahman-realization = nirbīja samādhi = viveka-khyāti fully matured. All four chapters end at the same place, approached from different angles.</div>
+
+            <div class="w-note">"Kaivalya is not an achievement. It is the recognition that the one who was seeking liberation was already the only reality. The guṇas cease their activity not because they are destroyed, but because the one for whose sake they arose is recognized as having never been bound."<br>— Yoga Sudhākara, final commentary, as rendered by Swami Paramahamsananda Sarasvatī</div>
+
+            <div class="mahasutra-hero" style="margin-top:16px;">
+              <div class="ms-label">Course closing mahāsūtra</div>
+              <div class="ms-sanskrit">योगश्चित्तवृत्तिनिरोधः — तदा द्रष्टुः स्वरूपेऽवस्थानम्</div>
+              <div class="ms-english">Yoga is the cessation of the modifications of the mind — then the Seer abides in its own nature. This is the beginning and the end. The first sūtra contains the last. The last illuminates the first. The entire teaching is a circle — enter anywhere, arrive at the same point.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ REFERENCE ═══════════════════════════════════ -->
+    <div class="screen" id="screen-reference">
+      <div class="wit-wrap">
+        <div class="screen-header">
+          <h2>Sūtra Index</h2>
+          <p>पातञ्जलयोगसूत्राणि · All 196 sūtras · Tap any row to expand</p>
+        </div>
+
+        <div class="wit-tabs" id="ref-tabs">
+          <button class="wit-tab active" onclick="switchRefTab(1,this)">I · Samādhi</button>
+          <button class="wit-tab" onclick="switchRefTab(2,this)">II · Sādhana</button>
+          <button class="wit-tab" onclick="switchRefTab(3,this)">III · Vibhūti</button>
+          <button class="wit-tab" onclick="switchRefTab(4,this)">IV · Kaivalya</button>
+        </div>
+
+        <div id="ref-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ MORE ═════════════════════════════════════════ -->
+    <div class="screen" id="screen-more">
+      <div class="more-wrap">
+        <div class="section-label" style="margin-bottom:16px;">All sections</div>
+        <div class="more-card" onclick="navigate('overview')"><div class="more-card-icon">📜</div><div><div class="more-card-name">Course Overview</div><div class="more-card-desc">Teacher · Lineage · Structure · Yoga Sudhākara</div></div><div class="more-card-tag tag-active">Intro</div></div>
+        <div class="more-card" onclick="navigate('ch1')"><div class="more-card-icon">🧘</div><div><div class="more-card-name">Samādhi Pāda</div><div class="more-card-desc">Ch.I · 51 Sūtras</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('ch2')"><div class="more-card-icon">🔥</div><div><div class="more-card-name">Sādhana Pāda</div><div class="more-card-desc">Ch.II · 55 Sūtras · Practice methods</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('ch3')"><div class="more-card-icon">⚡</div><div><div class="more-card-name">Vibhūti Pāda</div><div class="more-card-desc">Ch.III · 56 Sūtras · Saṃyama and siddhis</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('ch4')"><div class="more-card-icon">∞</div><div><div class="more-card-name">Kaivalya Pāda</div><div class="more-card-desc">Ch.IV · 34 Sūtras · Liberation</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div class="more-card" onclick="navigate('reference')"><div class="more-card-icon">🔍</div><div><div class="more-card-name">Sūtra Index</div><div class="more-card-desc">Key sūtras · All 4 chapters · Quick reference</div></div><div class="more-card-tag tag-active">Active</div></div>
+        <div style="margin-top:28px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;">
+          <div class="section-label" style="margin-bottom:8px;">Install as iPhone app</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;">In Safari: tap <strong style="color:var(--teal)">Share</strong> → <strong style="color:var(--teal)">Add to Home Screen</strong>. Yoga Sudhākara launches full-screen, no browser chrome.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end #content -->
+
+  <!-- ── BOTTOM NAV ──────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" id="nav-overview" onclick="navigate('overview')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+      <span class="nav-label">Overview</span>
+    </button>
+    <button class="nav-btn" id="nav-reference" onclick="navigate('reference')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M8 4v16M12 8h4M12 12h4M12 16h4"/></svg></div>
+      <span class="nav-label">Index</span>
+    </button>
+    <button class="nav-btn" id="nav-more" onclick="navigate('more')">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div>
+      <span class="nav-label">More</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ── TIME & GREETING ─────────────────────────────── */
+function initClock(){
+  var now=new Date(),h=now.getHours(),m=now.getMinutes();
+  var pad=function(n){return n<10?'0'+n:n};
+  document.getElementById('hdr-time').textContent=pad(h)+':'+pad(m);
+  var period;
+  if(h>=4&&h<12)period='Brahma Muhūrta';
+  else if(h>=12&&h<17)period='Madhyāhna';
+  else if(h>=17&&h<21)period='Sandhyā';
+  else period='Rātri';
+  document.getElementById('greeting-period').textContent=period;
+}
+initClock(); setInterval(initClock,60000);
+
+/* ── NAVIGATION ─────────────────────────────── */
+function navigate(screen){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var sc=document.getElementById('screen-'+screen);
+  if(sc){
+    sc.classList.add('active');
+    /* always restore first ch-section + ch-tab on chapter screens */
+    var sections=sc.querySelectorAll('.ch-section');
+    if(sections.length){
+      sections.forEach(function(s){s.classList.remove('active');});
+      sections[0].classList.add('active');
+      var allTabs=sc.querySelectorAll('.ch-tab');
+      allTabs.forEach(function(t){t.classList.remove('active');});
+      if(allTabs.length)allTabs[0].classList.add('active');
+    }
+    /* restore first wit-section on reference screen */
+    var wits=sc.querySelectorAll('.wit-section');
+    if(wits.length){
+      var witActive=false;
+      wits.forEach(function(s){if(s.classList.contains('active'))witActive=true;});
+      if(!witActive){
+        wits[0].classList.add('active');
+        var wtab=sc.querySelector('.wit-tab');
+        if(wtab)wtab.classList.add('active');
+      }
+    }
+  }
+  var nb=document.getElementById('nav-'+screen);
+  if(nb)nb.classList.add('active');
+  if(screen==='reference'){ renderRefList(refCurrentChapter); }
+  document.getElementById('content').scrollTop=0;
+}
+
+/* ── EXPANDABLE CARDS ────────────────────────────── */
+function toggleCard(hdr){
+  var body=hdr.nextElementSibling;
+  var open=hdr.classList.contains('open');
+  hdr.classList.toggle('open',!open);
+  body.classList.toggle('open',!open);
+}
+function toggleSutra(hdr){
+  var body=hdr.nextElementSibling;
+  var open=hdr.classList.contains('open');
+  hdr.classList.toggle('open',!open);
+  body.classList.toggle('open',!open);
+}
+function toggleClass(hdr){
+  var body=hdr.nextElementSibling;
+  var open=hdr.classList.contains('open');
+  hdr.classList.toggle('open',!open);
+  body.classList.toggle('open',!open);
+}
+
+/* ── TAB SWITCHING ───────────────────────────────── */
+function switchWitTab(id,btn){
+  var scr=document.getElementById('screen-reference');
+  scr.querySelectorAll('.wit-section').forEach(function(s){s.classList.remove('active');});
+  scr.querySelectorAll('.wit-tab').forEach(function(t){t.classList.remove('active');});
+  var ws=document.getElementById(id);if(ws)ws.classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+}
+
+function switchChTab(chapter, unitId, btn){
+  var scr=document.getElementById('screen-'+chapter);
+  if(!scr)return;
+  scr.querySelectorAll('.ch-section').forEach(function(s){s.classList.remove('active');});
+  var tabs=document.getElementById(chapter+'-tabs');
+  if(tabs)tabs.querySelectorAll('.ch-tab').forEach(function(t){t.classList.remove('active');});
+  var sec=document.getElementById(chapter+'-'+unitId);
+  if(sec)sec.classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+}
+
+/* ── SUTRA INDEX DATA ────────────────────────────────── */
+var SUTRAS = {
+1: [
+  ["1.1","अथ योगानुशासनम्","atha yogānuśāsanam","Now begins the authoritative instruction on Yoga."],
+  ["1.2","योगश्चित्तवृत्तिनिरोधः","yogaś citta-vṛtti-nirodhaḥ","Yoga is the cessation of the modifications of the mind-field."],
+  ["1.3","तदा द्रष्टुः स्वरूपेऽवस्थानम्","tadā draṣṭuḥ svarūpe'vasthānam","Then the Seer abides in its own nature."],
+  ["1.4","वृत्तिसारूप्यमितरत्र","vṛtti-sārūpyam itaratra","Otherwise, the Seer appears to take the form of the modifications."],
+  ["1.5","वृत्तयः पञ्चतय्यः क्लिष्टाक्लिष्टाः","vṛttayaḥ pañcatayyaḥ kliṣṭākliṣṭāḥ","The modifications are fivefold — painful and non-painful."],
+  ["1.6","प्रमाणविपर्ययविकल्पनिद्रास्मृतयः","pramāṇa-viparyaya-vikalpa-nidrā-smṛtayaḥ","Valid cognition, error, imagination, sleep, and memory are the five types."],
+  ["1.7","प्रत्यक्षानुमानागमाः प्रमाणानि","pratyakṣa-anumāna-āgamāḥ pramāṇāni","Direct perception, inference, and testimony are the three valid means of knowledge."],
+  ["1.8","विपर्ययो मिथ्याज्ञानमतद्रूपप्रतिष्ठम्","viparyayo mithyā-jñānam atadrūpa-pratiṣṭham","Error is false knowledge based on a form that does not reflect the true nature of the object."],
+  ["1.9","शब्दज्ञानानुपाती वस्तुशून्यो विकल्पः","śabda-jñāna-anupātī vastu-śūnyo vikalpaḥ","Imagination follows verbal knowledge but is devoid of any actual object."],
+  ["1.10","अभावप्रत्ययालम्बना वृत्तिर्निद्रा","abhāva-pratyaya-ālambanā vṛttir nidrā","Sleep is a modification resting upon the cognition of absence."],
+  ["1.11","अनुभूतविषयासम्प्रमोषः स्मृतिः","anubhūta-viṣaya-asampramoṣaḥ smṛtiḥ","Memory is the non-loss of experienced objects."],
+  ["1.12","अभ्यासवैराग्याभ्यां तन्निरोधः","abhyāsa-vairāgyābhyāṃ tan-nirodhaḥ","The cessation of modifications is achieved through practice and dispassion."],
+  ["1.13","तत्र स्थितौ यत्नोऽभ्यासः","tatra sthitau yatno'bhyāsaḥ","Practice is the effort toward steadiness of mind."],
+  ["1.14","स तु दीर्घकालनैरन्तर्यसत्कारादरासेवितो दृढभूमिः","sa tu dīrgha-kāla-nairantarya-satkāra-ādara-sevito dṛḍha-bhūmiḥ","Practice becomes firmly established when pursued over a long time, without interruption, and with reverence."],
+  ["1.15","दृष्टानुश्रविकविषयवितृष्णस्य वशीकारसंज्ञा वैराग्यम्","dṛṣṭānuśravika-viṣaya-vitṛṣṇasya vaśīkāra-saṃjñā vairāgyam","Dispassion is the consciousness of mastery of one who has no craving for seen or revealed objects."],
+  ["1.16","तत्परं पुरुषख्यातेर्गुणवैतृष्ण्यम्","tat-paraṃ puruṣa-khyāter guṇa-vaitṛṣṇyam","The higher dispassion comes from the discernment of Puruṣa — freedom from craving even for the guṇas."],
+  ["1.17","वितर्कविचारानन्दास्मितारूपानुगमात्सम्प्रज्ञातः","vitarka-vicāra-ānanda-asmitā-rūpa-anugamāt samprajñātaḥ","Samprajñāta samādhi is accompanied by examination, reflection, joy, or I-am-ness."],
+  ["1.18","विरामप्रत्ययाभ्यासपूर्वः संस्कारशेषोऽन्यः","virāma-pratyaya-abhyāsa-pūrvaḥ saṃskāra-śeṣo'nyaḥ","The other samādhi (asamprajñāta) is preceded by cessation-practice; only latent impressions remain."],
+  ["1.19","भवप्रत्ययो विदेहप्रकृतिलयानाम्","bhava-pratyayo videha-prakṛtilayānām","For the discarnate and those merged in Prakṛti, asamprajñāta arises from the experience of existence."],
+  ["1.20","श्रद्धावीर्यस्मृतिसमाधिप्रज्ञापूर्वक इतरेषाम्","śraddhā-vīrya-smṛti-samādhi-prajñā-pūrvaka itareṣām","For others it is preceded by faith, energy, memory, samādhi, and wisdom."],
+  ["1.21","तीव्रसंवेगानामासन्नः","tīvra-saṃvegānām āsannaḥ","For those with intense ardour, it (samādhi) is near."],
+  ["1.22","मृदुमध्याधिमात्रत्वात्ततोऽपि विशेषः","mṛdu-madhya-adhimātratvāt tato'pi viśeṣaḥ","There is further distinction based on mild, medium, or intense effort."],
+  ["1.23","ईश्वरप्रणिधानाद्वा","īśvara-praṇidhānād vā","Or, samādhi is attained by surrender to Īśvara."],
+  ["1.24","क्लेशकर्मविपाकाशयैरपरामृष्टः पुरुषविशेष ईश्वरः","kleśa-karma-vipāka-āśayair aparāmṛṣṭaḥ puruṣa-viśeṣa īśvaraḥ","Īśvara is a special Puruṣa untouched by afflictions, actions, their fruits, and latent impressions."],
+  ["1.25","तत्र निरतिशयं सर्वज्ञबीजम्","tatra niratiśayaṃ sarvajña-bījam","In Īśvara is the unsurpassed seed of all-knowing."],
+  ["1.26","स एष पूर्वेषामपि गुरुः कालेनानवच्छेदात्","sa eṣa pūrveṣām api guruḥ kālena-anavacchedāt","He is the teacher of even the ancient teachers, not being limited by time."],
+  ["1.27","तस्य वाचकः प्रणवः","tasya vācakaḥ praṇavaḥ","His expression is the Praṇava (Oṃ)."],
+  ["1.28","तज्जपस्तदर्थभावनम्","taj-japas tad-artha-bhāvanam","Its repetition and contemplation of its meaning are prescribed."],
+  ["1.29","ततः प्रत्यक्चेतनाधिगमोऽप्यन्तरायाभावश्च","tataḥ pratyak-cetanā-adhigamo'py antarāya-abhāvaś ca","From this, inward-turned consciousness arises and obstacles disappear."],
+  ["1.30","व्याधिस्त्यानसंशयप्रमादालस्याविरतिभ्रान्तिदर्शनालब्धभूमिकत्वानवस्थितत्वानि चित्तविक्षेपास्तेऽन्तरायाः","vyādhi-styāna-saṃśaya-pramāda-ālasya-avirati-bhrānti-darśana-alabdha-bhūmikatva-anavasthitatvāni citta-vikṣepās te'ntarāyāḥ","Disease, dullness, doubt, negligence, laziness, non-abstinence, false perception, non-attainment, instability — these are the nine obstacles."],
+  ["1.31","दुःखदौर्मनस्याङ्गमेजयत्वश्वासप्रश्वासा विक्षेपसहभुवः","duḥkha-daurmanasya-aṅgamejayatva-śvāsa-praśvāsā vikṣepa-sahabhuvaḥ","Pain, depression, trembling, irregular breathing accompany the distractions."],
+  ["1.32","तत्प्रतिषेधार्थमेकतत्त्वाभ्यासः","tat-pratiṣedhārtham eka-tattva-abhyāsaḥ","For their prevention, the practice of one principle."],
+  ["1.33","मैत्रीकरुणामुदितोपेक्षाणां सुखदुःखपुण्यापुण्यविषयाणां भावनातश्चित्तप्रसादनम्","maitrī-karuṇā-muditā-upekṣāṇāṃ sukha-duḥkha-puṇya-apuṇya-viṣayāṇāṃ bhāvanātaś citta-prasādanam","Friendliness, compassion, joy, and equanimity toward happy, suffering, virtuous, and non-virtuous beings clears the mind."],
+  ["1.34","प्रच्छर्दनविधारणाभ्यां वा प्राणस्य","pracchardana-vidhāraṇābhyāṃ vā prāṇasya","Or by exhalation and retention of the breath."],
+  ["1.35","विषयवती वा प्रवृत्तिरुत्पन्ना मनसः स्थितिनिबन्धिनी","viṣayavatī vā pravṛttir utpannā manasaḥ sthiti-nibandhinī","Or activity relating to sense objects, having arisen, binds the mind to steadiness."],
+  ["1.36","विशोका वा ज्योतिष्मती","viśokā vā jyotiṣmatī","Or the luminous, sorrowless inner light."],
+  ["1.37","वीतरागविषयं वा चित्तम्","vīta-rāga-viṣayaṃ vā cittam","Or the mind taking as its object one free from craving."],
+  ["1.38","स्वप्ननिद्राज्ञानालम्बनं वा","svapna-nidrā-jñāna-ālamabanaṃ vā","Or supported by knowledge from dream and sleep."],
+  ["1.39","यथाभिमतध्यानाद्वा","yathābhimata-dhyānād vā","Or by meditation on whatever is agreeable."],
+  ["1.40","परमाणुपरममहत्त्वान्तोऽस्य वशीकारः","paramāṇu-parama-mahattva-anto'sya vaśīkāraḥ","Mastery extends from the smallest atom to the greatest magnitude."],
+  ["1.41","क्षीणवृत्तेरभिजातस्येव मणेर्ग्रहीतृग्रहणग्राह्येषु तत्स्थतदञ्जनता समापत्तिः","kṣīṇa-vṛtter abhijātasyeva maṇer grahītṛ-grahaṇa-grāhyeṣu tat-stha-tad-añjanatā samāpattiḥ","When modifications are diminished, the mind becomes like a crystal — taking the colour of whatever is near (the knower, knowing, known). This is samāpatti."],
+  ["1.42","तत्र शब्दार्थज्ञानविकल्पैः संकीर्णा सवितर्का समापत्तिः","tatra śabda-artha-jñāna-vikalpaiḥ saṃkīrṇā savitarkā samāpattiḥ","Savitarka samāpatti is mixed with verbal knowledge, meaning, and imagination."],
+  ["1.43","स्मृतिपरिशुद्धौ स्वरूपशून्येवार्थमात्रनिर्भासा निर्वितर्का","smṛti-pariśuddhau svarūpa-śūnyevārtha-mātra-nirbhāsā nirvitarkā","When memory is purified and the mind appears empty of its own form, only the object shines — nirvitarka."],
+  ["1.44","एतयैव सविचारा निर्विचारा च सूक्ष्मविषया व्याख्याता","etayaiva savicārā nirvicārā ca sūkṣma-viṣayā vyākhyātā","By this same account, savicāra and nirvicāra, which have subtle objects, are explained."],
+  ["1.45","सूक्ष्मविषयत्वं चालिङ्गपर्यवसानम्","sūkṣma-viṣayatvaṃ cāliṅga-paryavasānam","The subtle object extends up to the unmanifest (aliṅga — Prakṛti without characteristics)."],
+  ["1.46","ता एव सबीजः समाधिः","tā eva sabījaḥ samādhiḥ","These (samāpattis) alone constitute sabīja (with-seed) samādhi."],
+  ["1.47","निर्विचारवैशारद्येऽध्यात्मप्रसादः","nirvicāra-vaiśāradye'dhyātma-prasādaḥ","In the clarity of nirvicāra, the self becomes luminous."],
+  ["1.48","ऋतम्भरा तत्र प्रज्ञा","ṛtambharā tatra prajñā","There, wisdom is ṛtambharā (truth-bearing)."],
+  ["1.49","श्रुतानुमानप्रज्ञाभ्यामन्यविषया विशेषार्थत्वात्","śruta-anumāna-prajñābhyām anya-viṣayā viśeṣārthatvāt","This wisdom has a different object from that of testimony and inference, because its object is specific and direct."],
+  ["1.50","तज्जः संस्कारोऽन्यसंस्कारप्रतिबन्धी","taj-jaḥ saṃskāro'nya-saṃskāra-pratibandhī","The impression born from it obstructs all other impressions."],
+  ["1.51","तस्यापि निरोधे सर्वनिरोधान्निर्बीजः समाधिः","tasyāpi nirodhe sarva-nirodhān nirbījaḥ samādhiḥ","When even this impression is restrained, seedless samādhi arises from complete cessation of all."]
+],
+2: [
+  ["2.1","तपःस्वाध्यायेश्वरप्रणिधानानि क्रियायोगः","tapaḥ-svādhyāya-īśvara-praṇidhānāni kriyā-yogaḥ","Austerity, self-study, and surrender to Īśvara constitute Kriyā Yoga."],
+  ["2.2","समाधिभावनार्थः क्लेशतनूकरणार्थश्च","samādhi-bhāvanā-arthaḥ kleśa-tanūkaraṇa-arthaś ca","It is for the purpose of cultivating samādhi and attenuating the kleśas."],
+  ["2.3","अविद्यास्मितारागद्वेषाभिनिवेशाः क्लेशाः","avidyā-asmitā-rāga-dveṣa-abhiniveśāḥ kleśāḥ","Ignorance, I-am-ness, desire, aversion, and clinging to life are the five afflictions."],
+  ["2.4","अविद्या क्षेत्रमुत्तरेषां प्रसुप्ततनुविच्छिन्नोदाराणाम्","avidyā kṣetram uttareṣāṃ prasupta-tanu-vicchinna-udārāṇām","Ignorance is the field of the others — dormant, attenuated, interrupted, or fully active."],
+  ["2.5","अनित्याशुचिदुःखानात्मसु नित्यशुचिसुखात्मख्यातिरविद्या","anityā-aśuci-duḥkha-anātmasu nitya-śuci-sukha-ātma-khyātir avidyā","Ignorance is taking the impermanent, impure, painful, and non-Self as permanent, pure, pleasant, and Self."],
+  ["2.6","दृग्दर्शनशक्त्योरेकात्मतेवास्मिता","dṛg-darśana-śaktyor ekātmateva'smitā","I-am-ness is the apparent identification of the power of the Seer with the power of seeing."],
+  ["2.7","सुखानुशयी रागः","sukha-anuśayī rāgaḥ","Desire is that which follows upon pleasure."],
+  ["2.8","दुःखानुशयी द्वेषः","duḥkha-anuśayī dveṣaḥ","Aversion is that which follows upon pain."],
+  ["2.9","स्वरसवाही विदुषोऽपि तथारूढोऽभिनिवेशः","svarasavāhī viduṣo'pi tathā rūḍho'bhiniveśaḥ","Clinging to life flows by its own force; it is established even in the learned."],
+  ["2.10","ते प्रतिप्रसवहेयाः सूक्ष्माः","te pratiprasava-heyāḥ sūkṣmāḥ","These (kleśas), when subtle, are to be overcome by involution."],
+  ["2.11","ध्यानहेयास्तद्वृत्तयः","dhyāna-heyās tad-vṛttayaḥ","Their modifications are to be overcome by meditation."],
+  ["2.12","क्लेशमूलः कर्माशयो दृष्टादृष्टजन्मवेदनीयः","kleśa-mūlaḥ karmāśayo dṛṣṭa-adṛṣṭa-janma-vedanīyaḥ","The karmic deposit rooted in kleśas is felt in present or future lives."],
+  ["2.13","सति मूले तद्विपाको जात्यायुर्भोगाः","sati mūle tad-vipāko jāty-āyur-bhogāḥ","As long as the root exists, its fruition is birth, lifespan, and experience."],
+  ["2.14","ते ह्लादपरितापफलाः पुण्यापुण्यहेतुत्वात्","te hlāda-paritāpa-phalāḥ puṇya-apuṇya-hetutvāt","They bear fruits of pleasure and pain, owing to virtuous and non-virtuous causes."],
+  ["2.15","परिणामतापसंस्कारदुःखैर्गुणवृत्तिविरोधाच्च दुःखमेव सर्वं विवेकिनः","pariṇāma-tāpa-saṃskāra-duḥkhair guṇa-vṛtti-virodhāc ca duḥkham eva sarvaṃ vivekinaḥ","For the discriminating, everything is indeed suffering — due to change, anxiety, latent impressions, and conflict of the guṇas."],
+  ["2.16","हेयं दुःखमनागतम्","heyaṃ duḥkham anāgatam","Future suffering is to be avoided."],
+  ["2.17","द्रष्टृदृश्ययोः संयोगो हेयहेतुः","draṣṭṛ-dṛśyayoḥ saṃyogo heya-hetuḥ","The cause of future suffering is the conjunction of the Seer and the seen."],
+  ["2.18","प्रकाशक्रियास्थितिशीलं भूतेन्द्रियात्मकं भोगापवर्गार्थं दृश्यम्","prakāśa-kriyā-sthiti-śīlaṃ bhūta-indriya-ātmakaṃ bhoga-apavarga-arthaṃ dṛśyam","The seen is of the nature of luminosity, activity, and inertia; it consists of the elements and sense-organs; its purpose is experience and liberation."],
+  ["2.19","विशेषाविशेषलिङ्गमात्रालिङ्गानि गुणपर्वाणि","viśeṣa-aviśeṣa-liṅgamātra-aliṅgāni guṇa-parvāṇi","The stages of the guṇas are: specific, non-specific, merely indicated, and unindicated."],
+  ["2.20","द्रष्टा दृशिमात्रः शुद्धोऽपि प्रत्ययानुपश्यः","draṣṭā dṛśi-mātraḥ śuddho'pi pratyaya-anupaśyaḥ","The Seer is pure seeing itself; though pure, it appears to look through the cognitions of the mind."],
+  ["2.21","तदर्थ एव दृश्यस्यात्मा","tad-artha eva dṛśyasya ātmā","The nature of the seen exists solely for the sake of the Seer."],
+  ["2.22","कृतार्थं प्रति नष्टमप्यनष्टं तदन्यसाधारणत्वात्","kṛtārthaṃ prati naṣṭam apy anaṣṭaṃ tad-anya-sādhāraṇatvāt","Although the seen ceases for the one who has achieved its purpose, it does not cease for others, being common to them."],
+  ["2.23","स्वस्वामिशक्त्योः स्वरूपोपलब्धिहेतुः संयोगः","sva-svāmi-śaktyoḥ svarūpa-upalabdhi-hetuḥ saṃyogaḥ","The conjunction (of Seer and seen) is the cause of the recognition of the own-nature of both powers."],
+  ["2.24","तस्य हेतुरविद्या","tasya hetur avidyā","Its cause is ignorance."],
+  ["2.25","तदभावात्संयोगाभावो हानं तद्दृशेः कैवल्यम्","tad-abhāvāt saṃyoga-abhāvo hānaṃ tad-dṛśeḥ kaivalyam","With the absence of ignorance, conjunction ceases — this removal is the liberation of the Seer."],
+  ["2.26","विवेकख्यातिरविप्लवा हानोपायः","viveka-khyātir aviplavā hāna-upāyaḥ","Uninterrupted discriminative awareness is the means of liberation."],
+  ["2.27","तस्य सप्तधा प्रान्तभूमिः प्रज्ञा","tasya saptadhā prānta-bhūmiḥ prajñā","The wisdom of the one at the final stage is sevenfold."],
+  ["2.28","योगाङ्गानुष्ठानादशुद्धिक्षये ज्ञानदीप्तिराविवेकख्यातेः","yoga-aṅga-anuṣṭhānād aśuddhi-kṣaye jñāna-dīptir ā viveka-khyāteḥ","By practising the limbs of yoga, as impurities are destroyed, knowledge blazes up to discriminative awareness."],
+  ["2.29","यमनियमासनप्राणायामप्रत्याहारधारणाध्यानसमाधयोऽष्टावङ्गानि","yama-niyama-āsana-prāṇāyāma-pratyāhāra-dhāraṇā-dhyāna-samādhayo'ṣṭāv aṅgāni","The eight limbs are: restraints, observances, posture, breath-control, sense-withdrawal, concentration, meditation, and absorption."],
+  ["2.30","अहिंसासत्यास्तेयब्रह्मचर्यापरिग्रहा यमाः","ahiṃsā-satya-asteya-brahmacarya-aparigrahā yamāḥ","Non-violence, truthfulness, non-stealing, celibacy, and non-possessiveness are the yamas."],
+  ["2.31","जातिदेशकालसमयानवच्छिन्नाः सार्वभौमा महाव्रतम्","jāti-deśa-kāla-samaya-anavacchinnaḥ sārvabhaumā mahāvratam","These, not limited by birth, place, time, or circumstance, are the universal great vows."],
+  ["2.32","शौचसन्तोषतपःस्वाध्यायेश्वरप्रणिधानानि नियमाः","śauca-santoṣa-tapaḥ-svādhyāya-īśvara-praṇidhānāni niyamāḥ","Purity, contentment, austerity, self-study, and surrender to Īśvara are the niyamas."],
+  ["2.33","वितर्कबाधने प्रतिपक्षभावनम्","vitarka-bādhane pratipakṣa-bhāvanam","When negative thoughts obstruct, cultivate the opposite."],
+  ["2.34","वितर्का हिंसादयः कृतकारितानुमोदिता लोभक्रोधमोहपूर्वका मृदुमध्याधिमात्रा दुःखाज्ञानानन्तफला इति प्रतिपक्षभावनम्","vitarkā hiṃsā-ādayaḥ kṛta-kārita-anumoditā lobha-krodha-moha-pūrvakā mṛdu-madhya-adhimātrā duḥkha-ajñāna-ananta-phalā iti pratipakṣa-bhāvanam","Negative thoughts such as violence — whether done, caused, or approved; arising from greed, anger, or delusion; mild, moderate, or intense — bear endless fruits of suffering and ignorance. Thus, cultivate the opposite."],
+  ["2.35","अहिंसाप्रतिष्ठायां तत्सन्निधौ वैरत्यागः","ahiṃsā-pratiṣṭhāyāṃ tat-sannidhau vaira-tyāgaḥ","When non-violence is established, all enmity is abandoned in its presence."],
+  ["2.36","सत्यप्रतिष्ठायां क्रियाफलाश्रयत्वम्","satya-pratiṣṭhāyāṃ kriyā-phala-āśrayatvam","When truthfulness is established, actions and their fruits rest upon it."],
+  ["2.37","अस्तेयप्रतिष्ठायां सर्वरत्नोपस्थानम्","asteya-pratiṣṭhāyāṃ sarva-ratna-upasthānam","When non-stealing is established, all jewels present themselves."],
+  ["2.38","ब्रह्मचर्यप्रतिष्ठायां वीर्यलाभः","brahmacarya-pratiṣṭhāyāṃ vīrya-lābhaḥ","When celibacy is established, vitality is gained."],
+  ["2.39","अपरिग्रहस्थैर्ये जन्मकथंतासम्बोधः","aparigraha-sthairye janma-kathaṃtā-sambodhaḥ","When non-possessiveness is firm, illumination arises on the how and why of birth."],
+  ["2.40","शौचात्स्वाङ्गजुगुप्सा परैरसंसर्गः","śaucāt svāṅga-jugupsā parair asaṃsargaḥ","From purity comes disenchantment with one's own body and non-contact with others."],
+  ["2.41","सत्त्वशुद्धिसौमनस्यैकाग्र्येन्द्रियजयात्मदर्शनयोग्यत्वानि च","sattva-śuddhi-saumanasya-ekāgrya-indriya-jaya-ātma-darśana-yogyatvāni ca","Also purity of sattva, cheerfulness, one-pointedness, mastery of the senses, and fitness for Self-realization."],
+  ["2.42","सन्तोषादनुत्तमसुखलाभः","santoṣād anuttama-sukha-lābhaḥ","From contentment, unsurpassed happiness is gained."],
+  ["2.43","कायेन्द्रियसिद्धिरशुद्धिक्षयात्तपसः","kāya-indriya-siddhir aśuddhi-kṣayāt tapasaḥ","From austerity, through destruction of impurity, perfection of body and sense-organs arises."],
+  ["2.44","स्वाध्यायादिष्टदेवतासम्प्रयोगः","svādhyāyād iṣṭa-devatā-saṃprayogaḥ","From self-study, union with one's chosen deity."],
+  ["2.45","समाधिसिद्धिरीश्वरप्रणिधानात्","samādhi-siddhir īśvara-praṇidhānāt","From surrender to Īśvara, the perfection of samādhi."],
+  ["2.46","स्थिरसुखमासनम्","sthira-sukham āsanam","Posture is steady and comfortable."],
+  ["2.47","प्रयत्नशैथिल्यानन्तसमापत्तिभ्याम्","prayatna-śaithilya-ananta-samāpattibhyām","By relaxation of effort and absorption in the infinite, posture is mastered."],
+  ["2.48","ततो द्वन्द्वानभिघातः","tato dvandva-anabhighātaḥ","From this, no affliction from the pairs of opposites."],
+  ["2.49","तस्मिन्सति श्वासप्रश्वासयोर्गतिविच्छेदः प्राणायामः","tasmin sati śvāsa-praśvāsayor gati-vicchedaḥ prāṇāyāmaḥ","Being in that (āsana), prāṇāyāma is the interruption of the movements of inhalation and exhalation."],
+  ["2.50","बाह्याभ्यन्तरस्तम्भवृत्तिर्देशकालसंख्याभिः परिदृष्टो दीर्घसूक्ष्मः","bāhya-ābhyantara-stambha-vṛttir deśa-kāla-saṃkhyābhiḥ paridṛṣṭo dīrgha-sūkṣmaḥ","The modifications are external, internal, or restrained; regulated by place, time, and number; it becomes long and subtle."],
+  ["2.51","बाह्याभ्यन्तरविषयाक्षेपी चतुर्थः","bāhya-ābhyantara-viṣaya-ākṣepī caturthaḥ","The fourth prāṇāyāma transcends the external and internal domains."],
+  ["2.52","ततः क्षीयते प्रकाशावरणम्","tataḥ kṣīyate prakāśa-āvaraṇam","From it, the covering of light is dissolved."],
+  ["2.53","धारणासु च योग्यता मनसः","dhāraṇāsu ca yogyatā manasaḥ","And the mind becomes fit for concentration."],
+  ["2.54","स्वविषयासम्प्रयोगे चित्तस्वरूपानुकार इवेन्द्रियाणां प्रत्याहारः","sva-viṣaya-asamprayoge citta-svarūpa-anukāra ivendriyāṇāṃ pratyāhāraḥ","Pratyāhāra is the withdrawal of the senses from their objects, imitating as it were the own-form of the mind."],
+  ["2.55","ततः परमा वश्यतेन्द्रियाणाम्","tataḥ paramā vaśyatā indriyāṇām","From this, supreme mastery over the senses."]
+],
+3: [
+  ["3.1","देशबन्धश्चित्तस्य धारणा","deśa-bandhaś cittasya dhāraṇā","Dhāraṇā is the binding of the mind to a place."],
+  ["3.2","तत्र प्रत्ययैकतानता ध्यानम्","tatra pratyaya-ekatānatā dhyānam","Dhyāna is the unbroken flow of cognition there."],
+  ["3.3","तदेवार्थमात्रनिर्भासं स्वरूपशून्यमिव समाधिः","tad eva artha-mātra-nirbhāsaṃ svarūpa-śūnyam iva samādhiḥ","Samādhi is when the object alone shines, as if empty of the mind's own form."],
+  ["3.4","त्रयमेकत्र संयमः","trayam ekatra saṃyamaḥ","The three together (on one object) is saṃyama."],
+  ["3.5","तज्जयात्प्रज्ञालोकः","taj-jayāt prajñā-ālokaḥ","By mastery of saṃyama, the light of wisdom."],
+  ["3.6","तस्य भूमिषु विनियोगः","tasya bhūmiṣu viniyogaḥ","Its application is in stages."],
+  ["3.7","त्रयमन्तरङ्गं पूर्वेभ्यः","trayam antaraṅgaṃ pūrvebhyaḥ","The three are more internal than the preceding limbs."],
+  ["3.8","तदपि बहिरङ्गं निर्बीजस्य","tad api bahiraṅgaṃ nirbījasya","Even these are external relative to seedless (samādhi)."],
+  ["3.9","व्युत्थाननिरोधसंस्कारयोरभिभवप्रादुर्भावौ निरोधक्षणचित्तान्वयो निरोधपरिणामः","vyutthāna-nirodha-saṃskārayor abhibhava-prādurbhāvau nirodha-kṣaṇa-citta-anvayo nirodha-pariṇāmaḥ","The transformation of restraint occurs when the emerging and restraining impressions meet, and the mind is linked to the moment of restraint."],
+  ["3.10","तस्य प्रशान्तवाहिता संस्कारात्","tasya praśānta-vāhitā saṃskārāt","Its peaceful flow comes from the impression."],
+  ["3.11","सर्वार्थतैकाग्रतयोः क्षयोदयौ चित्तस्य समाधिपरिणामः","sarvārthatā-ekāgratayoḥ kṣaya-udayau cittasya samādhi-pariṇāmaḥ","The samādhi transformation of the mind is the rise and fall of distractedness and one-pointedness."],
+  ["3.12","ततः पुनः शान्तोदितौ तुल्यप्रत्ययौ चित्तस्यैकाग्रतापरिणामः","tataḥ punaḥ śānta-uditau tulya-pratyayau cittasya ekāgratā-pariṇāmaḥ","The one-pointedness transformation occurs when the subsided and arisen cognitions are equal."],
+  ["3.13","एतेन भूतेन्द्रियेषु धर्मलक्षणावस्थापरिणामा व्याख्याताः","etena bhūta-indriyeṣu dharma-lakṣaṇa-avasthā-pariṇāmā vyākhyātāḥ","By this, the transformations of property, character, and condition in elements and sense-organs are explained."],
+  ["3.14","शान्तोदिताव्यपदेश्यधर्मानुपाती धर्मी","śānta-udita-avyapadeśya-dharma-anupātī dharmī","The substratum underlies the subsided, arisen, and unmanifest properties."],
+  ["3.15","क्रमान्यत्वं परिणामान्यत्वे हेतुः","krama-anyatvaṃ pariṇāma-anyatve hetuḥ","Difference in sequence is the cause of difference in transformation."],
+  ["3.16","परिणामत्रयसंयमादतीतानागतज्ञानम्","pariṇāma-traya-saṃyamād atīta-anāgata-jñānam","From saṃyama on the three transformations, knowledge of past and future."],
+  ["3.17","शब्दार्थप्रत्ययानामितरेतराध्यासात्संकरस्तत्प्रविभागसंयमात्सर्वभूतरुतज्ञानम्","śabda-artha-pratyayānām itaretara-adhyāsāt saṃkaras tat-pravibhāga-saṃyamāt sarva-bhūta-ruta-jñānam","Word, object, and cognition are intermingled by mutual superimposition; from saṃyama on their distinction, knowledge of the cries of all beings."],
+  ["3.18","संस्कारसाक्षात्करणात्पूर्वजातिज्ञानम्","saṃskāra-sākṣātkaraṇāt pūrva-jāti-jñānam","From direct cognition of saṃskāras, knowledge of previous births."],
+  ["3.19","प्रत्ययस्य परचित्तज्ञानम्","pratyayasya para-citta-jñānam","From saṃyama on cognition, knowledge of another's mind."],
+  ["3.20","न च तत्सालम्बनं तस्याविषयीभूतत्वात्","na ca tat-sālamabanaṃ tasya aviṣayī-bhūtatvāt","But not its support, because that is not its object."],
+  ["3.21","कायरूपसंयमात्तद्ग्राह्यशक्तिस्तम्भे चक्षुःप्रकाशासम्प्रयोगेऽन्तर्धानम्","kāya-rūpa-saṃyamāt tad-grāhya-śakti-stambhe cakṣuḥ-prakāśa-asamprayoge'ntardhānam","From saṃyama on bodily form, when the power of being seen is suspended, contact of light with the eye is severed — disappearance."],
+  ["3.22","सोपक्रमं निरुपक्रमं च कर्म तत्संयमादपरान्तज्ञानमरिष्टेभ्यो वा","sopakramaṃ nirupakramaṃ ca karma tat-saṃyamād aparānta-jñānam ariṣṭebhyo vā","Karma is active or dormant; from saṃyama on it, knowledge of death — or from omens."],
+  ["3.23","मैत्र्यादिषु बलानि","maitry-ādiṣu balāni","From saṃyama on friendliness and other virtues, the corresponding powers."],
+  ["3.24","बलेषु हस्तिबलादीनि","baleṣu hasti-bala-ādīni","From saṃyama on strengths, the strength of an elephant and so on."],
+  ["3.25","प्रवृत्त्यालोकन्यासात्सूक्ष्मव्यवहितविप्रकृष्टज्ञानम्","pravṛtty-āloka-nyāsāt sūkṣma-vyavahita-viprakṛṣṭa-jñānam","By projecting the light of higher activity, knowledge of the subtle, hidden, and distant."],
+  ["3.26","भुवनज्ञानं सूर्ये संयमात्","bhuvana-jñānaṃ sūrye saṃyamāt","From saṃyama on the sun, knowledge of the worlds."],
+  ["3.27","चन्द्रे ताराव्यूहज्ञानम्","candre tārā-vyūha-jñānam","From saṃyama on the moon, knowledge of the arrangement of stars."],
+  ["3.28","ध्रुवे तद्गतिज्ञानम्","dhruve tad-gati-jñānam","From saṃyama on the pole-star, knowledge of their movements."],
+  ["3.29","नाभिचक्रे कायव्यूहज्ञानम्","nābhi-cakre kāya-vyūha-jñānam","From saṃyama on the navel centre, knowledge of the body's constitution."],
+  ["3.30","कण्ठकूपे क्षुत्पिपासानिवृत्तिः","kaṇṭha-kūpe kṣut-pipāsā-nivṛttiḥ","From saṃyama on the pit of the throat, cessation of hunger and thirst."],
+  ["3.31","कूर्मनाड्यां स्थैर्यम्","kūrma-nāḍyāṃ sthairyam","From saṃyama on the tortoise-channel, steadiness."],
+  ["3.32","मूर्धज्योतिषि सिद्धदर्शनम्","mūrdha-jyotiṣi siddha-darśanam","From saṃyama on the light in the crown, vision of perfected beings."],
+  ["3.33","प्रातिभाद्वा सर्वम्","prātibhād vā sarvam","Or from intuition, all."],
+  ["3.34","हृदये चित्तसंवित्","hṛdaye citta-saṃvit","From saṃyama on the heart, knowledge of the mind."],
+  ["3.35","सत्त्वपुरुषयोरत्यन्तासंकीर्णयोः प्रत्ययाविशेषो भोगः परार्थत्वात्स्वार्थसंयमात्पुरुषज्ञानम्","sattva-puruṣayor atyanta-asaṃkīrṇayoḥ pratyaya-aviśeṣo bhogaḥ; para-arthatvāt sva-artha-saṃyamāt puruṣa-jñānam","Experience arises from non-discrimination of sattva and Puruṣa; from saṃyama on one's own purpose (distinct from the other's), knowledge of Puruṣa."],
+  ["3.36","ततः प्रातिभश्रावणवेद्यादर्शास्वादवार्ता जायन्ते","tataḥ prātibha-śrāvaṇa-vedyā-ādarśa-āsvāda-vārtā jāyante","From this arise intuitional hearing, touch, sight, taste, and smell."],
+  ["3.37","ते समाधावुपसर्गा व्युत्थाने सिद्धयः","te samādhāv upasargā vyutthāne siddhayaḥ","These are obstacles to samādhi; in the outward state they are powers."],
+  ["3.38","बन्धकारणशैथिल्यात्प्रचारसंवेदनाच्च चित्तस्य परशरीरावेशः","bandha-kāraṇa-śaithilyāt pracāra-saṃvedanāc ca cittasya para-śarīra-āveśaḥ","From loosening of the cause of bondage and knowledge of the passage, the mind enters another body."],
+  ["3.39","उदानजयाज्जलपङ्ककण्टकादिष्वसङ्ग उत्क्रान्तिश्च","udāna-jayāj jala-paṅka-kaṇṭaka-ādiṣv asaṅga utkrāntiś ca","From mastery of udāna, non-contact with water, mud, thorns, and rising up at death."],
+  ["3.40","समानजयाज्ज्वलनम्","samāna-jayāj jvalanam","From mastery of samāna, blazing luminosity."],
+  ["3.41","श्रोत्राकाशयोः सम्बन्धसंयमाद्दिव्यं श्रोत्रम्","śrotra-ākāśayoḥ sambandha-saṃyamād divyaṃ śrotram","From saṃyama on the relation of ear and ākāśa, divine hearing."],
+  ["3.42","कायाकाशयोः सम्बन्धसंयमाल्लघुतूलसमापत्तेश्चाकाशगमनम्","kāya-ākāśayoḥ sambandha-saṃyamāl laghu-tūla-samāpatteś cākāśa-gamanam","From saṃyama on the relation of body and ākāśa, and from absorption like cotton-fluff, passage through space."],
+  ["3.43","बहिरकल्पिता वृत्तिर्महाविदेहा ततः प्रकाशावरणक्षयः","bahir akalpitā vṛttir mahā-videhā tataḥ prakāśa-āvaraṇa-kṣayaḥ","The great disembodied state is the external, non-imagined modification; from this, the covering of light dissolves."],
+  ["3.44","स्थूलस्वरूपसूक्ष्मान्वयार्थवत्त्वसंयमाद्भूतजयः","sthūla-svarūpa-sūkṣma-anvaya-arthavattva-saṃyamād bhūta-jayaḥ","From saṃyama on gross form, own nature, subtle aspect, inherence, and purposiveness — mastery over the elements."],
+  ["3.45","ततोऽणिमादिप्रादुर्भावः कायसम्पत्तद्धर्मानभिघातश्च","tato'ṇimā-ādi-prādurbhāvaḥ kāya-sampat tad-dharma-anabhighātaś ca","From this arise the powers of miniaturisation etc., perfection of body, and freedom from obstruction by their properties."],
+  ["3.46","रूपलावण्यबलवज्रसंहननत्वानि कायसम्पत्","rūpa-lāvaṇya-bala-vajra-saṃhananatvāni kāya-sampat","Beauty, grace, strength, and diamond-like firmness are the perfections of the body."],
+  ["3.47","ग्रहणस्वरूपास्मितान्वयार्थवत्त्वसंयमादिन्द्रियजयः","grahaṇa-svarūpa-asmitā-anvaya-arthavattva-saṃyamād indriya-jayaḥ","From saṃyama on the power of cognition, own form, I-am-ness, inherence, and purposiveness — mastery over the sense-organs."],
+  ["3.48","ततो मनोजवित्वं विकरणभावः प्रधानजयश्च","tato mano-javitvaṃ vikaraṇa-bhāvaḥ pradhāna-jayaś ca","From this: swiftness of mind, the state of being without instruments, and mastery over Pradhāna (Prakṛti)."],
+  ["3.49","सत्त्वपुरुषान्यताख्यातिमात्रस्य सर्वभावाधिष्ठातृत्वं सर्वज्ञातृत्वं च","sattva-puruṣa-anyatā-khyāti-mātrasya sarva-bhāva-adhiṣṭhātṛtvaṃ sarva-jñātṛtvaṃ ca","For one with only the awareness of the difference between sattva and Puruṣa, there is omnipotence and omniscience."],
+  ["3.50","तद्वैराग्यादपि दोषबीजक्षये कैवल्यम्","tad-vairāgyād api doṣa-bīja-kṣaye kaivalyam","From dispassion even toward this, the seed of affliction is destroyed — Kaivalya."],
+  ["3.51","स्थान्युपनिमन्त्रणे सङ्गस्मयाकरणं पुनरनिष्टप्रसङ्गात्","sthāny-upanimantraṇe saṅga-smaya-akaraṇaṃ punar aniṣṭa-prasaṅgāt","When invited by celestial beings, no attachment or pride — for the undesirable can recur."],
+  ["3.52","क्षणतत्क्रमयोः संयमाद्विवेकजं ज्ञानम्","kṣaṇa-tat-kramayoḥ saṃyamād viveka-jaṃ jñānam","From saṃyama on moment and its sequence, knowledge born of discrimination."],
+  ["3.53","जातिलक्षणदेशैरन्यतानवच्छेदात्तुल्ययोस्ततः प्रतिपत्तिः","jāti-lakṣaṇa-deśair anyatā-anavacchedāt tulyayos tataḥ pratipattiḥ","From this, perception of distinctions between two similar things not separable by class, character, or position."],
+  ["3.54","तारकं सर्वविषयं सर्वथाविषयमक्रमं चेति विवेकजं ज्ञानम्","tārakaṃ sarva-viṣayaṃ sarvathā-viṣayam akramaṃ ceti viveka-jaṃ jñānam","The knowledge born of discrimination is the liberator — covering all objects, all ways, simultaneously (without sequence)."],
+  ["3.55","सत्त्वपुरुषयोः शुद्धिसाम्ये कैवल्यमिति","sattva-puruṣayoḥ śuddhi-sāmye kaivalyam iti","When the purity of sattva equals that of Puruṣa, Kaivalya."]
+],
+4: [
+  ["4.1","जन्मौषधिमन्त्रतपःसमाधिजाः सिद्धयः","janma-auṣadhi-mantra-tapaḥ-samādhi-jāḥ siddhayaḥ","Powers arise from birth, herbs, mantra, austerity, and samādhi."],
+  ["4.2","जात्यन्तरपरिणामः प्रकृत्यापूरात्","jāty-antara-pariṇāmaḥ prakṛty-āpūrāt","Transformation into another kind of existence is by the overflow of Prakṛti."],
+  ["4.3","निमित्तमप्रयोजकं प्रकृतीनां वरणभेदस्तु ततः क्षेत्रिकवत्","nimittam aprayojakaṃ prakṛtīnāṃ varaṇa-bhedas tu tataḥ kṣetrikavat","The incidental cause does not motivate Prakṛti; it removes the obstruction — as a farmer (removes the barrier to let water flow)."],
+  ["4.4","निर्माणचित्तान्यस्मितामात्रात्","nirmāṇa-cittāny asmitā-mātrāt","Created minds arise from I-am-ness alone."],
+  ["4.5","प्रवृत्तिभेदे प्रयोजकं चित्तमेकमनेकेषाम्","pravṛtti-bhede prayojakaṃ cittam ekam anekeṣām","Though activities differ, the one mind is the director of many."],
+  ["4.6","तत्र ध्यानजमनाशयम्","tatra dhyāna-jam anāśayam","Of these, the one born of meditation is free from karmic residue."],
+  ["4.7","कर्माशुक्लाकृष्णं योगिनस्त्रिविधमितरेषाम्","karma-aśukla-akṛṣṇaṃ yoginas tri-vidham itareṣām","The karma of a yogī is neither white nor black; others have three kinds."],
+  ["4.8","ततस्तद्विपाकानुगुणानामेवाभिव्यक्तिर्वासनानाम्","tatas tad-vipāka-anuguṇānām eva abhivyaktir vāsanānām","From these, only those vāsanās are manifested that correspond to their fruition."],
+  ["4.9","जातिदेशकालव्यवहितानामप्यानन्तर्यं स्मृतिसंस्कारयोरेकरूपत्वात्","jāti-deśa-kāla-vyavahitānām apy ānantaryaṃ smṛti-saṃskārayor ekarūpatvāt","Even when separated by birth, place, and time, there is unbroken continuity — because memory and saṃskāra are of the same form."],
+  ["4.10","तासामनादित्वं चाशिषो नित्यत्वात्","tāsām anāditvaṃ cāśiṣo nityatvāt","These are beginningless, because the desire to live is eternal."],
+  ["4.11","हेतुफलाश्रयालम्बनैः संगृहीतत्वादेषामभावे तदभावः","hetu-phala-āśraya-ālambanaiḥ saṃgṛhītatvād eṣām abhāve tad-abhāvaḥ","Since these are held together by cause, effect, basis, and support — with their absence, they too are absent."],
+  ["4.12","अतीतानागतं स्वरूपतोऽस्त्यध्वभेदाद्धर्माणाम्","atīta-anāgataṃ svarūpato'sty adhva-bhedād dharmāṇām","Past and future exist in their own nature; the difference lies in the path of the properties."],
+  ["4.13","ते व्यक्तसूक्ष्मा गुणात्मानः","te vyakta-sūkṣmā guṇa-ātmānaḥ","These (past and future) are manifest or subtle, and are of the nature of the guṇas."],
+  ["4.14","परिणामैकत्वाद्वस्तुतत्त्वम्","pariṇāma-ekatvād vastu-tattvam","The essence of an object (its reality) arises from the unity of transformation."],
+  ["4.15","वस्तुसाम्ये चित्तभेदात्तयोर्विभक्तः पन्थाः","vastu-sāmye citta-bhedāt tayor vibhaktaḥ panthāḥ","Though the object is the same, since the minds differ, the two follow different paths."],
+  ["4.16","न चैकचित्ततन्त्रं वस्तु तदप्रमाणकं तदा किं स्यात्","na ca eka-citta-tantraṃ vastu tad apramāṇakaṃ tadā kiṃ syāt","Nor does an object depend on one mind; what would become of it when not cognised by that mind?"],
+  ["4.17","तदुपरागापेक्षित्वाच्चित्तस्य वस्तु ज्ञाताज्ञातम्","tad-uparāga-apekṣitvāc cittasya vastu jñāta-ajñātam","An object is known or unknown depending on whether the mind is coloured by it."],
+  ["4.18","सदा ज्ञाताश्चित्तवृत्तयस्तत्प्रभोः पुरुषस्यापरिणामित्वात्","sadā jñātāś citta-vṛttayas tat-prabhoḥ puruṣasya apariṇāmitvāt","The modifications of the mind are always known to their master, Puruṣa, due to His unchangeable nature."],
+  ["4.19","न तत्स्वाभासं दृश्यत्वात्","na tat-svābhāsaṃ dṛśyatvāt","It (the mind) does not self-illuminate, because it is an object of perception."],
+  ["4.20","एकसमये चोभयानवधारणम्","eka-samaye cobhaya-anavadhāraṇam","Also, both (mind and object) cannot be cognised at the same time."],
+  ["4.21","चित्तान्तरदृश्ये बुद्धिबुद्धेरतिप्रसङ्गः स्मृतिसंकरश्च","cittāntara-dṛśye buddhi-buddher ati-prasaṅgaḥ smṛti-saṃkaraś ca","If the mind were cognised by another mind, there would be infinite regress and confusion of memory."],
+  ["4.22","चितेरप्रतिसंक्रमायास्तदाकारापत्तौ स्वबुद्धिसंवेदनम्","citer apratisaṃkramāyās tad-ākāra-āpattau svabuddhi-saṃvedanam","Consciousness, though not moving, becoming like the mind's form — self-cognition of the buddhi."],
+  ["4.23","द्रष्टृदृश्योपरक्तं चित्तं सर्वार्थम्","draṣṭṛ-dṛśya-uparaktaṃ cittaṃ sarvārtham","The mind, coloured by both Seer and seen, cognises everything."],
+  ["4.24","तदसंख्येयवासनाभिश्चित्रमपि परार्थं संहत्यकारित्वात्","tad asaṃkhyeya-vāsanābhiś citram api para-arthaṃ saṃhatya-kāritvāt","Though the mind is variegated by countless vāsanās, it exists for another (Puruṣa), because it acts in conjunction."],
+  ["4.25","विशेषदर्शिन आत्मभावभावनाविनिवृत्तिः","viśeṣa-darśina ātma-bhāva-bhāvanā-vinivṛttiḥ","For one who sees the distinction, reflection on the nature of Self ceases."],
+  ["4.26","तदा विवेकनिम्नं कैवल्यप्राग्भारं चित्तम्","tadā viveka-nimnaṃ kaivalya-prāgbhāraṃ cittam","Then the mind, inclined toward discrimination, gravitates toward Kaivalya."],
+  ["4.27","तच्छिद्रेषु प्रत्ययान्तराणि संस्कारेभ्यः","tac-chidreṣu pratyayāntarāṇi saṃskārebhyaḥ","In the gaps, other cognitions arise from impressions."],
+  ["4.28","हानमेषां क्लेशवदुक्तम्","hānam eṣāṃ kleśavad uktam","Their removal has been described like the removal of afflictions."],
+  ["4.29","प्रसंख्यानेऽप्यकुसीदस्य सर्वथा विवेकख्यातेर्धर्ममेघः समाधिः","prasaṃkhyāne'py akusīdasya sarvathā viveka-khyāter dharma-meghaḥ samādhiḥ","For one with no interest even in the highest state of discrimination, dharmamegha samādhi arises from uninterrupted viveka-khyāti."],
+  ["4.30","ततः क्लेशकर्मनिवृत्तिः","tataḥ kleśa-karma-nivṛttiḥ","From this, cessation of afflictions and karma."],
+  ["4.31","तदा सर्वावरणमलापेतस्य ज्ञानस्यानन्त्याज्ज्ञेयमल्पम्","tadā sarva-āvaraṇa-malāpetasya jñānasya ānantyāj jñeyam alpam","Then, with all coverings and impurities removed, the knowable becomes little compared to the infinity of knowledge."],
+  ["4.32","ततः कृतार्थानां परिणामक्रमसमाप्तिर्गुणानाम्","tataḥ kṛtārthānāṃ pariṇāma-krama-samāptir guṇānām","Then the sequence of transformation of the guṇas ends, their purpose fulfilled."],
+  ["4.33","क्षणप्रतियोगी परिणामापरान्तनिर्ग्राह्यः क्रमः","kṣaṇa-pratiyogī pariṇāma-aparānta-nirgrāhyaḥ kramaḥ","Sequence is the succession of moments, recognised at the end of transformation."],
+  ["4.34","पुरुषार्थशून्यानां गुणानां प्रतिप्रसवः कैवल्यं स्वरूपप्रतिष्ठा वा चितिशक्तिरिति","puruṣa-artha-śūnyānāṃ guṇānāṃ pratiprasavaḥ kaivalyaṃ svarūpa-pratiṣṭhā vā citi-śaktir iti","Kaivalya is the return of the guṇas to their origin when empty of purpose for Puruṣa — or the establishment of citi-śakti in its own nature."]
+]
+};
+
+var refCurrentChapter = 1;
+
+function switchRefTab(ch, btn) {
+  document.querySelectorAll('#ref-tabs .wit-tab').forEach(function(t){t.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  refCurrentChapter = ch;
+  renderRefList(ch);
+  document.getElementById('content').scrollTop = 0;
+}
+
+function renderRefList(ch) {
+  var rows = SUTRAS[ch];
+  var colors = {1:'var(--teal)',2:'var(--amber)',3:'var(--purple2)',4:'var(--coral)'};
+  var c = colors[ch];
+  var html = rows.map(function(r){
+    return '<div class="class-item" style="margin-bottom:8px;">'
+      + '<div class="class-hdr" onclick="toggleClass(this)" style="padding:12px 14px;">'
+      + '<div class="class-num" style="color:'+c+';min-width:32px;font-size:10px;">'+r[0]+'</div>'
+      + '<div class="class-name" style="font-size:13px;font-family:var(--devanagari);color:var(--text2);line-height:1.4;">'+r[1]+'</div>'
+      + '<div class="class-arr">›</div>'
+      + '</div>'
+      + '<div class="class-body">'
+      + '<div class="v-translit" style="padding-left:0;margin-bottom:10px;">'+r[2]+'</div>'
+      + '<div class="transl"><strong>'+r[0]+':</strong> '+r[3]+'</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('ref-list').innerHTML = html;
+}
+
+/* init reference on first load */
+document.addEventListener('DOMContentLoaded', function(){ renderRefList(1); });
+
+</script>
+</body>
+</html>
