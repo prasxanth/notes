@@ -1,6 +1,6 @@
 # Personal Knowledge Apps
 
-> A collection of personal single-file web apps — metabolic tracking, Vedic sādhana, Yoga study, and a reading library — each designed to live on an iPhone home screen.
+> A collection of personal single-file web apps — metabolic tracking, Vedic sādhana, Yoga study, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
 
 ---
 
@@ -8,7 +8,7 @@
 
 This repository contains a suite of personal knowledge tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
 
-The four main apps cover: a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a Yoga Sūtra learning course (**Yoga Sudhakara**), and a personal reading library with thematic browsing and stats (**Marginalia**). The books app is backed by a CSV database that can be updated via a small Python script.
+The six apps cover: a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
 
 ---
 
@@ -122,6 +122,60 @@ A personal reading library browser (~108 books). Book data is embedded as JSON d
 
 ---
 
+### I Ching Oracle
+
+**File:** `iching_oracle.html`
+
+A polished mobile-first app for consulting the classical Chinese divination text using the traditional three-coin method. All 64 hexagrams and their full textual content are embedded — no internet connection required for casting or reading.
+
+**Key sections (four screens via bottom navigation):**
+
+- **Home:** Time-aware greeting, a hero banner showing the last reading (hexagram glyph, name, subtitle) or an intro prompt, and module cards linking to Cast, Reading, and Reference.
+- **Cast:** The active casting interface. Enter a question, then throw three animated coins six times — each throw appends a line to the forming hexagram (displayed in real time from bottom up). Coins display ☀ (yang, value 3) or ☽ (yin, value 2). Sums of 6 (Old Yin) or 9 (Old Yang) are flagged as moving lines.
+- **Reading:** Full textual reading after casting — Primary hexagram with Judgment, Image, and moving-line commentary; Relating hexagram (derived by transforming all moving lines) when applicable.
+- **Reference (All 64):** Searchable grid of all 64 hexagrams by name or number. Tapping any hexagram opens a detail sheet with glyph, number, Chinese name + pinyin, upper/lower trigram names and attributes, Judgment, Image, and Commentary.
+
+**Key features:**
+- Coin-flip animation on each of the six throws
+- Moving lines highlighted in the reading with specific counsel
+- Full 64-hexagram reference database embedded in JS
+- "Coin Oracle Method" modal explaining preparation, line values (6/7/8/9), and how to interpret the result
+- Last reading persists on the Home hero banner
+
+**How to use:** Open `iching_oracle.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **I Ching Oracle**.
+
+---
+
+### Recipes
+
+**File:** `recipes.html`
+
+A personal health-protocol recipe reference and daily compliance app for seven functional preparations — powders, smoothie cubes, a medicinal brew, and a chai masala — each targeting specific biomarkers (LDL-C, ApoB, nitric oxide, AMPK/autophagy). Inspired by Dr. Michael Greger's work and Ayurvedic traditions.
+
+**The 7 recipes:**
+
+| Name | Lane | Target |
+|---|---|---|
+| **Portfolio+ Powder** | Sprinkle | LDL-C / ApoB / LDL-P backbone |
+| **BALT Powder** | Swallow | Black Cumin · Amla · Long Pepper · Turmeric |
+| **SEP Smoothie Cubes v1.5** | Meal | β-glucan · Resistant starch · Protein · Bile acid binding |
+| **Nitric Oxide Core Powder** | Vascular/Mitochondrial | Endothelial & mitochondrial efficiency |
+| **Adaptabrew™ v2.2** | Brew | Calm Focus Edition · 100–200 cups per batch |
+| **UrbanYogi Chai Masala v2.1** | Brew/Seasonal | Ayurvedic · Winter & Summer modes |
+| **Polyphenol Pulse v1.1** | Hormetic | AMPK · Autophagy · 2× per week only |
+
+**Key sections (three screens via bottom navigation):**
+
+- **Home:** Searchable recipe card list with color-coded lane tags. Live search filters cards in place.
+- **Daily:** Tap-to-check daily compliance checklist split into Always-on (Portfolio+, BALT, SEP Smoothie, Nitric Oxide, Adaptabrew) and Rotational (Chai Masala, Polyphenol Pulse).
+- **Lanes:** Systems view mapping each recipe to its functional delivery lane (Swallow, Sprinkle, Meal, Vascular/Mitochondrial, Brew, Hormetic) with documented cross-recipe interactions (e.g., turmeric stacking across BALT, SEP Cubes, and Adaptabrew).
+
+Each recipe detail screen includes a hero block, color-coded stats bar (batch size, daily dose, prep time, difficulty), ingredients with quantities, numbered step-by-step instructions, and troubleshooting notes.
+
+**How to use:** Open `recipes.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Recipes** with a dark green leaf icon.
+
+---
+
 ## Books Toolchain
 
 The `books/` directory contains three files that work together:
@@ -152,7 +206,7 @@ python update_books_navigator_from_csv.py path/to/books.csv path/to/target.html
 
 ## iOS Home Screen Icons
 
-All four apps are configured for iOS "Add to Home Screen" via Safari. Each HTML file includes:
+Most apps are configured for iOS "Add to Home Screen" via Safari. Each HTML file includes:
 
 ```html
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,6 +225,8 @@ The `apple-touch-icon` is inlined as an SVG data URI — no separate image file 
 | Jyotish Sādhana | Deep amber radial gradient with white ॐ | Jyotish Sādhana |
 | Yoga Sudhakara | Deep teal with white ॐ | Yoga Sudhakara |
 | Marginalia | Navy-to-steel-blue gradient with ✏️ | Marginalia |
+| Recipes | Dark green radial gradient with 🍃 | Recipes |
+| I Ching Oracle | No icon defined (uses Safari default) | I Ching Oracle |
 
 ---
 
