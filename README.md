@@ -4,6 +4,22 @@
 
 ---
 
+## Contents
+
+- [Overview](#overview)
+- [Apps](#apps)
+  - [Agni](#agni)
+  - [Jyotish Sādhana](#jyotish-sādhana)
+  - [Yoga Sudhakara](#yoga-sudhakara)
+  - [Marginalia](#marginalia)
+  - [I Ching Oracle](#i-ching-oracle)
+  - [Recipes](#recipes)
+- [Books Toolchain](#books-toolchain)
+- [iOS Home Screen Icons](#ios-home-screen-icons)
+- [Technical Notes](#technical-notes)
+
+---
+
 ## Overview
 
 This repository contains a suite of personal knowledge tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
