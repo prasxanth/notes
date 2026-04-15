@@ -456,6 +456,216 @@ body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; 
 
 .section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; margin-top: 22px; }
 
+/* ─── HAMBURGER PANEL (BOTTOM SHEET) ────────────────────── */
+.panel-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.55);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.panel-overlay.open { opacity: 1; pointer-events: all; }
+
+.side-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 101;
+  background: var(--bg2);
+  border-top: 1px solid var(--border2);
+  border-radius: 18px 18px 0 0;
+  padding: 0 0 calc(var(--safe-b) + 20px);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.side-panel.open { transform: translateY(0); }
+
+.side-panel-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border2);
+  margin: 12px auto 0;
+}
+.side-panel-title {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+  color: var(--text3); text-transform: uppercase;
+  padding: 16px 18px 10px;
+}
+.side-panel-section { padding: 6px 18px 14px; border-bottom: 1px solid var(--border); }
+.side-panel-section:last-child { border-bottom: none; }
+.side-panel-section-label {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em;
+  color: var(--text3); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.group-option-row {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px;
+}
+.group-option-btn {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.06em; color: var(--text3);
+  cursor: pointer; transition: all 0.15s;
+  text-transform: uppercase;
+}
+.group-option-btn:active { opacity: 0.7; }
+.group-option-btn.active { background: rgba(93,202,165,0.12); border-color: rgba(93,202,165,0.35); color: var(--teal2); }
+
+/* ─── THEME MULTI-SELECT DROPDOWN ────────────────────────── */
+.theme-dropdown-wrap {
+  flex-shrink: 0; position: relative;
+  padding: 8px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.theme-dropdown-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 8px 12px;
+  cursor: pointer; gap: 8px;
+  transition: border-color 0.15s;
+}
+.theme-dropdown-trigger.has-selection { border-color: var(--gold); }
+.theme-dropdown-trigger-label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.06em; color: var(--text3);
+  text-transform: uppercase; flex: 1;
+}
+.theme-dropdown-trigger.has-selection .theme-dropdown-trigger-label { color: var(--gold); }
+.theme-dropdown-trigger-chevron {
+  width: 12px; height: 12px;
+  stroke: var(--text3);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.theme-dropdown-trigger.open .theme-dropdown-trigger-chevron { transform: rotate(180deg); }
+
+.theme-dropdown-panel {
+  position: absolute; left: 14px; right: 14px; top: calc(100% - 2px);
+  z-index: 50;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: none;
+  overflow: hidden;
+}
+.theme-dropdown-panel.open { display: block; }
+
+.theme-dd-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.andor-toggle {
+  display: flex; border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--border2); flex-shrink: 0;
+}
+.andor-btn {
+  padding: 4px 12px; font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer;
+  background: transparent; border: none;
+  color: var(--text3); transition: all 0.15s;
+}
+.andor-btn.active { background: rgba(200,169,110,0.2); color: var(--gold); }
+
+.dd-clear-btn {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text3); background: none; border: none;
+  cursor: pointer; padding: 4px 8px;
+  border-radius: 6px; transition: color 0.15s;
+}
+.dd-clear-btn:hover { color: var(--coral); }
+
+.theme-dd-list {
+  max-height: 220px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0;
+}
+.theme-dd-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; cursor: pointer;
+  transition: background 0.1s;
+}
+.theme-dd-item:active { background: var(--bg4); }
+.theme-dd-item input[type=checkbox] {
+  width: 14px; height: 14px; flex-shrink: 0;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.theme-dd-item-label {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text2); flex: 1;
+}
+.theme-dd-item.checked .theme-dd-item-label { color: var(--gold); }
+
+/* ─── ACTIVE FILTER BANNER ───────────────────────────────── */
+.active-filter-banner {
+  display: none; flex-shrink: 0;
+  align-items: center; gap: 8px;
+  padding: 7px 14px;
+  background: rgba(200,169,110,0.1);
+  border-bottom: 1px solid rgba(200,169,110,0.25);
+}
+.active-filter-banner.show { display: flex; }
+.active-filter-banner-label {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gold); flex: 1;
+}
+.active-filter-banner-clear {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(200,169,110,0.2); border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.active-filter-banner-clear svg { width: 10px; height: 10px; stroke: var(--gold); }
+
+/* ─── GROUPED LIST ───────────────────────────────────────── */
+.group-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px 9px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.group-header:active { background: var(--bg3); }
+.group-header-name {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text2); flex: 1;
+}
+.group-header-badge {
+  font-family: var(--mono); font-size: 8px;
+  padding: 2px 7px; border-radius: 10px;
+  background: var(--bg4);
+  color: var(--text3);
+  border: 1px solid var(--border);
+}
+.group-header-chevron {
+  width: 14px; height: 14px;
+  stroke: var(--text3);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.group-header.expanded .group-header-chevron { transform: rotate(90deg); }
+.group-books { display: none; }
+.group-books.open { display: block; }
+
+/* ─── CLICKABLE STATS ────────────────────────────────────── */
+.stat-card.clickable {
+  cursor: pointer; transition: background 0.15s, border-color 0.15s;
+}
+.stat-card.clickable:active { background: var(--bg3); }
+.stat-card.clickable:hover { border-color: var(--gold); }
+.bar-item.clickable { cursor: pointer; border-radius: 6px; padding: 4px; margin: 0 -4px 5px; }
+.bar-item.clickable:active { background: var(--bg4); }
+
 /* ─── THEME COLORS ───────────────────────────────────────── */
 .tc-0  { background: #7B5EA7; }
 .tc-1  { background: #5DCAA5; }
@@ -491,6 +701,30 @@ body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; 
         <path d="M3 6h18M7 12h10M11 18h2"/>
       </svg>
     </div>
+    <div class="app-header-icon" id="hamburger-btn" title="Group &amp; options">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Hamburger panel overlay + bottom sheet -->
+  <div class="panel-overlay" id="panel-overlay"></div>
+  <div class="side-panel" id="side-panel">
+    <div class="side-panel-handle"></div>
+    <div class="side-panel-title">Library Options</div>
+    <div class="side-panel-section">
+      <div class="side-panel-section-label">Group by</div>
+      <div class="group-option-row" id="group-option-row">
+        <button class="group-option-btn active" data-group="none">None</button>
+        <button class="group-option-btn" data-group="theme">Theme</button>
+        <button class="group-option-btn" data-group="genre">Genre</button>
+        <button class="group-option-btn" data-group="fiction">Fiction / Nonfiction</button>
+        <button class="group-option-btn" data-group="impact">Impact Rating</button>
+        <button class="group-option-btn" data-group="audiobook">Audiobook</button>
+        <button class="group-option-btn" data-group="reread">Re-read</button>
+      </div>
+    </div>
   </div>
 
   <!-- Search -->
@@ -504,12 +738,32 @@ body { font-family: var(--sans); color: var(--text); overscroll-behavior: none; 
     </div>
   </div>
 
-  <!-- Theme filter chips -->
-  <div class="filter-strip" id="filter-strip">
-    <div class="filter-chip active" data-theme="all">
-      <span class="chip-dot"></span>All
+  <!-- Active filter banner (for Insights → Library navigation) -->
+  <div class="active-filter-banner" id="active-filter-banner">
+    <span class="active-filter-banner-label" id="active-filter-banner-label"></span>
+    <button class="active-filter-banner-clear" id="active-filter-banner-clear" aria-label="Clear filter">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Theme multi-select dropdown -->
+  <div class="theme-dropdown-wrap" id="filter-strip">
+    <div class="theme-dropdown-trigger" id="theme-dd-trigger">
+      <span class="theme-dropdown-trigger-label" id="theme-dd-label">All Themes</span>
+      <svg class="theme-dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
     </div>
-    <!-- theme chips injected by JS -->
+    <div class="theme-dropdown-panel" id="theme-dd-panel">
+      <div class="theme-dd-top">
+        <div class="andor-toggle" id="andor-toggle">
+          <button class="andor-btn active" id="andor-and" data-mode="and">AND</button>
+          <button class="andor-btn" id="andor-or" data-mode="or">OR</button>
+        </div>
+        <button class="dd-clear-btn" id="dd-clear-btn">Clear</button>
+      </div>
+      <div class="theme-dd-list" id="theme-dd-list">
+        <!-- injected by JS -->
+      </div>
+    </div>
   </div>
 
   <!-- List meta bar -->
@@ -563,11 +817,15 @@ const ALL_THEMES = [...new Set(BOOKS.flatMap(b => b.themes))].sort();
 const THEME_IDX  = Object.fromEntries(ALL_THEMES.map((t,i) => [t, i]));
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
-let activeTheme  = 'all';
+let selectedThemes = [];       // multi-select: array of theme strings
+let themeFilterMode = 'and';   // 'and' | 'or'
 let searchQuery  = '';
-let sortMode     = 'alpha'; // alpha | impact
+let sortMode     = 'alpha';    // alpha | impact
 let expandedIdx  = null;
 let currentScreen = 'library';
+let groupBy      = 'none';     // none | theme | genre | fiction | impact | audiobook | reread
+let groupStates  = {};         // groupKey -> true (expanded)
+let insightsFilter = null;     // { label, test: fn } set when navigating from Insights
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function impactStars(val) {
@@ -591,8 +849,17 @@ function initials(title) {
 
 function filteredBooks() {
   let books = BOOKS.slice();
-  if (activeTheme !== 'all') {
-    books = books.filter(b => b.themes.includes(activeTheme));
+  // Theme multi-select filter
+  if (selectedThemes.length > 0) {
+    if (themeFilterMode === 'and') {
+      books = books.filter(b => selectedThemes.every(t => b.themes.includes(t)));
+    } else {
+      books = books.filter(b => selectedThemes.some(t => b.themes.includes(t)));
+    }
+  }
+  // Insights deep-link filter
+  if (insightsFilter) {
+    books = books.filter(insightsFilter.test);
   }
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -620,41 +887,201 @@ function filteredBooks() {
   return books;
 }
 
-// ─── RENDER FILTER CHIPS ──────────────────────────────────────────────────────
-function renderFilterChips() {
-  const strip = document.getElementById('filter-strip');
-  // Remove existing theme chips (keep "All")
-  [...strip.querySelectorAll('[data-theme]:not([data-theme="all"])')].forEach(e => e.remove());
+// ─── THEME DROPDOWN ───────────────────────────────────────────────────────────
+function renderThemeDropdown() {
+  const list = document.getElementById('theme-dd-list');
+  list.innerHTML = ALL_THEMES.map(theme => {
+    const checked = selectedThemes.includes(theme);
+    return `<label class="theme-dd-item${checked?' checked':''}" onclick="toggleTheme('${theme.replace(/'/g,"\\'")}')">
+      <input type="checkbox"${checked?' checked':''} onclick="event.stopPropagation();toggleTheme('${theme.replace(/'/g,"\\'")}')">
+      <span class="theme-dd-item-label">${theme}</span>
+    </label>`;
+  }).join('');
 
-  ALL_THEMES.forEach(theme => {
-    const div = document.createElement('div');
-    div.className = 'filter-chip' + (activeTheme === theme ? ' active' : '');
-    div.dataset.theme = theme;
-    div.innerHTML = `<span class="chip-dot"></span>${theme}`;
-    div.onclick = () => setTheme(theme);
-    strip.appendChild(div);
-  });
-
-  strip.querySelector('[data-theme="all"]').className =
-    'filter-chip' + (activeTheme === 'all' ? ' active' : '');
+  const trigger = document.getElementById('theme-dd-trigger');
+  const label   = document.getElementById('theme-dd-label');
+  if (selectedThemes.length === 0) {
+    label.textContent = 'All Themes';
+    trigger.classList.remove('has-selection');
+  } else if (selectedThemes.length === 1) {
+    label.textContent = selectedThemes[0];
+    trigger.classList.add('has-selection');
+  } else {
+    label.textContent = `${selectedThemes.length} themes selected (${themeFilterMode.toUpperCase()})`;
+    trigger.classList.add('has-selection');
+  }
 }
 
-function setTheme(theme) {
-  activeTheme = theme;
+function toggleTheme(theme) {
+  const idx = selectedThemes.indexOf(theme);
+  if (idx === -1) selectedThemes.push(theme);
+  else selectedThemes.splice(idx, 1);
   expandedIdx = null;
-  renderFilterChips();
+  renderThemeDropdown();
   renderList();
 }
 
+function openThemeDropdown() {
+  document.getElementById('theme-dd-panel').classList.add('open');
+  document.getElementById('theme-dd-trigger').classList.add('open');
+}
+
+function closeThemeDropdown() {
+  document.getElementById('theme-dd-panel').classList.remove('open');
+  document.getElementById('theme-dd-trigger').classList.remove('open');
+}
+
+// ─── INSIGHTS FILTER BANNER ───────────────────────────────────────────────────
+function updateInsightsBanner() {
+  const banner = document.getElementById('active-filter-banner');
+  const bannerLabel = document.getElementById('active-filter-banner-label');
+  if (insightsFilter) {
+    bannerLabel.textContent = `Filtered: ${insightsFilter.label}`;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function clearInsightsFilter() {
+  insightsFilter = null;
+  updateInsightsBanner();
+  renderList();
+}
+
+// Navigate from Insights to Library with a filter
+function insightsNavigate(label, testFn) {
+  insightsFilter = { label, test: testFn };
+  expandedIdx = null;
+  switchScreen('library');
+  updateInsightsBanner();
+  renderList();
+}
+
+// ─── BOOK CARD HTML ───────────────────────────────────────────────────────────
+function bookCardHtml(book) {
+  const globalIdx = BOOKS.indexOf(book);
+  const themeIdx  = THEME_IDX[book.themes[0]] || 0;
+  const impact    = book.optional['Impact (1–5)'];
+  const audio     = book.optional['Audiobook'] === 'Y';
+  const reread    = book.optional['Re-read?'] === 'Y';
+  const fic       = book.optional['Fiction/Nonfiction'];
+  const rec       = book.optional['Would Recommend'];
+  const isExpanded = expandedIdx === globalIdx;
+
+  let pills = '';
+  if (impact) pills += `<span class="book-pill ${impactClass(impact)}">${impact.replace('.0','')}★</span>`;
+  if (audio)  pills += `<span class="book-pill pill-audio">▶ Audio</span>`;
+  if (reread) pills += `<span class="book-pill pill-reread">↺ Re-read</span>`;
+  if (fic)    pills += `<span class="book-pill ${fic.toLowerCase().startsWith('non') ? 'pill-nonfiction' : 'pill-fiction'}">${fic}</span>`;
+
+  let detailHtml = '';
+  if (isExpanded) {
+    const themeChips = book.themes.map(t =>
+      `<span class="theme-chip" onclick="event.stopPropagation();toggleTheme('${t.replace(/'/g,"\\'")}');">${t}</span>`
+    ).join('');
+
+    const metaItems = [];
+    if (book.optional['Genre'])           metaItems.push(['Genre', book.optional['Genre']]);
+    if (book.optional['Completion Date'])  metaItems.push(['Read', book.optional['Completion Date']]);
+    if (impact)                            metaItems.push(['Impact', `<span class="stars">${impactStars(impact)}</span>`]);
+    if (rec)                               metaItems.push(['Recommend', rec === 'Y' ? '✓ Yes' : '✗ No']);
+
+    const metaGrid = metaItems.map(([k,v]) =>
+      `<div class="detail-meta-item"><div class="detail-meta-key">${k}</div><div class="detail-meta-val ${k==='Impact'?'stars':''}">${v}</div></div>`
+    ).join('');
+
+    const notesHtml = book.optional['Notes']
+      ? `<div class="detail-section"><div class="detail-label">Notes</div><div class="detail-notes">${book.optional['Notes']}</div></div>`
+      : '';
+
+    detailHtml = `
+      <div class="book-detail open" id="detail-${globalIdx}">
+        <div class="detail-section">
+          <div class="detail-label">Themes</div>
+          <div class="detail-themes">${themeChips}</div>
+        </div>
+        ${metaGrid ? `<div class="detail-section"><div class="detail-meta-grid">${metaGrid}</div></div>` : ''}
+        ${notesHtml}
+      </div>`;
+  } else {
+    detailHtml = `<div class="book-detail" id="detail-${globalIdx}"></div>`;
+  }
+
+  return `
+    <div class="book-card${isExpanded?' expanded':''}" data-idx="${globalIdx}" onclick="toggleExpand(${globalIdx})">
+      <div class="book-card-header">
+        <div class="book-spine">
+          <div class="book-spine-icon tc-${themeIdx % 19}">${initials(book.title)}</div>
+        </div>
+        <div class="book-main">
+          <div class="book-title">${book.title}</div>
+          <div class="book-author">${book.author}</div>
+          <div class="book-pills">${pills}</div>
+        </div>
+        <div class="book-card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      </div>
+      ${detailHtml}
+    </div>`;
+}
+
+// ─── GROUPING HELPERS ─────────────────────────────────────────────────────────
+function getBookGroups(books) {
+  const grouped = new Map();
+
+  function addTo(key, book) {
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(book);
+  }
+
+  books.forEach(book => {
+    if (groupBy === 'theme') {
+      book.themes.forEach(t => addTo(t, book));
+    } else if (groupBy === 'genre') {
+      addTo(book.optional['Genre'] || 'Unknown', book);
+    } else if (groupBy === 'fiction') {
+      addTo(book.optional['Fiction/Nonfiction'] || 'Unknown', book);
+    } else if (groupBy === 'impact') {
+      const n = Math.round(parseFloat(book.optional['Impact (1–5)'] || 0));
+      addTo(n >= 1 ? `${'★'.repeat(n)}${'☆'.repeat(5-n)}` : 'Unrated', book);
+    } else if (groupBy === 'audiobook') {
+      addTo(book.optional['Audiobook'] === 'Y' ? 'Audiobook' : 'Not Audiobook', book);
+    } else if (groupBy === 'reread') {
+      addTo(book.optional['Re-read?'] === 'Y' ? 'Would Re-read' : 'Would Not Re-read', book);
+    }
+  });
+
+  // Sort group keys sensibly
+  const entries = [...grouped.entries()];
+  if (groupBy === 'impact') {
+    entries.sort((a, b) => {
+      const na = (a[0].match(/★/g)||[]).length;
+      const nb = (b[0].match(/★/g)||[]).length;
+      return nb - na;
+    });
+  } else {
+    entries.sort((a, b) => a[0].localeCompare(b[0]));
+  }
+  return entries;
+}
+
+function toggleGroup(key) {
+  groupStates[key] = !groupStates[key];
+  // Re-render without resetting group states
+  _renderListInner();
+}
+
 // ─── RENDER BOOK LIST ─────────────────────────────────────────────────────────
-function renderList() {
+function _renderListInner() {
   const books = filteredBooks();
   const list  = document.getElementById('book-list');
   const meta  = document.getElementById('list-meta-count');
   const hdr   = document.getElementById('header-count');
 
-  meta.textContent  = `${books.length} of ${BOOKS.length} books`;
-  hdr.textContent   = `${BOOKS.length} titles`;
+  meta.textContent = `${books.length} of ${BOOKS.length} books`;
+  hdr.textContent  = `${BOOKS.length} titles`;
 
   if (!books.length) {
     list.innerHTML = `
@@ -666,79 +1093,35 @@ function renderList() {
     return;
   }
 
-  list.innerHTML = books.map((book, localIdx) => {
-    const globalIdx = BOOKS.indexOf(book);
-    const themeIdx  = THEME_IDX[book.themes[0]] || 0;
-    const impact    = book.optional['Impact (1–5)'];
-    const audio     = book.optional['Audiobook'] === 'Y';
-    const reread    = book.optional['Re-read?'] === 'Y';
-    const fic       = book.optional['Fiction/Nonfiction'];
-    const rec       = book.optional['Would Recommend'];
-    const isExpanded = expandedIdx === globalIdx;
+  if (groupBy === 'none') {
+    list.innerHTML = books.map(bookCardHtml).join('');
+    return;
+  }
 
-    let pills = '';
-    if (impact) pills += `<span class="book-pill ${impactClass(impact)}">${impact.replace('.0','')}★</span>`;
-    if (audio)  pills += `<span class="book-pill pill-audio">▶ Audio</span>`;
-    if (reread) pills += `<span class="book-pill pill-reread">↺ Re-read</span>`;
-    if (fic)    pills += `<span class="book-pill ${fic.toLowerCase().startsWith('non') ? 'pill-nonfiction' : 'pill-fiction'}">${fic}</span>`;
-
-    let detailHtml = '';
-    if (isExpanded) {
-      const themeChips = book.themes.map(t =>
-        `<span class="theme-chip" onclick="event.stopPropagation();setTheme('${t.replace(/'/g,"\\'")}');">${t}</span>`
-      ).join('');
-
-      const metaItems = [];
-      if (book.optional['Genre'])           metaItems.push(['Genre', book.optional['Genre']]);
-      if (book.optional['Completion Date'])  metaItems.push(['Read', book.optional['Completion Date']]);
-      if (impact)                            metaItems.push(['Impact', `<span class="stars">${impactStars(impact)}</span>`]);
-      if (rec)                               metaItems.push(['Recommend', rec === 'Y' ? '✓ Yes' : '✗ No']);
-
-      const metaGrid = metaItems.map(([k,v]) =>
-        `<div class="detail-meta-item"><div class="detail-meta-key">${k}</div><div class="detail-meta-val ${k==='Impact'?'stars':''}">${v}</div></div>`
-      ).join('');
-
-      const notesHtml = book.optional['Notes']
-        ? `<div class="detail-section"><div class="detail-label">Notes</div><div class="detail-notes">${book.optional['Notes']}</div></div>`
-        : '';
-
-      detailHtml = `
-        <div class="book-detail open" id="detail-${globalIdx}">
-          <div class="detail-section">
-            <div class="detail-label">Themes</div>
-            <div class="detail-themes">${themeChips}</div>
-          </div>
-          ${metaGrid ? `<div class="detail-section"><div class="detail-meta-grid">${metaGrid}</div></div>` : ''}
-          ${notesHtml}
-        </div>`;
-    } else {
-      detailHtml = `<div class="book-detail" id="detail-${globalIdx}"></div>`;
-    }
-
+  // Grouped mode
+  const groups = getBookGroups(books);
+  list.innerHTML = groups.map(([key, groupBooks]) => {
+    const isOpen = !!groupStates[key];
+    const safeKey = key.replace(/'/g, "\\'");
     return `
-      <div class="book-card${isExpanded?' expanded':''}" data-idx="${globalIdx}" onclick="toggleExpand(${globalIdx})">
-        <div class="book-card-header">
-          <div class="book-spine">
-            <div class="book-spine-icon tc-${themeIdx % 19}">${initials(book.title)}</div>
-          </div>
-          <div class="book-main">
-            <div class="book-title">${book.title}</div>
-            <div class="book-author">${book.author}</div>
-            <div class="book-pills">${pills}</div>
-          </div>
-          <div class="book-card-chevron">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-        ${detailHtml}
+      <div class="group-header${isOpen?' expanded':''}" onclick="toggleGroup('${safeKey}')">
+        <svg class="group-header-chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="group-header-name">${key}</span>
+        <span class="group-header-badge">${groupBooks.length}</span>
+      </div>
+      <div class="group-books${isOpen?' open':''}">
+        ${groupBooks.map(bookCardHtml).join('')}
       </div>`;
   }).join('');
 }
 
+function renderList() {
+  _renderListInner();
+}
+
 function toggleExpand(globalIdx) {
   expandedIdx = expandedIdx === globalIdx ? null : globalIdx;
-  renderList();
-  // Scroll the card into view
+  _renderListInner();
   setTimeout(() => {
     const card = document.querySelector(`[data-idx="${globalIdx}"]`);
     if (card && expandedIdx === globalIdx) {
@@ -751,11 +1134,12 @@ function toggleExpand(globalIdx) {
 function renderStats() {
   const screen = document.getElementById('screen-stats');
   const total  = BOOKS.length;
-  const fiveStars = BOOKS.filter(b => parseFloat(b.optional['Impact (1–5)']||0) >= 5).length;
-  const audioCount = BOOKS.filter(b => b.optional['Audiobook'] === 'Y').length;
-  const recCount   = BOOKS.filter(b => b.optional['Would Recommend'] === 'Y').length;
+  const fiveStars   = BOOKS.filter(b => parseFloat(b.optional['Impact (1–5)']||0) >= 5).length;
+  const audioCount  = BOOKS.filter(b => b.optional['Audiobook'] === 'Y').length;
+  const recCount    = BOOKS.filter(b => b.optional['Would Recommend'] === 'Y').length;
   const rereadCount = BOOKS.filter(b => b.optional['Re-read?'] === 'Y').length;
-  const fictionCount = BOOKS.filter(b => b.optional['Fiction/Nonfiction'] === 'Fiction').length;
+  const fictionCount    = BOOKS.filter(b => b.optional['Fiction/Nonfiction'] === 'Fiction').length;
+  const nonfictionCount = BOOKS.filter(b => b.optional['Fiction/Nonfiction'] === 'Nonfiction').length;
 
   // Theme distribution
   const themeCounts = {};
@@ -766,8 +1150,9 @@ function renderStats() {
   const barRows = themesSorted.map(([theme, count]) => {
     const pct = Math.round(count / maxTheme * 100);
     const ci  = THEME_IDX[theme] || 0;
+    const safeTheme = theme.replace(/'/g, "\\'");
     return `
-      <div class="bar-item">
+      <div class="bar-item clickable" onclick="insightsNavigate('Theme: ${safeTheme}', b => b.themes.includes('${safeTheme}'))">
         <div class="bar-label" title="${theme}">${theme}</div>
         <div class="bar-track"><div class="bar-fill tc-${ci % 19}" style="width:${pct}%"></div></div>
         <div class="bar-count">${count}</div>
@@ -784,7 +1169,7 @@ function renderStats() {
   screen.innerHTML = `
     <div class="screen-header">
       <h2>Insights</h2>
-      <p>At a glance across the library</p>
+      <p>Tap any card or bar to filter the library</p>
     </div>
 
     <div class="stat-row">
@@ -792,30 +1177,30 @@ function renderStats() {
         <div class="stat-num">${total}</div>
         <div class="stat-lbl">Total Books</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="insightsNavigate('5-Star reads', b => Math.round(parseFloat(b.optional['Impact (1\u20135)']||0)) === 5)">
         <div class="stat-num">${fiveStars}</div>
         <div class="stat-lbl">5-Star Reads</div>
       </div>
     </div>
     <div class="stat-row">
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="insightsNavigate('Audiobook', b => b.optional['Audiobook'] === 'Y')">
         <div class="stat-num">${audioCount}</div>
         <div class="stat-lbl">Audiobooks</div>
         <div class="stat-sub">${Math.round(audioCount/total*100)}% of library</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="insightsNavigate('Would Recommend', b => b.optional['Would Recommend'] === 'Y')">
         <div class="stat-num">${recCount}</div>
         <div class="stat-lbl">Recommended</div>
         <div class="stat-sub">${Math.round(recCount/total*100)}% of library</div>
       </div>
     </div>
     <div class="stat-row">
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="insightsNavigate('Fiction', b => b.optional['Fiction/Nonfiction'] === 'Fiction')">
         <div class="stat-num">${fictionCount}</div>
         <div class="stat-lbl">Fiction</div>
-        <div class="stat-sub">${total - fictionCount} nonfiction</div>
+        <div class="stat-sub">${nonfictionCount} nonfiction &rsaquo;</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="insightsNavigate('Would Re-read', b => b.optional['Re-read?'] === 'Y')">
         <div class="stat-num">${rereadCount}</div>
         <div class="stat-lbl">Would Re-read</div>
       </div>
@@ -824,7 +1209,7 @@ function renderStats() {
     <div class="section-label">Impact Distribution</div>
     <div class="bar-chart">
       ${[5,4,3,2,1].map(n => `
-        <div class="bar-item">
+        <div class="bar-item clickable" onclick="insightsNavigate('Impact: ${n}\u2605', b => Math.round(parseFloat(b.optional['Impact (1\u20135)']||0)) === ${n})">
           <div class="bar-label">${'★'.repeat(n)}${'☆'.repeat(5-n)}</div>
           <div class="bar-track"><div class="bar-fill" style="width:${Math.round((impactBuckets[n]||0)/total*100)}%;background:var(--gold)"></div></div>
           <div class="bar-count">${impactBuckets[n]||0}</div>
@@ -845,10 +1230,13 @@ function switchScreen(screen) {
   document.getElementById('nav-library').classList.toggle('active', screen === 'library');
   document.getElementById('nav-stats').classList.toggle('active', screen === 'stats');
 
-  // Show/hide search + filter for library only
-  document.querySelector('.search-wrap').style.display = screen === 'library' ? '' : 'none';
-  document.getElementById('filter-strip').style.display = screen === 'library' ? '' : 'none';
-  document.querySelector('.list-meta').style.display = screen === 'library' ? '' : 'none';
+  const isLib = screen === 'library';
+  document.querySelector('.search-wrap').style.display              = isLib ? '' : 'none';
+  document.getElementById('filter-strip').style.display             = isLib ? '' : 'none';
+  document.querySelector('.list-meta').style.display                = isLib ? '' : 'none';
+  document.getElementById('active-filter-banner').style.display     = isLib ? '' : 'none';
+  // Banner only shows in library when an insights filter is active
+  if (isLib) updateInsightsBanner();
 
   if (screen === 'stats') renderStats();
 }
@@ -888,11 +1276,74 @@ searchClear.addEventListener('click', () => {
   renderList();
 });
 
-// ─── FILTER CHIP "All" ────────────────────────────────────────────────────────
-document.querySelector('[data-theme="all"]').addEventListener('click', () => setTheme('all'));
+// ─── THEME DROPDOWN EVENTS ────────────────────────────────────────────────────
+document.getElementById('theme-dd-trigger').addEventListener('click', (e) => {
+  const panel = document.getElementById('theme-dd-panel');
+  if (panel.classList.contains('open')) {
+    closeThemeDropdown();
+  } else {
+    openThemeDropdown();
+  }
+  e.stopPropagation();
+});
+
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('filter-strip');
+  if (wrap && !wrap.contains(e.target)) closeThemeDropdown();
+});
+
+document.getElementById('andor-and').addEventListener('click', () => {
+  themeFilterMode = 'and';
+  document.getElementById('andor-and').classList.add('active');
+  document.getElementById('andor-or').classList.remove('active');
+  renderThemeDropdown();
+  renderList();
+});
+document.getElementById('andor-or').addEventListener('click', () => {
+  themeFilterMode = 'or';
+  document.getElementById('andor-or').classList.add('active');
+  document.getElementById('andor-and').classList.remove('active');
+  renderThemeDropdown();
+  renderList();
+});
+
+document.getElementById('dd-clear-btn').addEventListener('click', (e) => {
+  selectedThemes = [];
+  renderThemeDropdown();
+  renderList();
+  e.stopPropagation();
+});
+
+// ─── INSIGHTS FILTER BANNER ───────────────────────────────────────────────────
+document.getElementById('active-filter-banner-clear').addEventListener('click', () => {
+  clearInsightsFilter();
+});
+
+// ─── HAMBURGER PANEL ──────────────────────────────────────────────────────────
+function openPanel() {
+  document.getElementById('side-panel').classList.add('open');
+  document.getElementById('panel-overlay').classList.add('open');
+}
+function closePanel() {
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('panel-overlay').classList.remove('open');
+}
+
+document.getElementById('hamburger-btn').addEventListener('click', openPanel);
+document.getElementById('panel-overlay').addEventListener('click', closePanel);
+
+// Group-by buttons
+document.getElementById('group-option-row').addEventListener('click', (e) => {
+  const btn = e.target.closest('.group-option-btn');
+  if (!btn) return;
+  groupBy = btn.dataset.group;
+  groupStates = {}; // reset expand states on group change
+  document.querySelectorAll('.group-option-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderList();
+});
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-renderFilterChips();
+renderThemeDropdown();
 renderList();
 updateSortUI();
 switchScreen('library');
