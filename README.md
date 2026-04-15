@@ -12,9 +12,9 @@
   - [Jyotish Sādhana](#jyotish-sādhana)
   - [Yoga Sudhakara](#yoga-sudhakara)
   - [Marginalia](#marginalia)
+    - [Books Toolchain](#books-toolchain)
   - [I Ching Oracle](#i-ching-oracle)
   - [Recipes](#recipes)
-- [Books Toolchain](#books-toolchain)
 - [iOS Home Screen Icons](#ios-home-screen-icons)
 - [Technical Notes](#technical-notes)
 
@@ -136,6 +136,32 @@ A personal reading library browser (~108 books). Book data is embedded as JSON d
 
 **How to use:** Open `books/marginalia.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Marginalia** with a deep blue gradient icon.
 
+#### Books Toolchain
+
+The `books/` directory contains three files that work together:
+
+| File | Role |
+|---|---|
+| `books_db.csv` | Source of truth — edit this to add, update, or remove books |
+| `update_books_navigator_from_csv.py` | Python script that reads the CSV and injects JSON into the HTML |
+| `marginalia.html` | The app — reads the embedded JSON at runtime, no server needed |
+
+**Workflow:**
+
+1. Edit `books_db.csv` in any spreadsheet app or text editor. Add a new row per book and use semicolons for multiple themes.
+2. Run the updater from the `books/` directory:
+   ```bash
+   python update_books_navigator_from_csv.py books_db.csv marginalia.html
+   ```
+3. Open or refresh `marginalia.html` — the new data is live immediately.
+
+**Dependencies:** Python 3, `pandas` (`pip install pandas`).
+
+**Custom paths:** The script accepts optional command-line overrides for both the CSV and HTML paths:
+```bash
+python update_books_navigator_from_csv.py path/to/books.csv path/to/target.html
+```
+
 ---
 
 ### I Ching Oracle
@@ -189,34 +215,6 @@ A personal health-protocol recipe reference and daily compliance app for seven f
 Each recipe detail screen includes a hero block, color-coded stats bar (batch size, daily dose, prep time, difficulty), ingredients with quantities, numbered step-by-step instructions, and troubleshooting notes.
 
 **How to use:** Open `recipes.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Recipes** with a dark green leaf icon.
-
----
-
-## Books Toolchain
-
-The `books/` directory contains three files that work together:
-
-| File | Role |
-|---|---|
-| `books_db.csv` | Source of truth — edit this to add, update, or remove books |
-| `update_books_navigator_from_csv.py` | Python script that reads the CSV and injects JSON into the HTML |
-| `marginalia.html` | The app — reads the embedded JSON at runtime, no server needed |
-
-**Workflow:**
-
-1. Edit `books_db.csv` in any spreadsheet app or text editor. Add a new row per book and use semicolons for multiple themes.
-2. Run the updater from the `books/` directory:
-   ```bash
-   python update_books_navigator_from_csv.py books_db.csv marginalia.html
-   ```
-3. Open or refresh `marginalia.html` — the new data is live immediately.
-
-**Dependencies:** Python 3, `pandas` (`pip install pandas`).
-
-**Custom paths:** The script accepts optional command-line overrides for both the CSV and HTML paths:
-```bash
-python update_books_navigator_from_csv.py path/to/books.csv path/to/target.html
-```
 
 ---
 
