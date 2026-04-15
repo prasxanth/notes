@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRX · Dashboard</title>
+<style>
+  :root {
+    --base:    #1e1e2e;
+    --mantle:  #181825;
+    --crust:   #11111b;
+    --surface0:#313244;
+    --surface1:#45475a;
+    --surface2:#585b70;
+    --overlay0:#6c7086;
+    --overlay1:#7f849c;
+    --overlay2:#9399b2;
+    --text:    #cdd6f4;
+    --subtext0:#a6adc8;
+    --subtext1:#bac2de;
+    --lavender:#b4befe;
+    --blue:    #89b4fa;
+    --sapphire:#74c7ec;
+    --sky:     #89dceb;
+    --teal:    #94e2d5;
+    --green:   #a6e3a1;
+    --yellow:  #f9e2af;
+    --peach:   #fab387;
+    --maroon:  #eba0ac;
+    --red:     #f38ba8;
+    --mauve:   #cba6f7;
+    --pink:    #f5c2e7;
+    --flamingo:#f2cdcd;
+    --rosewater:#f5e0dc;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--base);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;overflow-x:hidden}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:var(--mantle)}
+  ::-webkit-scrollbar-thumb{background:var(--surface1);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--surface2)}
+
+  /* ── topbar ── */
+  #topbar{
+    position:sticky;top:0;z-index:100;
+    background:var(--crust);border-bottom:1px solid var(--surface0);
+    padding:0 24px;display:flex;align-items:center;gap:12px;height:54px
+  }
+  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--lavender);letter-spacing:.06em;white-space:nowrap}
+  .logo em{color:var(--mauve);font-style:normal}
+  .sep{flex:1}
+  .datepill{background:var(--surface0);padding:4px 12px;border-radius:20px;color:var(--subtext0);font-size:11px;letter-spacing:.06em}
+  .btn{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:6px 14px;border-radius:8px;border:none;
+    font-family:'DM Mono',monospace;font-size:12px;
+    cursor:pointer;transition:all .15s;font-weight:500;letter-spacing:.03em
+  }
+  .btn-primary{background:var(--lavender);color:var(--crust)}
+  .btn-primary:hover{background:var(--mauve)}
+  .btn-ghost{background:var(--surface0);color:var(--text)}
+  .btn-ghost:hover{background:var(--surface1)}
+  .btn-danger{background:var(--red);color:var(--crust)}
+  .btn-danger:hover{background:var(--maroon)}
+  .btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
+  .btn-xs{padding:2px 7px;font-size:10px;border-radius:5px}
+
+  /* ── layout ── */
+  #app{display:flex;height:calc(100vh - 54px);overflow:hidden}
+
+  /* ── sidebar ── */
+  #sidebar{
+    width:252px;flex-shrink:0;
+    background:var(--mantle);border-right:1px solid var(--surface0);
+    display:flex;flex-direction:column;overflow:hidden
+  }
+  .sb-head{padding:14px 14px 8px;display:flex;align-items:center;justify-content:space-between}
+  .sb-label{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:var(--overlay1);letter-spacing:.14em;text-transform:uppercase}
+  #proj-list{flex:1;overflow-y:auto;padding:0 8px 16px}
+  .pi{border-radius:8px;margin-bottom:2px}
+  .pi-hdr{
+    display:flex;align-items:center;gap:7px;
+    padding:7px 9px;cursor:pointer;border-radius:8px;
+    transition:background .12s
+  }
+  .pi-hdr:hover{background:var(--surface0)}
+  .pi-hdr.sel{background:var(--surface1)}
+  .chev{
+    width:13px;height:13px;flex-shrink:0;color:var(--overlay0);
+    transition:transform .2s;cursor:pointer
+  }
+  .chev.open{transform:rotate(90deg)}
+  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .pi-name{flex:1;color:var(--text);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pi-ct{font-size:10px;padding:1px 5px;border-radius:9px;background:var(--surface0);color:var(--subtext0)}
+  .sub-list{padding-left:18px;display:none}
+  .sub-list.open{display:block}
+  .sub-item{
+    display:flex;align-items:center;gap:7px;
+    padding:6px 9px;border-radius:6px;cursor:pointer;
+    margin-bottom:2px;transition:background .12s
+  }
+  .sub-item:hover{background:var(--surface0)}
+  .sub-item.sel{background:var(--surface1)}
+  .sb-div{height:1px;background:var(--surface0);margin:8px 8px}
+  .sb-section-label{padding:4px 9px;font-size:10px;color:var(--overlay0);letter-spacing:.1em;text-transform:uppercase}
+
+  /* ── main ── */
+  #main{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+
+  /* ── stats ── */
+  #stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  .stat{background:var(--mantle);border:1px solid var(--surface0);border-radius:12px;padding:13px 16px}
+  .stat-lbl{font-size:10px;color:var(--overlay1);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+  .stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1}
+  .stat-sub{font-size:10px;color:var(--subtext0);margin-top:2px}
+
+  /* ── content header ── */
+  #con-hdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  #con-hdr h2{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--text);flex:1}
+  #srch{
+    width:200px;background:var(--surface0);border:1px solid var(--surface1);
+    border-radius:20px;padding:6px 14px;color:var(--text);
+    font-family:'DM Mono',monospace;font-size:12px;outline:none
+  }
+  #srch:focus{border-color:var(--lavender)}
+  .tag-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:2px}
+  .tag{padding:3px 10px;border-radius:12px;font-size:10px;background:var(--surface0);color:var(--subtext1);cursor:pointer;border:1px solid transparent;transition:all .12s}
+  .tag.on{background:var(--lavender);color:var(--crust)}
+
+  /* ── project card ── */
+  .pcard{
+    background:var(--mantle);border:1px solid var(--surface0);
+    border-radius:14px;overflow:hidden;margin-bottom:14px;
+    transition:border-color .15s;
+    animation:slideIn .18s ease
+  }
+  .pcard:hover{border-color:var(--surface1)}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .pcard-hdr{
+    padding:16px 18px;display:flex;align-items:flex-start;gap:12px;
+    border-bottom:1px solid var(--surface0);cursor:pointer
+  }
+  .cbar{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:36px}
+  .pinfo{flex:1;min-width:0}
+  .ptitle{
+    font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text);
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap
+  }
+  .pmeta{font-size:11px;color:var(--subtext0);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+  .pactions{display:flex;gap:5px;flex-shrink:0;align-items:flex-start}
+  .pcard-body{}
+  .pcard-body.hide{display:none}
+  .notebar{
+    padding:8px 18px;background:var(--crust);
+    font-size:11px;color:var(--subtext0);
+    border-bottom:1px solid var(--surface0);
+    display:flex;gap:6px;align-items:flex-start;
+    white-space:pre-wrap;word-break:break-word
+  }
+  .nlbl{color:var(--overlay1);flex-shrink:0;font-weight:500;letter-spacing:.06em}
+
+  /* ── milestones table ── */
+  .ms-wrap{overflow-x:auto}
+  table.ms{width:100%;border-collapse:collapse;font-size:12px}
+  table.ms thead tr{background:var(--crust)}
+  table.ms th{
+    padding:8px 12px;text-align:left;
+    font-size:10px;font-weight:500;color:var(--overlay1);
+    letter-spacing:.1em;text-transform:uppercase;
+    border-bottom:1px solid var(--surface0);white-space:nowrap
+  }
+  table.ms td{
+    padding:9px 12px;vertical-align:top;
+    border-bottom:1px solid var(--surface0);color:var(--subtext1)
+  }
+  table.ms tbody tr:last-child td{border-bottom:none}
+  table.ms tbody tr:hover td{background:rgba(255,255,255,.018)}
+  td.msname{color:var(--text);font-weight:500}
+  td.msnotes{max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:11px;color:var(--subtext0)}
+  .add-row{padding:8px 12px;background:var(--crust);border-top:1px solid var(--surface0)}
+
+  /* ── badges ── */
+  .badge{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 8px;border-radius:12px;
+    font-size:10px;font-weight:500;letter-spacing:.04em;white-space:nowrap
+  }
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8}
+  .s-active{background:rgba(166,227,161,.12);color:var(--green)}
+  .s-planning{background:rgba(180,190,254,.12);color:var(--lavender)}
+  .s-blocked{background:rgba(243,139,168,.12);color:var(--red)}
+  .s-review{background:rgba(249,226,175,.12);color:var(--yellow)}
+  .s-done{background:rgba(148,226,213,.12);color:var(--teal)}
+  .s-onhold{background:rgba(88,91,112,.25);color:var(--overlay2)}
+  .s-atrisk{background:rgba(250,179,135,.12);color:var(--peach)}
+  .prio{border-radius:4px;padding:1px 6px;font-size:10px}
+  .p-critical{background:rgba(243,139,168,.18);color:var(--red)}
+  .p-high{background:rgba(250,179,135,.18);color:var(--peach)}
+  .p-medium{background:rgba(249,226,175,.18);color:var(--yellow)}
+  .p-low{background:rgba(166,227,161,.18);color:var(--green)}
+  .artchip{
+    display:inline-flex;align-items:center;gap:3px;
+    background:var(--surface0);border-radius:5px;
+    padding:2px 7px;font-size:10px;color:var(--blue);margin:1px 2px
+  }
+
+  /* ── progress ── */
+  .pw{display:flex;align-items:center;gap:7px;min-width:100px}
+  .pb{flex:1;height:4px;background:var(--surface0);border-radius:2px;overflow:hidden}
+  .pf{height:100%;border-radius:2px;transition:width .3s}
+  .pp{font-size:10px;color:var(--subtext0);white-space:nowrap}
+
+  /* ── date colors ── */
+  .d-over{color:var(--red)}
+  .d-soon{color:var(--yellow)}
+  .d-ok{color:var(--subtext0)}
+
+  /* ── modal ── */
+  .mbg{
+    display:none;position:fixed;inset:0;
+    background:rgba(17,17,27,.8);backdrop-filter:blur(4px);
+    z-index:500;align-items:center;justify-content:center
+  }
+  .mbg.open{display:flex}
+  .modal{
+    background:var(--mantle);border:1px solid var(--surface1);
+    border-radius:16px;padding:26px;width:680px;max-width:95vw;
+    max-height:88vh;overflow-y:auto
+  }
+  .mtitle{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--lavender);margin-bottom:18px}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .fgrid .full{grid-column:1/-1}
+  label{font-size:11px;color:var(--overlay1);letter-spacing:.05em;display:block;margin-bottom:3px}
+  input[type=text],input[type=date],input[type=number],select,textarea{
+    width:100%;background:var(--surface0);border:1px solid var(--surface1);
+    border-radius:8px;padding:7px 11px;
+    color:var(--text);font-family:'DM Mono',monospace;font-size:12px;
+    outline:none;transition:border-color .12s
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--lavender)}
+  textarea{resize:vertical;min-height:65px}
+  select option{background:var(--surface0)}
+  .factions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+  /* ── perf output ── */
+  #perf-out{
+    background:var(--crust);border-radius:10px;padding:18px;
+    font-size:11px;line-height:1.8;white-space:pre-wrap;color:var(--text);
+    max-height:58vh;overflow-y:auto;border:1px solid var(--surface0)
+  }
+
+  /* ── empty ── */
+  .empty{text-align:center;padding:40px;color:var(--overlay0);font-size:13px}
+
+  /* ── no results ── */
+  #no-res{display:none;text-align:center;padding:40px;color:var(--overlay0);font-size:13px}
+
+  /* ── del button fade ── */
+  .del-btn{opacity:0;transition:opacity .12s}
+  tr:hover .del-btn,.pcard:hover .del-btn{opacity:1}
+
+  /* ── sub-project indent ── */
+  .sub-indent{margin-left:24px;border-left:2px solid var(--surface0)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">PRX<em>·</em>DASH</div>
+  <div class="sep"></div>
+  <div class="datepill" id="today"></div>
+  <button class="btn btn-ghost" onclick="openPerf()">📊 Perf Review</button>
+  <button class="btn btn-ghost" onclick="doExport()">↓ Export</button>
+  <button class="btn btn-ghost" onclick="document.getElementById('fi').click()">↑ Import</button>
+  <input type="file" id="fi" accept=".json" style="display:none" onchange="doImport(event)">
+  <button class="btn btn-primary" onclick="openAddProj()">+ Project</button>
+</div>
+
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-head">
+      <span class="sb-label">Projects</span>
+      <button class="btn btn-ghost btn-xs" onclick="openAddProj()">+</button>
+    </div>
+    <div id="proj-list"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="stats-row"></div>
+    <div id="con-hdr">
+      <h2 id="mtitle">All Projects</h2>
+      <input id="srch" type="text" placeholder="Search…" oninput="renderMain()">
+      <div style="flex:1"></div>
+    </div>
+    <div class="tag-row" id="sf"></div>
+    <div id="proj-area"></div>
+    <div id="no-res">No projects match.</div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Project -->
+<div class="mbg" id="m-proj">
+  <div class="modal">
+    <div class="mtitle" id="mptitle">New Project</div>
+    <div class="fgrid">
+      <div class="full"><label>Project Name *</label><input type="text" id="fp-name" placeholder="AIx Strategy Initiative"></div>
+      <div><label>Status</label><select id="fp-status">
+        <option value="active">Active</option><option value="planning">Planning</option>
+        <option value="review">In Review</option><option value="blocked">Blocked</option>
+        <option value="atrisk">At Risk</option><option value="onhold">On Hold</option><option value="done">Done</option>
+      </select></div>
+      <div><label>Priority</label><select id="fp-pri">
+        <option value="critical">Critical</option><option value="high">High</option>
+        <option value="medium">Medium</option><option value="low">Low</option>
+      </select></div>
+      <div><label>Accent Color</label><select id="fp-col">
+        <option value="lavender">Lavender</option><option value="blue">Blue</option>
+        <option value="mauve">Mauve</option><option value="green">Green</option>
+        <option value="peach">Peach</option><option value="yellow">Yellow</option>
+        <option value="teal">Teal</option><option value="red">Red</option>
+        <option value="pink">Pink</option><option value="sapphire">Sapphire</option>
+      </select></div>
+      <div><label>Progress % (0–100)</label><input type="number" id="fp-prog" min="0" max="100" value="0"></div>
+      <div><label>Start Date</label><input type="date" id="fp-start"></div>
+      <div><label>Target Date</label><input type="date" id="fp-tgt"></div>
+      <div><label>Owner</label><input type="text" id="fp-owner" placeholder="Name"></div>
+      <div><label>Team / Stakeholders</label><input type="text" id="fp-team" placeholder="PM, Eng…"></div>
+      <div class="full"><label>Description / Goal</label><textarea id="fp-desc" placeholder="Objective and success criteria…"></textarea></div>
+      <div class="full"><label>Artifacts (comma-separated)</label><input type="text" id="fp-art" placeholder="PRD, Design Doc, Deck…"></div>
+      <div class="full"><label>Notes / Risks</label><textarea id="fp-notes" placeholder="Blockers, context, dependencies…"></textarea></div>
+      <div><label>Parent Project (leave blank for top-level)</label><select id="fp-parent"><option value="">— None —</option></select></div>
+    </div>
+    <div class="factions">
+      <button class="btn btn-ghost" onclick="closeM('m-proj')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProj()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Milestone -->
+<div class="mbg" id="m-ms">
+  <div class="modal">
+    <div class="mtitle" id="mmtitle">New Milestone</div>
+    <input type="hidden" id="fm-pid"><input type="hidden" id="fm-mid">
+    <div class="fgrid">
+      <div class="full"><label>Milestone Name *</label><input type="text" id="fm-name" placeholder="MVP Demo Ready"></div>
+      <div><label>Status</label><select id="fm-status">
+        <option value="planning">Not Started</option><option value="active">In Progress</option>
+        <option value="review">In Review</option><option value="blocked">Blocked</option>
+        <option value="atrisk">At Risk</option><option value="done">Done</option><option value="onhold">On Hold</option>
+      </select></div>
+      <div><label>Priority</label><select id="fm-pri">
+        <option value="critical">Critical</option><option value="high">High</option>
+        <option value="medium">Medium</option><option value="low">Low</option>
+      </select></div>
+      <div><label>Due Date</label><input type="date" id="fm-due"></div>
+      <div><label>ETA</label><input type="date" id="fm-eta"></div>
+      <div><label>Owner</label><input type="text" id="fm-owner" placeholder="Name"></div>
+      <div><label>Progress % (0–100)</label><input type="number" id="fm-prog" min="0" max="100" value="0"></div>
+      <div class="full"><label>Artifacts (comma-separated)</label><input type="text" id="fm-art" placeholder="Prototype, Report, Deck…"></div>
+      <div class="full"><label>Notes</label><textarea id="fm-notes" placeholder="Details, dependencies, risks…"></textarea></div>
+    </div>
+    <div class="factions">
+      <button class="btn btn-ghost" onclick="closeM('m-ms')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMs()">Save Milestone</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Perf Review -->
+<div class="mbg" id="m-perf">
+  <div class="modal" style="width:780px">
+    <div class="mtitle">📊 Performance Review Summary</div>
+    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <label style="margin:0;color:var(--subtext1)">Period:</label>
+      <select id="pp" style="width:auto" onchange="genPerf()">
+        <option value="h1">H1 (Jan–Jun)</option>
+        <option value="h2">H2 (Jul–Dec)</option>
+        <option value="all">Full Year / All Time</option>
+      </select>
+      <label style="margin:0;color:var(--subtext1)">Year:</label>
+      <input type="number" id="py" style="width:78px" value="2025" onchange="genPerf()">
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" onclick="copyPerf()">Copy Text</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-perf')">Close</button>
+    </div>
+    <div id="perf-out"></div>
+  </div>
+</div>
+
+<!-- MODAL: Confirm Delete -->
+<div class="mbg" id="m-del">
+  <div class="modal" style="width:400px">
+    <div class="mtitle" style="color:var(--red)">⚠ Confirm Delete</div>
+    <p style="color:var(--subtext1);margin-bottom:18px;font-size:13px" id="del-msg">Are you sure?</p>
+    <div class="factions">
+      <button class="btn btn-ghost" onclick="closeM('m-del')">Cancel</button>
+      <button class="btn btn-danger" id="del-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Constants & Storage ── */
+const SK = 'prx_dash_v3';
+const COLORS = {
+  lavender:'#b4befe',blue:'#89b4fa',mauve:'#cba6f7',green:'#a6e3a1',
+  peach:'#fab387',yellow:'#f9e2af',teal:'#94e2d5',red:'#f38ba8',
+  pink:'#f5c2e7',sapphire:'#74c7ec'
+};
+const STATUS_LABELS = {active:'Active',planning:'Planning',review:'In Review',blocked:'Blocked',atrisk:'At Risk',onhold:'On Hold',done:'Done'};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function load(){try{return JSON.parse(localStorage.getItem(SK))||{projects:[]}}catch{return{projects:[]}}}
+function save(){localStorage.setItem(SK,JSON.stringify(DB))}
+
+let DB = load();
+let openNodes = {};
+let selId = null;
+let sfActive = null;
+let editProjId = null;
+let editMsId = null;
+
+/* ── Seed data ── */
+if(!DB.projects.length){
+  DB.projects = [
+    {id:uid(),name:'AIx Strategy & Architecture',color:'lavender',
+     status:'active',priority:'critical',start:'2025-01-01',target:'2025-12-31',
+     owner:'Prashanth',team:'AGS Technical Marketing',
+     desc:'Define and execute AIx strategy within AGS. Multi-agent architecture, domain-aligned agents (Etch, DDP, MDP, 8D, Documentation), orchestrator layers, and portfolio-level positioning.',
+     artifacts:'AIx Architecture Doc, Agent Spec, Portfolio Taxonomy, Insight OS Infographic',
+     notes:'2026 is foundation-building phase; 2027 is the recognition window. Emphasis on strategic visibility for Director promo.',
+     progress:40,collapsed:false,milestones:[
+      {id:uid(),name:'Multi-agent architecture design',status:'done',priority:'critical',due:'2025-03-31',eta:'2025-03-28',owner:'Prashanth',progress:100,artifacts:'Architecture Doc, DAG Routing Spec',notes:'Air-gapped, self-hosted LLMs. HITL as first-class output pathway.'},
+      {id:uid(),name:'160+ AIx project taxonomy finalized',status:'done',priority:'high',due:'2025-04-30',eta:'2025-04-25',owner:'Prashanth',progress:100,artifacts:'Taxonomy CSV, Insight OS Infographic',notes:'Three layers: Insights Engine, Domain Knowledge, Actionable Data.'},
+      {id:uid(),name:'AIx Demo — Skip-Level Leadership',status:'active',priority:'critical',due:'2025-09-30',eta:'2025-10-15',owner:'Prashanth',progress:30,artifacts:'Demo Deck',notes:'ETA slipping — compute environment needs finalization.'},
+      {id:uid(),name:'Director Promotion Business Case',status:'planning',priority:'critical',due:'2025-12-01',eta:'',owner:'Prashanth',progress:10,artifacts:'Promo Doc',notes:'2027 framed as recognition window per Jyotish session.'}
+    ]},
+    {id:uid(),name:'EHM2 Patent & IP Strategy',color:'blue',
+     status:'review',priority:'high',start:'2025-02-01',target:'2025-10-31',
+     owner:'Prashanth, Suketu Parikh',team:'Applied Materials Legal',
+     desc:'AI-based excursion detection and equipment health monitoring system. Utility patent with 6 independent claims, full IDS, and 5-patent family roadmap.',
+     artifacts:'Patent Draft, IDS, Family Roadmap v1',
+     notes:'Alice Step 2 hardening complete. Anticipate office action on claims 3 & 5.',
+     progress:75,collapsed:false,milestones:[
+      {id:uid(),name:'Utility patent draft — 6 independent claims',status:'done',priority:'critical',due:'2025-03-15',eta:'2025-03-10',owner:'Prashanth',progress:100,artifacts:'Patent Draft + IDS',notes:''},
+      {id:uid(),name:'5-patent family roadmap approved',status:'done',priority:'high',due:'2025-04-01',eta:'2025-04-01',owner:'Prashanth',progress:100,artifacts:'Family Roadmap v1',notes:''},
+      {id:uid(),name:'Legal review & filing',status:'review',priority:'critical',due:'2025-06-30',eta:'2025-07-20',owner:'Legal',progress:60,artifacts:'',notes:'Pending Alice Step 2 revisions.'},
+      {id:uid(),name:'Office action response ready',status:'planning',priority:'high',due:'2025-09-30',eta:'',owner:'Prashanth',progress:0,artifacts:'',notes:'Anticipate OA on claims 3 & 5.'}
+    ]},
+    {id:uid(),name:'AGS Performance Services GTM',color:'green',
+     status:'active',priority:'high',start:'2025-03-01',target:'2025-08-31',
+     owner:'Prashanth',team:'AGS Technical Marketing, Sales',
+     desc:'Go-to-market strategy for AGS Performance Services including economic value analysis, pricing models, and managed service delivery framework.',
+     artifacts:'GTM Strategy Doc, Value Analysis, Pricing Model',
+     notes:'Managed service delivery model approved. Pricing tiers finalized.',
+     progress:55,collapsed:false,milestones:[
+      {id:uid(),name:'Economic value analysis complete',status:'done',priority:'high',due:'2025-04-15',eta:'2025-04-10',owner:'Prashanth',progress:100,artifacts:'Value Analysis v1',notes:''},
+      {id:uid(),name:'Pricing & packaging finalized',status:'done',priority:'high',due:'2025-05-01',eta:'2025-05-01',owner:'Prashanth',progress:100,artifacts:'Pricing Model',notes:''},
+      {id:uid(),name:'Internal sales enablement deck',status:'active',priority:'medium',due:'2025-07-15',eta:'2025-07-30',owner:'Prashanth',progress:40,artifacts:'Sales Deck WIP',notes:''},
+      {id:uid(),name:'Field pilot — 2 customer accounts',status:'planning',priority:'high',due:'2025-08-31',eta:'',owner:'Team',progress:0,artifacts:'',notes:'Accounts TBD.'}
+    ]}
+  ];
+  save();
+}
+
+/* ── Render All ── */
+function renderAll(){renderSidebar();renderMain()}
+
+/* ── Sidebar ── */
+function renderSidebar(){
+  const list = document.getElementById('proj-list');
+  const top = DB.projects.filter(p=>!p.parentId);
+  list.innerHTML='';
+  top.forEach(p=>{
+    const subs = DB.projects.filter(s=>s.parentId===p.id);
+    const hasSubs = subs.length>0;
+    const color = COLORS[p.color]||COLORS.lavender;
+    const item = document.createElement('div');
+    item.className='pi';
+    const hdr = document.createElement('div');
+    hdr.className='pi-hdr'+(selId===p.id?' sel':'');
+    hdr.innerHTML=`<svg class="chev ${openNodes[p.id]?'open':''}" style="visibility:${hasSubs?'visible':'hidden'}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg>
+      <div class="dot" style="background:${color}"></div>
+      <span class="pi-name">${p.name}</span>
+      <span class="pi-ct">${p.milestones.length}</span>`;
+    hdr.onclick=e=>{
+      if(e.target.closest('.chev')){openNodes[p.id]=!openNodes[p.id];renderSidebar()}
+      else{selId=p.id;renderSidebar();renderMain()}
+    };
+    item.appendChild(hdr);
+    if(hasSubs){
+      const sl=document.createElement('div');
+      sl.className='sub-list'+(openNodes[p.id]?' open':'');
+      subs.forEach(s=>{
+        const sc=COLORS[s.color]||COLORS.blue;
+        const si=document.createElement('div');
+        si.className='sub-item'+(selId===s.id?' sel':'');
+        si.innerHTML=`<div class="dot" style="background:${sc}"></div><span class="pi-name" style="font-size:11px">${s.name}</span><span class="pi-ct">${s.milestones.length}</span>`;
+        si.onclick=()=>{selId=s.id;renderSidebar();renderMain()};
+        sl.appendChild(si);
+      });
+      item.appendChild(sl);
+    }
+    list.appendChild(item);
+  });
+  // "All" option at top
+  const allItem = document.createElement('div');
+  allItem.className='pi-hdr'+(selId===null?' sel':'');
+  allItem.style.marginBottom='4px';
+  allItem.innerHTML=`<div style="width:13px"></div><div class="dot" style="background:var(--overlay1)"></div><span class="pi-name" style="color:var(--subtext0)">All Projects</span>`;
+  allItem.onclick=()=>{selId=null;renderSidebar();renderMain()};
+  list.insertBefore(allItem, list.firstChild);
+  const div=document.createElement('div');div.className='sb-div';
+  list.insertBefore(div, list.children[1]);
+}
+
+/* ── Stats ── */
+function renderStats(){
+  const row=document.getElementById('stats-row');
+  const ps=DB.projects;
+  const ams=ps.flatMap(p=>p.milestones);
+  const active=ps.filter(p=>p.status==='active').length;
+  const done=ams.filter(m=>m.status==='done').length;
+  const over=ams.filter(m=>m.due&&m.status!=='done'&&new Date(m.due)<new Date()).length;
+  const blk=ps.filter(p=>p.status==='blocked'||p.status==='atrisk').length;
+  const avg=ps.length?Math.round(ps.reduce((a,p)=>a+(p.progress||0),0)/ps.length):0;
+  row.innerHTML=`
+    <div class="stat"><div class="stat-lbl">Projects</div><div class="stat-val" style="color:var(--lavender)">${ps.length}</div><div class="stat-sub">${active} active</div></div>
+    <div class="stat"><div class="stat-lbl">Milestones</div><div class="stat-val" style="color:var(--blue)">${ams.length}</div><div class="stat-sub">${done} done</div></div>
+    <div class="stat"><div class="stat-lbl">Overdue</div><div class="stat-val" style="color:${over>0?'var(--red)':'var(--green)'}">${over}</div><div class="stat-sub">milestones</div></div>
+    <div class="stat"><div class="stat-lbl">At Risk/Blocked</div><div class="stat-val" style="color:${blk>0?'var(--peach)':'var(--green)'}">${blk}</div><div class="stat-sub">projects</div></div>
+    <div class="stat"><div class="stat-lbl">Avg Progress</div><div class="stat-val" style="color:var(--teal)">${avg}%</div><div class="stat-sub">all projects</div></div>`;
+}
+
+/* ── Status filter ── */
+function renderSF(){
+  const el=document.getElementById('sf');
+  const statuses=['active','planning','review','blocked','atrisk','onhold','done'];
+  el.innerHTML='<span style="color:var(--overlay1);font-size:10px;letter-spacing:.08em">FILTER:</span>'+
+    statuses.map(s=>`<div class="tag ${sfActive===s?'on':''}" onclick="toggleSF('${s}')">${STATUS_LABELS[s]}</div>`).join('');
+}
+function toggleSF(s){sfActive=(sfActive===s)?null:s;renderMain()}
+
+/* ── Main Content ── */
+function renderMain(){
+  renderStats();
+  renderSF();
+  const area=document.getElementById('proj-area');
+  const nr=document.getElementById('no-res');
+  document.getElementById('mtitle').textContent = selId
+    ?(DB.projects.find(p=>p.id===selId)?.name||'Project')
+    :'All Projects';
+  const q=document.getElementById('srch').value.toLowerCase().trim();
+  let projs = selId
+    ? DB.projects.filter(p=>p.id===selId)
+    : DB.projects.filter(p=>!p.parentId);
+  if(sfActive) projs=projs.filter(p=>p.status===sfActive);
+  if(q) projs=projs.filter(p=>
+    p.name.toLowerCase().includes(q)||
+    (p.desc||'').toLowerCase().includes(q)||
+    (p.notes||'').toLowerCase().includes(q)||
+    p.milestones.some(m=>m.name.toLowerCase().includes(q))
+  );
+  area.innerHTML='';
+  if(!projs.length){nr.style.display='block';return}
+  nr.style.display='none';
+  projs.forEach(p=>{
+    area.appendChild(buildCard(p,false));
+    DB.projects.filter(s=>s.parentId===p.id).forEach(s=>{
+      const sc=buildCard(s,true);
+      sc.classList.add('sub-indent');
+      area.appendChild(sc);
+    });
+  });
+}
+
+/* ── Build Card ── */
+function buildCard(p,isSub){
+  const color=COLORS[p.color]||COLORS.lavender;
+  const subs=DB.projects.filter(s=>s.parentId===p.id);
+  const card=document.createElement('div');
+  card.className='pcard';card.id='card-'+p.id;
+  const pcPct=p.progress||0;
+  card.innerHTML=`
+    <div class="pcard-hdr" onclick="toggleCard('${p.id}')">
+      <div class="cbar" style="background:${color}"></div>
+      <div class="pinfo">
+        <div class="ptitle">
+          ${esc(p.name)} ${sbadge(p.status)} <span class="prio p-${p.priority}">${p.priority.toUpperCase()}</span>
+          ${isSub?'<span style="font-size:10px;color:var(--overlay1);background:var(--surface0);padding:1px 7px;border-radius:8px">SUB</span>':''}
+        </div>
+        <div class="pmeta">
+          ${p.owner?`<span>👤 ${esc(p.owner)}</span>`:''}
+          ${p.team?`<span>🏢 ${esc(p.team)}</span>`:''}
+          ${p.target?`<span>🎯 ${fmtd(p.target)}</span>`:''}
+          ${p.start?`<span>📅 ${fmtd(p.start)}</span>`:''}
+          <span>${p.milestones.length} milestone${p.milestones.length!==1?'s':''}</span>
+          ${subs.length?`<span>${subs.length} sub-project${subs.length!==1?'s':''}</span>`:''}
+        </div>
+        <div style="margin-top:7px">${progBar(pcPct,color)}</div>
+      </div>
+      <div class="pactions" onclick="event.stopPropagation()">
+        <button class="btn btn-ghost btn-sm" onclick="openAddMs('${p.id}')">+ Milestone</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditProj('${p.id}')">✎</button>
+        <button class="btn btn-danger btn-sm del-btn" onclick="confirmDel('proj','${p.id}')">✕</button>
+      </div>
+    </div>
+    ${p.desc?`<div class="notebar"><span class="nlbl">GOAL&nbsp;</span>${esc(p.desc)}</div>`:''}
+    ${p.notes?`<div class="notebar"><span class="nlbl">NOTES</span>${esc(p.notes)}</div>`:''}
+    ${p.artifacts?`<div class="notebar"><span class="nlbl">ARTF&nbsp;</span>${artChips(p.artifacts)}</div>`:''}
+    <div class="pcard-body ${p.collapsed?'hide':''}" id="body-${p.id}">
+      <div class="ms-wrap">${buildMsTable(p)}</div>
+    </div>`;
+  return card;
+}
+
+/* ── Milestones Table ── */
+function buildMsTable(p){
+  if(!p.milestones.length) return `<div class="empty">No milestones yet — add one with the button above.</div>`;
+  const rows=p.milestones.map(m=>`<tr>
+    <td class="msname">${esc(m.name)}</td>
+    <td>${sbadge(m.status)}</td>
+    <td><span class="prio p-${m.priority}">${m.priority.toUpperCase()}</span></td>
+    <td class="${dc(m.due)}">${m.due?fmtd(m.due):'—'}</td>
+    <td class="${dc(m.eta)}">${m.eta?fmtd(m.eta):'—'}</td>
+    <td>${esc(m.owner||'—')}</td>
+    <td>${progBar(m.progress||0)}</td>
+    <td>${artChips(m.artifacts||'')}</td>
+    <td class="msnotes">${esc(m.notes||'')}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-xs" onclick="openEditMs('${p.id}','${m.id}')">✎</button>
+      <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('ms','${m.id}','${p.id}')">✕</button>
+    </td>
+  </tr>`).join('');
+  return `<table class="ms">
+    <thead><tr>
+      <th>Milestone</th><th>Status</th><th>Priority</th>
+      <th>Due</th><th>ETA</th><th>Owner</th>
+      <th style="min-width:110px">Progress</th><th>Artifacts</th><th>Notes</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="10" class="add-row"><button class="btn btn-ghost btn-xs" onclick="openAddMs('${p.id}')">+ Add Milestone</button></td></tr></tfoot>
+  </table>`;
+}
+
+/* ── Helpers ── */
+function sbadge(s){const l=STATUS_LABELS[s]||s;return `<span class="badge s-${s}">${l}</span>`}
+function progBar(pct,col){
+  const c=pct>=100?'var(--green)':pct>=60?'var(--blue)':pct>=30?'var(--yellow)':'var(--peach)';
+  return `<div class="pw"><div class="pb"><div class="pf" style="width:${pct}%;background:${c}"></div></div><span class="pp">${pct}%</span></div>`;
+}
+function fmtd(d){
+  if(!d)return'';const[y,m,day]=d.split('-');
+  return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+parseInt(day)+', '+y;
+}
+function dc(d){if(!d)return'';const diff=(new Date(d)-new Date())/(86400000);return diff<0?'d-over':diff<14?'d-soon':'d-ok'}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function artChips(s){return(s||'').split(',').filter(Boolean).map(a=>`<span class="artchip">📎 ${esc(a.trim())}</span>`).join('')}
+function toggleCard(id){
+  const p=DB.projects.find(x=>x.id===id);if(!p)return;
+  p.collapsed=!p.collapsed;save();
+  const b=document.getElementById('body-'+id);if(b)b.classList.toggle('hide',p.collapsed);
+}
+
+/* ── Project CRUD ── */
+function openAddProj(){
+  editProjId=null;
+  document.getElementById('mptitle').textContent='New Project';
+  ['fp-name','fp-desc','fp-art','fp-notes','fp-owner','fp-team','fp-start','fp-tgt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('fp-status').value='active';
+  document.getElementById('fp-pri').value='high';
+  document.getElementById('fp-col').value='lavender';
+  document.getElementById('fp-prog').value=0;
+  const par=document.getElementById('fp-parent');
+  par.innerHTML='<option value="">— None (top-level) —</option>'+DB.projects.filter(p=>!p.parentId).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  openM('m-proj');
+}
+function openEditProj(id){
+  editProjId=id;const p=DB.projects.find(x=>x.id===id);if(!p)return;
+  document.getElementById('mptitle').textContent='Edit Project';
+  document.getElementById('fp-name').value=p.name||'';
+  document.getElementById('fp-status').value=p.status||'active';
+  document.getElementById('fp-pri').value=p.priority||'high';
+  document.getElementById('fp-col').value=p.color||'lavender';
+  document.getElementById('fp-start').value=p.start||'';
+  document.getElementById('fp-tgt').value=p.target||'';
+  document.getElementById('fp-owner').value=p.owner||'';
+  document.getElementById('fp-team').value=p.team||'';
+  document.getElementById('fp-desc').value=p.desc||'';
+  document.getElementById('fp-art').value=p.artifacts||'';
+  document.getElementById('fp-notes').value=p.notes||'';
+  document.getElementById('fp-prog').value=p.progress||0;
+  const par=document.getElementById('fp-parent');
+  par.innerHTML='<option value="">— None (top-level) —</option>'+DB.projects.filter(x=>x.id!==id&&!x.parentId).map(x=>`<option value="${x.id}"${x.id===p.parentId?' selected':''}>${x.name}</option>`).join('');
+  openM('m-proj');
+}
+function saveProj(){
+  const name=document.getElementById('fp-name').value.trim();
+  if(!name){alert('Project name required.');return}
+  const data={
+    name,status:document.getElementById('fp-status').value,
+    priority:document.getElementById('fp-pri').value,
+    color:document.getElementById('fp-col').value,
+    start:document.getElementById('fp-start').value,
+    target:document.getElementById('fp-tgt').value,
+    owner:document.getElementById('fp-owner').value.trim(),
+    team:document.getElementById('fp-team').value.trim(),
+    desc:document.getElementById('fp-desc').value.trim(),
+    artifacts:document.getElementById('fp-art').value.trim(),
+    notes:document.getElementById('fp-notes').value.trim(),
+    progress:parseInt(document.getElementById('fp-prog').value)||0,
+    parentId:document.getElementById('fp-parent').value||null
+  };
+  if(editProjId){const p=DB.projects.find(x=>x.id===editProjId);Object.assign(p,data)}
+  else DB.projects.push({id:uid(),milestones:[],collapsed:false,...data});
+  save();closeM('m-proj');renderAll();
+}
+
+/* ── Milestone CRUD ── */
+function openAddMs(pid){
+  editMsId=null;
+  document.getElementById('mmtitle').textContent='New Milestone';
+  document.getElementById('fm-pid').value=pid;
+  document.getElementById('fm-mid').value='';
+  ['fm-name','fm-due','fm-eta','fm-owner','fm-art','fm-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('fm-status').value='planning';
+  document.getElementById('fm-pri').value='medium';
+  document.getElementById('fm-prog').value=0;
+  openM('m-ms');
+}
+function openEditMs(pid,mid){
+  const p=DB.projects.find(x=>x.id===pid);const m=p?.milestones.find(x=>x.id===mid);if(!m)return;
+  editMsId=mid;
+  document.getElementById('mmtitle').textContent='Edit Milestone';
+  document.getElementById('fm-pid').value=pid;
+  document.getElementById('fm-mid').value=mid;
+  document.getElementById('fm-name').value=m.name||'';
+  document.getElementById('fm-status').value=m.status||'planning';
+  document.getElementById('fm-pri').value=m.priority||'medium';
+  document.getElementById('fm-due').value=m.due||'';
+  document.getElementById('fm-eta').value=m.eta||'';
+  document.getElementById('fm-owner').value=m.owner||'';
+  document.getElementById('fm-prog').value=m.progress||0;
+  document.getElementById('fm-art').value=m.artifacts||'';
+  document.getElementById('fm-notes').value=m.notes||'';
+  openM('m-ms');
+}
+function saveMs(){
+  const name=document.getElementById('fm-name').value.trim();
+  if(!name){alert('Milestone name required.');return}
+  const pid=document.getElementById('fm-pid').value;
+  const p=DB.projects.find(x=>x.id===pid);if(!p)return;
+  const data={
+    name,status:document.getElementById('fm-status').value,
+    priority:document.getElementById('fm-pri').value,
+    due:document.getElementById('fm-due').value,
+    eta:document.getElementById('fm-eta').value,
+    owner:document.getElementById('fm-owner').value.trim(),
+    progress:parseInt(document.getElementById('fm-prog').value)||0,
+    artifacts:document.getElementById('fm-art').value.trim(),
+    notes:document.getElementById('fm-notes').value.trim()
+  };
+  if(editMsId){const idx=p.milestones.findIndex(x=>x.id===editMsId);if(idx>=0)p.milestones[idx]={...p.milestones[idx],...data}}
+  else p.milestones.push({id:uid(),...data});
+  save();closeM('m-ms');renderAll();
+}
+
+/* ── Delete ── */
+function confirmDel(type,id,pid){
+  const msg=document.getElementById('del-msg');
+  const ok=document.getElementById('del-ok');
+  if(type==='proj'){
+    const p=DB.projects.find(x=>x.id===id);
+    msg.textContent=`Delete project "${p?.name}"? All milestones and sub-projects will be removed.`;
+    ok.onclick=()=>{
+      DB.projects=DB.projects.filter(x=>x.id!==id&&x.parentId!==id);
+      if(selId===id)selId=null;
+      save();closeM('m-del');renderAll();
+    };
+  }else{
+    const p=DB.projects.find(x=>x.id===pid);const m=p?.milestones.find(x=>x.id===id);
+    msg.textContent=`Delete milestone "${m?.name}"?`;
+    ok.onclick=()=>{if(p)p.milestones=p.milestones.filter(x=>x.id!==id);save();closeM('m-del');renderAll()};
+  }
+  openM('m-del');
+}
+
+/* ── Performance Review ── */
+function openPerf(){
+  document.getElementById('py').value=new Date().getFullYear();
+  genPerf();openM('m-perf');
+}
+function genPerf(){
+  const period=document.getElementById('pp').value;
+  const year=parseInt(document.getElementById('py').value);
+  const plbl=period==='h1'?`H1 ${year} (Jan–Jun)`:period==='h2'?`H2 ${year} (Jul–Dec)`:`Full Year ${year}`;
+  const ps=DB.projects;
+  const ams=ps.flatMap(p=>p.milestones.map(m=>({...m,pn:p.name})));
+  const done=ams.filter(m=>m.status==='done');
+  const active=ams.filter(m=>m.status==='active'||m.status==='review');
+  const blocked=ams.filter(m=>m.status==='blocked'||m.status==='atrisk');
+  const avg=ps.length?Math.round(ps.reduce((a,p)=>a+(p.progress||0),0)/ps.length):0;
+
+  let txt=`PERFORMANCE REVIEW SUMMARY — ${plbl}
+${'═'.repeat(56)}
+Generated: ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}
+
+━━ EXECUTIVE OVERVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Projects:        ${ps.length}
+Active Projects:       ${ps.filter(p=>p.status==='active').length}
+Completed Milestones:  ${done.length} / ${ams.length}
+Average Progress:      ${avg}%
+At Risk / Blocked:     ${ps.filter(p=>p.status==='blocked'||p.status==='atrisk').length} projects
+
+━━ KEY ACCOMPLISHMENTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${done.length?done.map(m=>`  ✓  [${m.pn}]  ${m.name}${m.due?' — completed by target '+fmtd(m.due):''}`).join('\n'):'  None recorded.'}
+
+━━ ACTIVE INITIATIVES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${ps.filter(p=>p.status==='active'||p.status==='review').map(p=>`
+  ▸  ${p.name}  [${(p.status).toUpperCase()}]  —  ${p.progress||0}% complete
+     Goal: ${p.desc||'—'}
+     Owner: ${p.owner||'—'}  |  Target: ${p.target?fmtd(p.target):'TBD'}
+     Milestones: ${p.milestones.length} total, ${p.milestones.filter(m=>m.status==='done').length} completed
+     Artifacts: ${p.artifacts||'—'}`).join('\n')||'  None.'}
+
+━━ MILESTONES IN FLIGHT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${active.length?active.map(m=>`  →  [${m.pn}]  ${m.name}
+      Progress: ${m.progress||0}%  |  Due: ${m.due?fmtd(m.due):'TBD'}${m.eta?'  |  ETA: '+fmtd(m.eta):''}`).join('\n'):'  None.'}
+
+━━ BLOCKERS & RISKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${blocked.length?blocked.map(m=>`  ⚠  [${m.pn}]  ${m.name}${m.notes?'\n     Notes: '+m.notes:''}`).join('\n'):'  No blockers recorded.'}
+
+━━ FULL PROJECT PORTFOLIO ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${ps.map(p=>`
+  ── ${p.name} ${'─'.repeat(Math.max(0,44-p.name.length))}
+  Status: ${p.status}  |  Priority: ${p.priority}  |  Progress: ${p.progress||0}%
+  Owner: ${p.owner||'—'}  |  Team: ${p.team||'—'}
+  Period: ${p.start?fmtd(p.start):'—'} → ${p.target?fmtd(p.target):'TBD'}
+  Goal: ${p.desc||'—'}
+  Notes: ${p.notes||'—'}
+  Artifacts: ${p.artifacts||'—'}
+
+  Milestones:
+${p.milestones.map(m=>`    [${(m.status).toUpperCase().padEnd(8)}] [${(m.priority).toUpperCase().padEnd(8)}] ${m.name}
+              Progress: ${m.progress||0}%  Due: ${m.due?fmtd(m.due):'TBD'}${m.eta?'  ETA: '+fmtd(m.eta):''}
+              ${m.artifacts?'Artifacts: '+m.artifacts:''}${m.notes?'\n              Notes: '+m.notes:''}`).join('\n')||'    — No milestones recorded.'}`).join('\n')}
+
+━━ END OF REVIEW ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+  document.getElementById('perf-out').textContent=txt;
+}
+function copyPerf(){
+  const t=document.getElementById('perf-out').textContent;
+  navigator.clipboard.writeText(t).then(()=>alert('Copied!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=t;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);alert('Copied!');
+  });
+}
+
+/* ── Import / Export ── */
+function doExport(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`prx-dashboard-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+function doImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(!d.projects)throw new Error();
+      DB=d;save();renderAll();alert('Imported successfully.');
+    }catch{alert('Invalid file.')}
+  };
+  r.readAsText(file);
+  e.target.value='';
+}
+
+/* ── Modal helpers ── */
+function openM(id){document.getElementById(id).classList.add('open')}
+function closeM(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.mbg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open')}));
+
+/* ── Init ── */
+document.getElementById('today').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+renderAll();
+</script>
+</body>
+</html>
