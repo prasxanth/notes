@@ -6,15 +6,15 @@
 <title>PRX · Dashboard</title>
 <style>
   :root {
-    --base:    #1e1e2e;
-    --mantle:  #181825;
-    --crust:   #11111b;
-    --surface0:#313244;
-    --surface1:#45475a;
-    --surface2:#585b70;
-    --overlay0:#6c7086;
-    --overlay1:#7f849c;
-    --overlay2:#9399b2;
+    --base:    #0e0e1e;
+    --mantle:  #090916;
+    --crust:   #05050e;
+    --surface0:#1f2030;
+    --surface1:#313346;
+    --surface2:#44475a;
+    --overlay0:#565970;
+    --overlay1:#696e86;
+    --overlay2:#7d839c;
     --text:    #cdd6f4;
     --subtext0:#a6adc8;
     --subtext1:#bac2de;
@@ -273,8 +273,8 @@
   <div class="sep"></div>
   <div class="datepill" id="today"></div>
   <button class="btn btn-ghost" onclick="openPerf()">📊 Perf Review</button>
-  <button class="btn btn-ghost" onclick="doExport()">↓ Export</button>
-  <button class="btn btn-ghost" onclick="document.getElementById('fi').click()">↑ Import</button>
+  <button class="btn btn-ghost" onclick="doExport()">↑ Export</button>
+  <button class="btn btn-ghost" onclick="document.getElementById('fi').click()">↓ Import</button>
   <input type="file" id="fi" accept=".json" style="display:none" onchange="doImport(event)">
   <button class="btn btn-primary" onclick="openAddProj()">+ Project</button>
 </div>
