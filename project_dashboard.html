@@ -267,6 +267,50 @@
 
   /* ── sub-project indent ── */
   .sub-indent{margin-left:24px;border-left:2px solid var(--surface0)}
+
+  /* ── task count badge ── */
+  .tc-badge{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:1px 7px;border-radius:10px;font-size:13px;
+    background:var(--surface0);color:var(--subtext0);
+    cursor:pointer;border:none;font-family:'JetBrains Mono',monospace;
+    transition:background .12s,color .12s;white-space:nowrap;vertical-align:middle
+  }
+  .tc-badge.has-tasks{background:rgba(137,180,250,.15);color:var(--blue)}
+  .tc-badge.has-tasks:hover{background:rgba(137,180,250,.28)}
+  .tc-badge:not(.has-tasks):hover{background:var(--surface1)}
+  .tc-chev{
+    display:inline-block;transition:transform .2s;font-style:normal;font-size:11px
+  }
+  .tc-chev.open{transform:rotate(90deg)}
+
+  /* ── task sub-row ── */
+  tr.task-sub-row td{padding:0!important;background:var(--crust)!important;border-bottom:1px solid var(--surface0)!important}
+  tr.task-sub-row td.task-sub-cell{
+    border-left:3px solid var(--surface1);
+    padding:0!important
+  }
+  .task-sub-wrap{padding:10px 14px 14px 14px;display:none}
+  .task-sub-wrap.open{display:block}
+
+  /* ── task inner table ── */
+  table.ts{width:100%;border-collapse:collapse;font-size:13px}
+  table.ts thead tr{background:var(--mantle)}
+  table.ts th{
+    padding:6px 10px;text-align:left;
+    font-size:12px;font-weight:500;color:var(--overlay0);
+    letter-spacing:.05em;text-transform:uppercase;
+    border-bottom:1px solid var(--surface0);white-space:nowrap
+  }
+  table.ts td{
+    padding:6px 10px;vertical-align:top;
+    border-bottom:1px solid var(--surface0);color:var(--subtext1)
+  }
+  table.ts tbody tr:last-child td{border-bottom:none}
+  table.ts tbody tr:hover td{background:rgba(255,255,255,.014)}
+  td.tsname{color:var(--text);font-weight:500;font-size:13px}
+  td.tsnotes{max-width:180px;white-space:pre-wrap;word-break:break-word;font-size:12px;color:var(--subtext0)}
+  .task-add-row{padding:6px 10px;background:var(--mantle);border-top:1px solid var(--surface0)}
 </style>
 </head>
 <body>
@@ -373,6 +417,30 @@
     <div class="factions">
       <button class="btn btn-ghost" onclick="closeM('m-ms')">Cancel</button>
       <button class="btn btn-primary" onclick="saveMs()">Save Milestone</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Task -->
+<div class="mbg" id="m-task">
+  <div class="modal">
+    <div class="mtitle" id="mttitle">New Task</div>
+    <input type="hidden" id="ft-pid"><input type="hidden" id="ft-mid"><input type="hidden" id="ft-tid">
+    <div class="fgrid">
+      <div class="full"><label>Task Name *</label><input type="text" id="ft-name" placeholder="Implement feature X"></div>
+      <div><label>Status</label><select id="ft-status">
+        <option value="planning">Not Started</option><option value="active">In Progress</option>
+        <option value="review">In Review</option><option value="blocked">Blocked</option>
+        <option value="done">Done</option>
+      </select></div>
+      <div><label>Due Date</label><input type="date" id="ft-due"></div>
+      <div><label>Owner</label><input type="text" id="ft-owner" placeholder="Name"></div>
+      <div><label>Progress % (0–100)</label><input type="number" id="ft-prog" min="0" max="100" value="0"></div>
+      <div class="full"><label>Notes</label><textarea id="ft-notes" placeholder="Details, context…"></textarea></div>
+    </div>
+    <div class="factions">
+      <button class="btn btn-ghost" onclick="closeM('m-task')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
     </div>
   </div>
 </div>
@@ -628,21 +696,37 @@ function buildCard(p,isSub){
 /* ── Milestones Table ── */
 function buildMsTable(p){
   if(!p.milestones.length) return `<div class="empty">No milestones yet — add one with the button above.</div>`;
-  const rows=p.milestones.map(m=>`<tr>
-    <td class="msname">${esc(m.name)}</td>
-    <td>${sbadge(m.status)}</td>
-    <td><span class="prio p-${m.priority}">${m.priority.toUpperCase()}</span></td>
-    <td class="${dc(m.due)}">${m.due?fmtd(m.due):'—'}</td>
-    <td class="${dc(m.eta)}">${m.eta?fmtd(m.eta):'—'}</td>
-    <td>${esc(m.owner||'—')}</td>
-    <td>${progBar(m.progress||0)}</td>
-    <td>${artChips(m.artifacts||'')}</td>
-    <td class="msnotes">${esc(m.notes||'')}</td>
-    <td style="white-space:nowrap">
-      <button class="btn btn-ghost btn-xs" onclick="openEditMs('${p.id}','${m.id}')">✎</button>
-      <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('ms','${m.id}','${p.id}')">✕</button>
-    </td>
-  </tr>`).join('');
+  const rows=p.milestones.map(m=>{
+    const tasks=m.tasks||[];
+    const hasTasks=tasks.length>0;
+    const mid=m.id;
+    const pid=p.id;
+    const subId=`tsub-${mid}`;
+    const chevId=`chev-${mid}`;
+    const badgeCls=`tc-badge${hasTasks?' has-tasks':''}`;
+    const taskBadge=`<button class="${badgeCls}" onclick="toggleTasks('${subId}','${chevId}')"><em class="tc-chev" id="${chevId}">▶</em> ${tasks.length} task${tasks.length!==1?'s':'task'}</button>`;
+    const msRow=`<tr>
+      <td class="msname">${esc(m.name)}<br><span style="margin-top:4px;display:inline-block">${taskBadge}</span></td>
+      <td>${sbadge(m.status)}</td>
+      <td><span class="prio p-${m.priority}">${m.priority.toUpperCase()}</span></td>
+      <td class="${dc(m.due)}">${m.due?fmtd(m.due):'—'}</td>
+      <td class="${dc(m.eta)}">${m.eta?fmtd(m.eta):'—'}</td>
+      <td>${esc(m.owner||'—')}</td>
+      <td>${progBar(m.progress||0)}</td>
+      <td>${artChips(m.artifacts||'')}</td>
+      <td class="msnotes">${esc(m.notes||'')}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-xs" onclick="openEditMs('${pid}','${mid}')">✎</button>
+        <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('ms','${mid}','${pid}')">✕</button>
+      </td>
+    </tr>`;
+    const subRow=`<tr class="task-sub-row" id="${subId}">
+      <td colspan="10" class="task-sub-cell">
+        <div class="task-sub-wrap" id="wrap-${mid}">${buildTaskTable(pid,m)}</div>
+      </td>
+    </tr>`;
+    return msRow+subRow;
+  }).join('');
   return `<table class="ms">
     <thead><tr>
       <th>Milestone</th><th>Status</th><th>Priority</th>
@@ -655,6 +739,94 @@ function buildMsTable(p){
 }
 
 /* ── Helpers ── */
+/* ── Task Table ── */
+function buildTaskTable(pid,m){
+  const tasks=m.tasks||[];
+  const mid=m.id;
+  const rows=tasks.length?tasks.map(t=>`<tr>
+    <td class="tsname">${esc(t.name)}</td>
+    <td>${sbadge(t.status||'planning')}</td>
+    <td class="${dc(t.due)}">${t.due?fmtd(t.due):'—'}</td>
+    <td>${esc(t.owner||'—')}</td>
+    <td>${progBar(t.progress||0)}</td>
+    <td class="tsnotes">${esc(t.notes||'')}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-xs" onclick="openEditTask('${pid}','${mid}','${t.id}')">✎</button>
+      <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('task','${t.id}','${pid}','${mid}')">✕</button>
+    </td>
+  </tr>`).join(''):`<tr><td colspan="7" class="empty" style="padding:10px 12px;font-size:13px">No tasks yet.</td></tr>`;
+  return `<table class="ts">
+    <thead><tr>
+      <th>Task</th><th>Status</th><th>Due</th><th>Owner</th>
+      <th style="min-width:100px">Progress</th><th>Notes</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="7" class="task-add-row">
+      <button class="btn btn-ghost btn-xs" onclick="openAddTask('${pid}','${mid}')">+ Add Task</button>
+    </td></tr></tfoot>
+  </table>`;
+}
+
+function toggleTasks(subId,chevId){
+  const row=document.getElementById(subId);
+  const wrap=row?.querySelector('.task-sub-wrap');
+  const chev=document.getElementById(chevId);
+  if(!wrap)return;
+  const open=wrap.classList.toggle('open');
+  if(chev)chev.classList.toggle('open',open);
+}
+
+function openAddTask(pid,mid){
+  document.getElementById('mttitle').textContent='New Task';
+  document.getElementById('ft-pid').value=pid;
+  document.getElementById('ft-mid').value=mid;
+  document.getElementById('ft-tid').value='';
+  ['ft-name','ft-due','ft-owner','ft-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('ft-status').value='planning';
+  document.getElementById('ft-prog').value=0;
+  openM('m-task');
+}
+
+function openEditTask(pid,mid,tid){
+  const p=DB.projects.find(x=>x.id===pid);
+  const m=p?.milestones.find(x=>x.id===mid);
+  const t=(m?.tasks||[]).find(x=>x.id===tid);
+  if(!t)return;
+  document.getElementById('mttitle').textContent='Edit Task';
+  document.getElementById('ft-pid').value=pid;
+  document.getElementById('ft-mid').value=mid;
+  document.getElementById('ft-tid').value=tid;
+  document.getElementById('ft-name').value=t.name||'';
+  document.getElementById('ft-status').value=t.status||'planning';
+  document.getElementById('ft-due').value=t.due||'';
+  document.getElementById('ft-owner').value=t.owner||'';
+  document.getElementById('ft-prog').value=t.progress||0;
+  document.getElementById('ft-notes').value=t.notes||'';
+  openM('m-task');
+}
+
+function saveTask(){
+  const name=document.getElementById('ft-name').value.trim();
+  if(!name){alert('Task name required.');return}
+  const pid=document.getElementById('ft-pid').value;
+  const mid=document.getElementById('ft-mid').value;
+  const tid=document.getElementById('ft-tid').value;
+  const p=DB.projects.find(x=>x.id===pid);if(!p)return;
+  const m=p.milestones.find(x=>x.id===mid);if(!m)return;
+  if(!m.tasks)m.tasks=[];
+  const data={
+    name,
+    status:document.getElementById('ft-status').value,
+    due:document.getElementById('ft-due').value,
+    owner:document.getElementById('ft-owner').value.trim(),
+    progress:parseInt(document.getElementById('ft-prog').value)||0,
+    notes:document.getElementById('ft-notes').value.trim()
+  };
+  if(tid){const idx=m.tasks.findIndex(x=>x.id===tid);if(idx>=0)m.tasks[idx]={...m.tasks[idx],...data}}
+  else m.tasks.push({id:uid(),...data});
+  save();closeM('m-task');renderAll();
+}
+
 function sbadge(s){const l=STATUS_LABELS[s]||s;return `<span class="badge s-${s}">${l}</span>`}
 function progBar(pct,col){
   const c=pct>=100?'var(--green)':pct>=60?'var(--blue)':pct>=30?'var(--yellow)':'var(--peach)';
@@ -780,12 +952,12 @@ function saveMs(){
     notes:document.getElementById('fm-notes').value.trim()
   };
   if(editMsId){const idx=p.milestones.findIndex(x=>x.id===editMsId);if(idx>=0)p.milestones[idx]={...p.milestones[idx],...data}}
-  else p.milestones.push({id:uid(),...data});
+  else p.milestones.push({id:uid(),tasks:[],...data});
   save();closeM('m-ms');renderAll();
 }
 
 /* ── Delete ── */
-function confirmDel(type,id,pid){
+function confirmDel(type,id,pid,mid){
   const msg=document.getElementById('del-msg');
   const ok=document.getElementById('del-ok');
   if(type==='proj'){
@@ -796,10 +968,15 @@ function confirmDel(type,id,pid){
       if(selId===id)selId=null;
       save();closeM('m-del');renderAll();
     };
-  }else{
+  }else if(type==='ms'){
     const p=DB.projects.find(x=>x.id===pid);const m=p?.milestones.find(x=>x.id===id);
     msg.textContent=`Delete milestone "${m?.name}"?`;
     ok.onclick=()=>{if(p)p.milestones=p.milestones.filter(x=>x.id!==id);save();closeM('m-del');renderAll()};
+  }else if(type==='task'){
+    const p=DB.projects.find(x=>x.id===pid);const m=p?.milestones.find(x=>x.id===mid);
+    const t=(m?.tasks||[]).find(x=>x.id===id);
+    msg.textContent=`Delete task "${t?.name}"?`;
+    ok.onclick=()=>{if(m)m.tasks=(m.tasks||[]).filter(x=>x.id!==id);save();closeM('m-del');renderAll()};
   }
   openM('m-del');
 }
