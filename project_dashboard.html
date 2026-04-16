@@ -128,6 +128,15 @@
   .tag-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:2px}
   .tag{padding:3px 10px;border-radius:12px;font-size:14px;background:var(--surface0);color:var(--subtext1);cursor:pointer;border:1px solid transparent;transition:all .12s}
   .tag.on{background:var(--lavender);color:var(--crust)}
+  .tag.on-tag{background:var(--teal);color:var(--crust)}
+  .ptag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:5px;font-size:12px;font-weight:500;background:rgba(148,226,213,.15);color:var(--teal);border:1px solid rgba(148,226,213,.3);margin-left:4px;cursor:pointer;transition:background .12s}
+  .ptag:hover{background:rgba(148,226,213,.28)}
+  /* tags input pill UI */
+  .tags-input-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:var(--surface0);border:1px solid var(--surface1);border-radius:8px;padding:5px 8px;min-height:36px;cursor:text}
+  .tags-input-wrap:focus-within{border-color:var(--teal)}
+  .tag-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(148,226,213,.18);color:var(--teal);border-radius:5px;padding:1px 7px;font-size:13px}
+  .tag-pill-x{cursor:pointer;opacity:.7;font-size:12px;line-height:1}.tag-pill-x:hover{opacity:1}
+  .tags-raw-input{border:none;outline:none;background:transparent;color:var(--text);font-family:inherit;font-size:14px;flex:1;min-width:80px;padding:1px 2px}
 
   /* ── project card ── */
   .pcard{
@@ -347,6 +356,7 @@
       <div style="flex:1"></div>
     </div>
     <div class="tag-row" id="sf"></div>
+    <div class="tag-row" id="tf" style="margin-top:3px"></div>
     <div id="proj-area"></div>
     <div id="no-res">No projects match.</div>
   </div>
@@ -382,6 +392,11 @@
       <div class="full"><label>Description / Goal</label><textarea id="fp-desc" placeholder="Objective and success criteria…"></textarea></div>
       <div class="full"><label>Artifacts — Name|URL, Name|URL (URL optional)</label><input type="text" id="fp-art" placeholder="PRD|https://…, Design Doc|https://…, Deck"></div>
       <div class="full"><label>Notes / Risks</label><textarea id="fp-notes" placeholder="Blockers, context, dependencies…"></textarea></div>
+      <div class="full">
+        <label>Tags</label>
+        <div class="tags-input-wrap" id="fp-tags-wrap" onclick="document.getElementById('fp-tags-raw').focus()"></div>
+        <input type="hidden" id="fp-tags-hidden">
+      </div>
       <div><label>Parent Project (leave blank for top-level)</label><select id="fp-parent"><option value="">— None —</option></select></div>
     </div>
     <div class="factions">
@@ -496,6 +511,7 @@ let DB = load();
 let openNodes = {};
 let selId = null;
 let sfActive = null;
+let activeTag = null;
 let editProjId = null;
 let editMsId = null;
 
@@ -620,10 +636,22 @@ function renderSF(){
 }
 function toggleSF(s){sfActive=(sfActive===s)?null:s;renderMain()}
 
+/* ── Tag filter ── */
+function renderTF(){
+  const el=document.getElementById('tf');
+  const allTags=[...new Set(DB.projects.flatMap(p=>p.tags||[]))].sort();
+  if(!allTags.length){el.innerHTML='';return}
+  el.innerHTML='<span style="color:var(--overlay1);font-size:14px;letter-spacing:.08em">TAGS:</span>'+
+    allTags.map(t=>`<div class="tag ${activeTag===t?'on-tag':''}" onclick="toggleTF('${esc(t)}')">${esc(t)}</div>`).join('');
+}
+function toggleTF(t){activeTag=(activeTag===t)?null:t;renderMain()}
+function setTagFilter(t){activeTag=(activeTag===t)?null:t;renderMain()}
+
 /* ── Main Content ── */
 function renderMain(){
   renderStats();
   renderSF();
+  renderTF();
   const area=document.getElementById('proj-area');
   const nr=document.getElementById('no-res');
   document.getElementById('mtitle').textContent = selId
@@ -634,6 +662,7 @@ function renderMain(){
     ? DB.projects.filter(p=>p.id===selId)
     : DB.projects.filter(p=>!p.parentId);
   if(sfActive) projs=projs.filter(p=>p.status===sfActive);
+  if(activeTag) projs=projs.filter(p=>(p.tags||[]).includes(activeTag));
   if(q) projs=projs.filter(p=>
     p.name.toLowerCase().includes(q)||
     (p.desc||'').toLowerCase().includes(q)||
@@ -666,6 +695,7 @@ function buildCard(p,isSub){
       <div class="pinfo">
         <div class="ptitle">
           ${esc(p.name)} ${sbadge(p.status)} <span class="prio p-${p.priority}">${p.priority.toUpperCase()}</span>
+          ${(p.tags||[]).map(t=>`<span class="ptag" onclick="event.stopPropagation();setTagFilter('${esc(t)}')">${esc(t)}</span>`).join('')}
           ${isSub?'<span style="font-size:14px;color:var(--overlay1);background:var(--surface0);padding:1px 7px;border-radius:8px">SUB</span>':''}
         </div>
         <div class="pmeta">
@@ -862,6 +892,7 @@ function openAddProj(){
   document.getElementById('fp-pri').value='high';
   document.getElementById('fp-col').value='lavender';
   document.getElementById('fp-prog').value=0;
+  renderTagsInput([]);
   const par=document.getElementById('fp-parent');
   par.innerHTML='<option value="">— None (top-level) —</option>'+DB.projects.filter(p=>!p.parentId).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   openM('m-proj');
@@ -881,6 +912,7 @@ function openEditProj(id){
   document.getElementById('fp-art').value=p.artifacts||'';
   document.getElementById('fp-notes').value=p.notes||'';
   document.getElementById('fp-prog').value=p.progress||0;
+  renderTagsInput(p.tags||[]);
   const par=document.getElementById('fp-parent');
   par.innerHTML='<option value="">— None (top-level) —</option>'+DB.projects.filter(x=>x.id!==id&&!x.parentId).map(x=>`<option value="${x.id}"${x.id===p.parentId?' selected':''}>${x.name}</option>`).join('');
   openM('m-proj');
@@ -888,6 +920,8 @@ function openEditProj(id){
 function saveProj(){
   const name=document.getElementById('fp-name').value.trim();
   if(!name){alert('Project name required.');return}
+  const tagsRaw=document.getElementById('fp-tags-hidden').value;
+  const tags=tagsRaw?tagsRaw.split('||').filter(Boolean):[];
   const data={
     name,status:document.getElementById('fp-status').value,
     priority:document.getElementById('fp-pri').value,
@@ -900,12 +934,35 @@ function saveProj(){
     artifacts:document.getElementById('fp-art').value.trim(),
     notes:document.getElementById('fp-notes').value.trim(),
     progress:parseInt(document.getElementById('fp-prog').value)||0,
-    parentId:document.getElementById('fp-parent').value||null
+    parentId:document.getElementById('fp-parent').value||null,
+    tags
   };
   if(editProjId){const p=DB.projects.find(x=>x.id===editProjId);Object.assign(p,data)}
   else DB.projects.push({id:uid(),milestones:[],collapsed:false,...data});
   save();closeM('m-proj');renderAll();
 }
+
+/* ── Tag pill input ── */
+function renderTagsInput(tags){
+  const wrap=document.getElementById('fp-tags-wrap');
+  const hidden=document.getElementById('fp-tags-hidden');
+  hidden.value=tags.join('||');
+  wrap.innerHTML=tags.map((t,i)=>`<span class="tag-pill">${esc(t)}<span class="tag-pill-x" onclick="removeTag(${i})">✕</span></span>`).join('')+
+    `<input class="tags-raw-input" id="fp-tags-raw" placeholder="Add tag…" onkeydown="tagKeydown(event)" onblur="tagBlur()">`;
+}
+function getCurrentTags(){return(document.getElementById('fp-tags-hidden').value||'').split('||').filter(Boolean)}
+function removeTag(i){const t=getCurrentTags();t.splice(i,1);renderTagsInput(t)}
+function addTag(val){
+  const v=val.trim().replace(/[|,]/g,'');if(!v)return;
+  const t=getCurrentTags();if(!t.includes(v))t.push(v);
+  renderTagsInput(t);
+  setTimeout(()=>{const el=document.getElementById('fp-tags-raw');if(el)el.focus()},0);
+}
+function tagKeydown(e){
+  if(e.key==='Enter'||e.key===','||e.key==='Tab'){e.preventDefault();addTag(e.target.value);e.target.value='';}
+  else if(e.key==='Backspace'&&e.target.value===''){const t=getCurrentTags();if(t.length){t.pop();renderTagsInput(t);}}
+}
+function tagBlur(){const el=document.getElementById('fp-tags-raw');if(el&&el.value.trim()){addTag(el.value);el.value=''}}
 
 /* ── Milestone CRUD ── */
 function openAddMs(pid){
