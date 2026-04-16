@@ -203,8 +203,12 @@
   .artchip{
     display:inline-flex;align-items:center;gap:3px;
     background:var(--surface0);border-radius:5px;
-    padding:2px 7px;font-size:14px;color:var(--blue);margin:1px 2px
+    padding:2px 7px;font-size:14px;color:var(--blue);margin:1px 2px;
+    text-decoration:none;
   }
+  a.artchip{cursor:pointer;border:1px solid transparent;transition:border-color .12s,background .12s}
+  a.artchip:hover{background:var(--surface1);border-color:var(--blue);text-decoration:none}
+  span.artchip{color:var(--overlay1)}
 
   /* ── progress ── */
   .pw{display:flex;align-items:center;gap:7px;min-width:100px}
@@ -332,7 +336,7 @@
       <div><label>Owner</label><input type="text" id="fp-owner" placeholder="Name"></div>
       <div><label>Team / Stakeholders</label><input type="text" id="fp-team" placeholder="PM, Eng…"></div>
       <div class="full"><label>Description / Goal</label><textarea id="fp-desc" placeholder="Objective and success criteria…"></textarea></div>
-      <div class="full"><label>Artifacts (comma-separated)</label><input type="text" id="fp-art" placeholder="PRD, Design Doc, Deck…"></div>
+      <div class="full"><label>Artifacts — Name|URL, Name|URL (URL optional)</label><input type="text" id="fp-art" placeholder="PRD|https://…, Design Doc|https://…, Deck"></div>
       <div class="full"><label>Notes / Risks</label><textarea id="fp-notes" placeholder="Blockers, context, dependencies…"></textarea></div>
       <div><label>Parent Project (leave blank for top-level)</label><select id="fp-parent"><option value="">— None —</option></select></div>
     </div>
@@ -363,7 +367,7 @@
       <div><label>ETA</label><input type="date" id="fm-eta"></div>
       <div><label>Owner</label><input type="text" id="fm-owner" placeholder="Name"></div>
       <div><label>Progress % (0–100)</label><input type="number" id="fm-prog" min="0" max="100" value="0"></div>
-      <div class="full"><label>Artifacts (comma-separated)</label><input type="text" id="fm-art" placeholder="Prototype, Report, Deck…"></div>
+      <div class="full"><label>Artifacts — Name|URL, Name|URL (URL optional)</label><input type="text" id="fm-art" placeholder="Prototype|https://…, Report|https://…, Deck"></div>
       <div class="full"><label>Notes</label><textarea id="fm-notes" placeholder="Details, dependencies, risks…"></textarea></div>
     </div>
     <div class="factions">
@@ -662,7 +666,15 @@ function fmtd(d){
 }
 function dc(d){if(!d)return'';const diff=(new Date(d)-new Date())/(86400000);return diff<0?'d-over':diff<14?'d-soon':'d-ok'}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function artChips(s){return(s||'').split(',').filter(Boolean).map(a=>`<span class="artchip">📎 ${esc(a.trim())}</span>`).join('')}
+function artChips(s){
+  return(s||'').split(',').filter(Boolean).map(a=>{
+    const parts=a.trim().split('|');
+    const name=esc(parts[0].trim());
+    const url=(parts[1]||'').trim();
+    if(url) return `<a class="artchip" href="${esc(url)}" target="_blank" rel="noopener">📎 ${name}</a>`;
+    return `<span class="artchip">📎 ${name}</span>`;
+  }).join('');
+}
 function toggleCard(id){
   const p=DB.projects.find(x=>x.id===id);if(!p)return;
   p.collapsed=!p.collapsed;save();
