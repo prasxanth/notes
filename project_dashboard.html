@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRX · Dashboard</title>
+<title>Project Dashboard</title>
 <style>
   :root {
     --base:    #0e0e1e;
@@ -317,7 +317,7 @@
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="logo">PRX<em>·</em>DASH</div>
+  <div class="logo">PROJECT DASHBOARD</div>
   <div class="sep"></div>
   <div class="datepill" id="today"></div>
   <button class="btn btn-ghost" onclick="openPerf()">📊 Perf Review</button>
@@ -1059,7 +1059,9 @@ function doExport(){
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`prx-dashboard-${new Date().toISOString().slice(0,10)}.json`;
+  const now=new Date();
+  const ts=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0'),String(now.getHours()).padStart(2,'0'),String(now.getMinutes()).padStart(2,'0'),String(now.getSeconds()).padStart(2,'0')].join('');
+  a.download=`project-dashboard-${ts}.json`;
   a.click();
 }
 function doImport(e){
