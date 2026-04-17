@@ -55,9 +55,14 @@
     background:transparent;border:none;outline:none;
     border-bottom:1px dashed var(--overlay0);
     cursor:text;min-width:80px;width:auto;
-    padding:0;caret-color:var(--lavender)
+    padding:0 2px;caret-color:var(--lavender);box-sizing:content-box
   }
   #logo-input:focus{border-bottom-color:var(--lavender)}
+  #logo-sizer{
+    position:absolute;visibility:hidden;white-space:pre;pointer-events:none;
+    font-family:'Inter',sans-serif;font-weight:800;font-size:18px;letter-spacing:.03em;
+    padding:0 2px;top:-9999px;left:-9999px
+  }
   .sep{flex:1}
   .datepill{background:var(--surface0);padding:4px 12px;border-radius:20px;color:var(--subtext0);font-size:13px;letter-spacing:.03em}
   .btn{
@@ -426,8 +431,9 @@
 
 <!-- TOPBAR -->
 <div id="topbar">
+  <span id="logo-sizer"></span>
   <input id="logo-input" type="text" spellcheck="false" title="Click to edit title"
-    onblur="saveTitle()" onkeydown="if(event.key==='Enter'||event.key==='Escape')this.blur()">
+    oninput="sizeTitle(this)" onblur="saveTitle()" onkeydown="if(event.key==='Enter'||event.key==='Escape')this.blur()">
   <div class="sep"></div>
   <div class="datepill" id="today"></div>
   <button class="btn btn-ghost" onclick="openPerf()">📊 Perf Review</button>
@@ -1434,16 +1440,21 @@ function toggleSidebar(){
 
 /* ── Editable title ── */
 const TITLE_KEY='dash_title';
+function sizeTitle(el){
+  const sizer=document.getElementById('logo-sizer');
+  sizer.textContent=el.value||el.placeholder||' ';
+  el.style.width=Math.max(80,sizer.offsetWidth+4)+'px';
+}
 function loadTitle(){
   const el=document.getElementById('logo-input');
   el.value=localStorage.getItem(TITLE_KEY)||'PROJECT DASHBOARD';
-  el.size=Math.max(8,el.value.length);
+  sizeTitle(el);
 }
 function saveTitle(){
   const el=document.getElementById('logo-input');
   const val=el.value.trim()||'PROJECT DASHBOARD';
   el.value=val;
-  el.size=Math.max(8,val.length);
+  sizeTitle(el);
   localStorage.setItem(TITLE_KEY,val);
 }
 
