@@ -49,6 +49,15 @@
   }
   .logo{font-family:'Inter',sans-serif;font-weight:800;font-size:18px;color:var(--lavender);letter-spacing:.03em;white-space:nowrap}
   .logo em{color:var(--mauve);font-style:normal}
+  #logo-input{
+    font-family:'Inter',sans-serif;font-weight:800;font-size:18px;
+    color:var(--lavender);letter-spacing:.03em;white-space:nowrap;
+    background:transparent;border:none;outline:none;
+    border-bottom:1px dashed var(--overlay0);
+    cursor:text;min-width:80px;width:auto;
+    padding:0;caret-color:var(--lavender)
+  }
+  #logo-input:focus{border-bottom-color:var(--lavender)}
   .sep{flex:1}
   .datepill{background:var(--surface0);padding:4px 12px;border-radius:20px;color:var(--subtext0);font-size:13px;letter-spacing:.03em}
   .btn{
@@ -417,7 +426,8 @@
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="logo">PROJECT DASHBOARD</div>
+  <input id="logo-input" type="text" spellcheck="false" title="Click to edit title"
+    onblur="saveTitle()" onkeydown="if(event.key==='Enter'||event.key==='Escape')this.blur()">
   <div class="sep"></div>
   <div class="datepill" id="today"></div>
   <button class="btn btn-ghost" onclick="openPerf()">📊 Perf Review</button>
@@ -1422,8 +1432,24 @@ function toggleSidebar(){
   });
 })();
 
+/* ── Editable title ── */
+const TITLE_KEY='dash_title';
+function loadTitle(){
+  const el=document.getElementById('logo-input');
+  el.value=localStorage.getItem(TITLE_KEY)||'PROJECT DASHBOARD';
+  el.size=Math.max(8,el.value.length);
+}
+function saveTitle(){
+  const el=document.getElementById('logo-input');
+  const val=el.value.trim()||'PROJECT DASHBOARD';
+  el.value=val;
+  el.size=Math.max(8,val.length);
+  localStorage.setItem(TITLE_KEY,val);
+}
+
 /* ── Init ── */
 document.getElementById('today').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+loadTitle();
 applySidebarState();
 renderAll();
 </script>
