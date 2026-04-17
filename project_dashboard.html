@@ -308,11 +308,19 @@
   /* ── column resize handle ── */
   table.ms th{position:relative}
   .col-resizer{
-    position:absolute;right:0;top:0;bottom:0;
-    width:4px;cursor:col-resize;
-    background:transparent;user-select:none;z-index:1
+    position:absolute;right:-6px;top:0;bottom:0;
+    width:14px;cursor:col-resize;user-select:none;z-index:2;
+    display:flex;align-items:center;justify-content:center;
   }
-  .col-resizer:hover,.col-resizer.dragging{background:var(--overlay0)}
+  .col-resizer::after{
+    content:'◂▸';font-size:9px;line-height:1;letter-spacing:-1px;
+    color:var(--overlay0);opacity:.5;pointer-events:none;
+    transition:opacity .15s,color .15s
+  }
+  .col-resizer:hover::after,.col-resizer.dragging::after{
+    color:var(--lavender);opacity:1
+  }
+  .col-resizer.dragging::after{color:var(--blue)}
 
   /* ── column visibility dropdown ── */
   .col-vis-wrap{position:relative;display:inline-block}
@@ -359,7 +367,7 @@
     border-bottom:1px solid var(--surface0);white-space:nowrap
   }
   table.ts td{
-    padding:14px 14px;vertical-align:middle;line-height:1.5;
+    padding:12px 14px;vertical-align:middle;line-height:1.5;
     border-bottom:1px solid var(--surface0);color:var(--subtext1)
   }
   table.ts tbody tr:last-child td{border-bottom:none}
