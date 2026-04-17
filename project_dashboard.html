@@ -312,7 +312,7 @@
     border-bottom:1px solid var(--surface0);white-space:nowrap
   }
   table.ts td{
-    padding:6px 10px;vertical-align:top;
+    padding:10px 10px;vertical-align:middle;
     border-bottom:1px solid var(--surface0);color:var(--subtext1)
   }
   table.ts tbody tr:last-child td{border-bottom:none}
@@ -559,7 +559,21 @@ if(!DB.projects.length){
 }
 
 /* ── Render All ── */
-function renderAll(){renderSidebar();renderMain()}
+function getOpenTasks(){
+  return new Set([...document.querySelectorAll('.task-sub-wrap.open')].map(el=>el.id.replace('wrap-','')));
+}
+function restoreOpenTasks(openMids){
+  openMids.forEach(mid=>{
+    const wrap=document.getElementById('wrap-'+mid);
+    const chev=document.getElementById('chev-'+mid);
+    if(wrap){wrap.classList.add('open');if(chev)chev.classList.add('open');}
+  });
+}
+function renderAll(preserveOpenTasks){
+  const openMids=preserveOpenTasks||getOpenTasks();
+  renderSidebar();renderMain();
+  restoreOpenTasks(openMids);
+}
 
 /* ── Sidebar ── */
 function renderSidebar(){
@@ -734,7 +748,7 @@ function buildMsTable(p){
     const subId=`tsub-${mid}`;
     const chevId=`chev-${mid}`;
     const badgeCls=`tc-badge${hasTasks?' has-tasks':''}`;
-    const taskBadge=`<button class="${badgeCls}" onclick="toggleTasks('${subId}','${chevId}')"><em class="tc-chev" id="${chevId}">▶</em> ${tasks.length} task${tasks.length!==1?'s':'task'}</button>`;
+    const taskBadge=`<button class="${badgeCls}" onclick="toggleTasks('${subId}','${chevId}')"><em class="tc-chev" id="${chevId}">▶</em> ${tasks.length} task${tasks.length!==1?'s':''}</button>`;
     const msRow=`<tr>
       <td class="msname">${esc(m.name)}<br><span style="margin-top:4px;display:inline-block">${taskBadge}</span></td>
       <td>${sbadge(m.status)}</td>
@@ -852,9 +866,11 @@ function saveTask(){
     progress:parseInt(document.getElementById('ft-prog').value)||0,
     notes:document.getElementById('ft-notes').value.trim()
   };
+  const openMids=getOpenTasks();
+  openMids.add(mid); // keep this milestone's tasks open
   if(tid){const idx=m.tasks.findIndex(x=>x.id===tid);if(idx>=0)m.tasks[idx]={...m.tasks[idx],...data}}
   else m.tasks.push({id:uid(),...data});
-  save();closeM('m-task');renderAll();
+  save();closeM('m-task');renderAll(openMids);
 }
 
 function sbadge(s){const l=STATUS_LABELS[s]||s;return `<span class="badge s-${s}">${l}</span>`}
@@ -1033,7 +1049,7 @@ function confirmDel(type,id,pid,mid){
     const p=DB.projects.find(x=>x.id===pid);const m=p?.milestones.find(x=>x.id===mid);
     const t=(m?.tasks||[]).find(x=>x.id===id);
     msg.textContent=`Delete task "${t?.name}"?`;
-    ok.onclick=()=>{if(m)m.tasks=(m.tasks||[]).filter(x=>x.id!==id);save();closeM('m-del');renderAll()};
+    ok.onclick=()=>{const openMids=getOpenTasks();openMids.add(mid);if(m)m.tasks=(m.tasks||[]).filter(x=>x.id!==id);save();closeM('m-del');renderAll(openMids)};
   }
   openM('m-del');
 }
