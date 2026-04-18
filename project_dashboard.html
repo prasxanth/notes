@@ -1375,8 +1375,26 @@ function copyPerf(){
 }
 
 /* ── Import / Export ── */
+function collectSettings(){
+  return {
+    dash_title:    localStorage.getItem(TITLE_KEY)||null,
+    sb_width:      localStorage.getItem(SB_WIDTH_KEY)||null,
+    sb_collapsed:  localStorage.getItem(SB_COLLAPSED_KEY)||null,
+    ms_col_vis:    getMsColVis(),
+    ms_col_widths: getMsColWidths()
+  };
+}
+function applySettings(s){
+  if(!s)return;
+  if(s.dash_title    !=null)localStorage.setItem(TITLE_KEY,       s.dash_title);
+  if(s.sb_width      !=null)localStorage.setItem(SB_WIDTH_KEY,    s.sb_width);
+  if(s.sb_collapsed  !=null)localStorage.setItem(SB_COLLAPSED_KEY,s.sb_collapsed);
+  if(s.ms_col_vis    !=null)setMsColVis(s.ms_col_vis);
+  if(s.ms_col_widths !=null)setMsColWidths(s.ms_col_widths);
+}
 function doExport(){
-  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const payload={...DB,settings:collectSettings()};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   const now=new Date();
@@ -1391,7 +1409,11 @@ function doImport(e){
     try{
       const d=JSON.parse(ev.target.result);
       if(!d.projects)throw new Error();
-      DB=d;save();renderAll();alert('Imported successfully.');
+      applySettings(d.settings||null);
+      const{settings:_,...dbData}=d;
+      DB=dbData;save();
+      loadTitle();applySidebarState();
+      renderAll();alert('Imported successfully.');
     }catch{alert('Invalid file.')}
   };
   r.readAsText(file);
