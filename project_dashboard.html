@@ -407,6 +407,20 @@
   }
   .col-vis-reset:hover{background:var(--surface1)}
 
+  /* ── drag-and-drop ── */
+  .dnd-dragging { opacity: 0.4; }
+  .dnd-over-top { box-shadow: inset 0 2px 0 var(--lavender); }
+  .dnd-over-bot { box-shadow: inset 0 -2px 0 var(--lavender); }
+  .drag-handle {
+    cursor: grab; color: var(--overlay0); padding: 0 8px;
+    font-size: 14px; user-select: none; flex-shrink: 0;
+    opacity: 0; transition: opacity .1s;
+  }
+  .pi-item:hover .drag-handle,
+  tr:hover .drag-handle { opacity: 1; }
+  .drag-handle:active { cursor: grabbing; }
+  .drag-handle-cell { width: 28px; padding: 0 !important; vertical-align: middle; }
+
   /* ── task inner table ── */
   table.ts{width:100%;border-collapse:collapse;font-size:13px}
   table.ts thead tr{background:var(--mantle)}
@@ -694,10 +708,11 @@ function renderSidebar(){
     const hasSubs = subs.length>0;
     const color = COLORS[p.color]||COLORS.lavender;
     const item = document.createElement('div');
-    item.className='pi';
+    item.className='pi pi-item';
+    item.dataset.id=p.id;
     const hdr = document.createElement('div');
     hdr.className='pi-hdr'+(selId===p.id?' sel':'');
-    hdr.innerHTML=`<svg class="chev ${openNodes[p.id]?'open':''}" style="visibility:${hasSubs?'visible':'hidden'}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg>
+    hdr.innerHTML=`<span class="drag-handle">⠿</span><svg class="chev ${openNodes[p.id]?'open':''}" style="visibility:${hasSubs?'visible':'hidden'}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg>
       <div class="dot" style="background:${color}"></div>
       <span class="pi-name">${p.name}</span>
       <span class="pi-ct">${p.milestones.length}</span>`;
@@ -730,6 +745,7 @@ function renderSidebar(){
   list.insertBefore(allItem, list.firstChild);
   const div=document.createElement('div');div.className='sb-div';
   list.insertBefore(div, list.children[1]);
+  initSidebarDnd();
 }
 
 /* ── Stats ── */
@@ -797,10 +813,12 @@ function renderMain(){
   nr.style.display='none';
   projs.forEach(p=>{
     area.appendChild(buildCard(p,false));
+    initMsDnd(p);
     DB.projects.filter(s=>s.parentId===p.id).forEach(s=>{
       const sc=buildCard(s,true);
       sc.classList.add('sub-indent');
       area.appendChild(sc);
+      initMsDnd(s);
     });
   });
 }
@@ -916,7 +934,7 @@ function buildMsTable(p){
   const widths=getMsColWidths();
   // Determine visible columns
   const visibleCols=MS_COLS.filter(col=>isMsColVisible(col));
-  const totalCols=visibleCols.length+1; // +1 for Actions
+  const totalCols=visibleCols.length+2; // +1 for Actions, +1 for drag handle
 
   // Build header cells
   const thCells=visibleCols.map(col=>{
@@ -924,6 +942,7 @@ function buildMsTable(p){
     const wStyle=w?` style="width:${w}px"`:'';
     return `<th data-col="${col}"${wStyle}>${col}<span class="col-resizer" data-col="${col}" onmousedown="startColResize(event,'${col}')"></span></th>`;
   }).join('');
+  const thHandle=`<th style="width:28px;padding:0"></th>`;
 
   // Build row data — cell values indexed by column name
   const rows=p.milestones.map(m=>{
@@ -952,7 +971,8 @@ function buildMsTable(p){
         <button class="btn btn-ghost btn-xs" onclick="openEditMs('${pid}','${mid}')">✎</button>
         <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('ms','${mid}','${pid}')">✕</button>
       </td>`;
-    const msRow=`<tr>${dataCells}${actionsCell}</tr>`;
+    const handleCell=`<td class="drag-handle-cell"><span class="drag-handle">⠿</span></td>`;
+    const msRow=`<tr data-id="${m.id}" data-mid="${mid}" data-pid="${pid}">${handleCell}${dataCells}${actionsCell}</tr>`;
     const subRow=`<tr class="task-sub-row" id="${subId}">
       <td colspan="${totalCols}" class="task-sub-cell">
         <div class="task-sub-wrap" id="wrap-${mid}">${buildTaskTable(pid,m)}</div>
@@ -961,8 +981,8 @@ function buildMsTable(p){
     return msRow+subRow;
   }).join('');
 
-  return `<table class="ms">
-    <thead><tr>${thCells}<th></th></tr></thead>
+  return `<table class="ms" id="ms-tbl-${p.id}">
+    <thead><tr>${thHandle}${thCells}<th></th></tr></thead>
     <tbody>${rows}</tbody>
     <tfoot><tr><td colspan="${totalCols}" class="add-row"><button class="btn btn-ghost btn-xs" onclick="openAddMs('${p.id}')">+ Add Milestone</button></td></tr></tfoot>
   </table>`;
@@ -1012,7 +1032,8 @@ function buildMsTable(p){
 function buildTaskTable(pid,m){
   const tasks=m.tasks||[];
   const mid=m.id;
-  const rows=tasks.length?tasks.map(t=>`<tr>
+  const rows=tasks.length?tasks.map(t=>`<tr data-id="${t.id}" data-mid="${mid}" data-pid="${pid}">
+    <td class="drag-handle-cell"><span class="drag-handle">⠿</span></td>
     <td class="tsname">${esc(t.name)}</td>
     <td>${sbadge(t.status||'planning')}</td>
     <td class="${dc(t.due)}">${t.due?fmtd(t.due):'—'}</td>
@@ -1023,14 +1044,15 @@ function buildTaskTable(pid,m){
       <button class="btn btn-ghost btn-xs" onclick="openEditTask('${pid}','${mid}','${t.id}')">✎</button>
       <button class="btn btn-danger btn-xs del-btn" onclick="confirmDel('task','${t.id}','${pid}','${mid}')">✕</button>
     </td>
-  </tr>`).join(''):`<tr><td colspan="7" class="empty" style="padding:10px 12px;font-size:13px">No tasks yet.</td></tr>`;
-  return `<table class="ts">
+  </tr>`).join(''):`<tr><td colspan="8" class="empty" style="padding:10px 12px;font-size:13px">No tasks yet.</td></tr>`;
+  return `<table class="ts" id="ts-tbl-${mid}">
     <thead><tr>
+      <th style="width:28px;padding:0"></th>
       <th>Task</th><th>Status</th><th>Due</th><th>Owner</th>
       <th style="min-width:100px">Progress</th><th>Notes</th><th></th>
     </tr></thead>
     <tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="7" class="task-add-row">
+    <tfoot><tr><td colspan="8" class="task-add-row">
       <button class="btn btn-ghost btn-xs" onclick="openAddTask('${pid}','${mid}')">+ Add Task</button>
     </td></tr></tfoot>
   </table>`;
@@ -1456,6 +1478,155 @@ function saveTitle(){
   el.value=val;
   sizeTitle(el);
   localStorage.setItem(TITLE_KEY,val);
+}
+
+/* ── Drag-and-Drop ── */
+
+// Reorder an array in place: move item with fromId before/after item with toId
+function dndReorder(arr, fromId, toId, before) {
+  const fi = arr.findIndex(x => x.id === fromId);
+  const [item] = arr.splice(fi, 1);
+  const ti = arr.findIndex(x => x.id === toId);
+  arr.splice(before ? ti : ti + 1, 0, item);
+}
+
+// Generic drag-to-reorder for an array of DOM rows
+// onDrop(fromId, toId, before) is called on successful drop
+function makeDraggable(rows, onDrop) {
+  if (!rows || !rows.length) return;
+  let dragEl = null;
+  let touchDragEl = null;
+  let touchTargetEl = null;
+
+  function clearIndicators() {
+    rows.forEach(r => r.classList.remove('dnd-over-top', 'dnd-over-bot'));
+  }
+
+  rows.forEach(row => {
+    row.setAttribute('draggable', 'true');
+
+    // ── HTML5 drag ──
+    row.addEventListener('dragstart', e => {
+      dragEl = row;
+      row.classList.add('dnd-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', () => {
+      if (dragEl) dragEl.classList.remove('dnd-dragging');
+      dragEl = null;
+      clearIndicators();
+    });
+
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (!dragEl || dragEl === row) return;
+      clearIndicators();
+      const rect = row.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      row.classList.add(before ? 'dnd-over-top' : 'dnd-over-bot');
+    });
+
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('dnd-over-top', 'dnd-over-bot');
+    });
+
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragEl || dragEl === row) { clearIndicators(); return; }
+      const rect = row.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height / 2;
+      clearIndicators();
+      const fromId = dragEl.dataset.id;
+      const toId = row.dataset.id;
+      if (fromId && toId && fromId !== toId) onDrop(fromId, toId, before);
+    });
+
+    // ── Touch drag ──
+    row.addEventListener('touchstart', e => {
+      touchDragEl = row;
+      touchTargetEl = null;
+    }, {passive: true});
+
+    row.addEventListener('touchmove', e => {
+      if (!touchDragEl) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      // Scroll if near viewport edges
+      const scrollMargin = 60;
+      if (touch.clientY < scrollMargin) window.scrollBy(0, -8);
+      else if (touch.clientY > window.innerHeight - scrollMargin) window.scrollBy(0, 8);
+      // Hide dragged element briefly to find element underneath
+      touchDragEl.style.visibility = 'hidden';
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      touchDragEl.style.visibility = '';
+      const target = el ? el.closest('[data-id]') : null;
+      if (target && rows.includes(target)) {
+        touchTargetEl = target;
+        clearIndicators();
+        if (target !== touchDragEl) {
+          const rect = target.getBoundingClientRect();
+          const before = (touch.clientY - rect.top) < rect.height / 2;
+          target.classList.add(before ? 'dnd-over-top' : 'dnd-over-bot');
+        }
+      }
+    }, {passive: false});
+
+    row.addEventListener('touchend', () => {
+      clearIndicators();
+      if (touchDragEl && touchTargetEl && touchDragEl !== touchTargetEl) {
+        const target = touchTargetEl;
+        const rect = target.getBoundingClientRect();
+        // Use last known position — approximate: insert after
+        const fromId = touchDragEl.dataset.id;
+        const toId = target.dataset.id;
+        const before = target.classList.contains('dnd-over-top');
+        if (fromId && toId && fromId !== toId) onDrop(fromId, toId, before);
+      }
+      touchDragEl = null;
+      touchTargetEl = null;
+    });
+  });
+}
+
+// Init milestone DnD for a project's milestone table (called after DOM insertion)
+function initMsDnd(p) {
+  const tbl = document.getElementById('ms-tbl-' + p.id);
+  if (!tbl) return;
+  const rows = Array.from(tbl.querySelectorAll('tbody tr:not(.task-sub-row)'));
+  makeDraggable(rows, (fromId, toId, before) => {
+    dndReorder(p.milestones, fromId, toId, before);
+    save();
+    renderAll(getOpenTasks());
+  });
+  // Init task DnD for each milestone in this table
+  p.milestones.forEach(m => initTaskDnd(p.id, m));
+}
+
+// Init task DnD for a milestone's task table (called after DOM insertion)
+function initTaskDnd(pid, m) {
+  const tbl = document.getElementById('ts-tbl-' + m.id);
+  if (!tbl) return;
+  const rows = Array.from(tbl.querySelectorAll('tbody tr[data-id]'));
+  if (!rows.length) return;
+  makeDraggable(rows, (fromId, toId, before) => {
+    dndReorder(m.tasks, fromId, toId, before);
+    save();
+    const openMids = getOpenTasks();
+    openMids.add(m.id);
+    renderAll(openMids);
+  });
+}
+
+// Init sidebar project DnD
+function initSidebarDnd() {
+  const items = Array.from(document.querySelectorAll('#proj-list .pi-item'));
+  makeDraggable(items, (fromId, toId, before) => {
+    dndReorder(DB.projects, fromId, toId, before);
+    save();
+    renderAll(getOpenTasks());
+  });
 }
 
 /* ── Init ── */
