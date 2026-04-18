@@ -1,6 +1,8 @@
-# Personal Knowledge Apps
+# Sangraha
 
-> A collection of personal single-file web apps — metabolic tracking, Vedic sādhana, Yoga study, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
+> *saṃgraha* (संग्रह) — Sanskrit for *compendium*, a curated gathering of knowledge and practice.
+
+A collection of personal single-file web apps — project management, metabolic tracking, Vedic sādhana, Yoga study, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
 
 ---
 
@@ -8,6 +10,7 @@
 
 - [Overview](#overview)
 - [Apps](#apps)
+  - [Project Dashboard](#project-dashboard)
   - [Agni](#agni)
   - [Jyotish Sādhana](#jyotish-sādhana)
   - [Yoga Sudhakara](#yoga-sudhakara)
@@ -22,13 +25,52 @@
 
 ## Overview
 
-This repository contains a suite of personal knowledge tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
+This repository contains a suite of personal knowledge and practice tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
 
-The six apps cover: a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
+The seven apps cover: a full-featured project and milestone tracker (**Project Dashboard**), a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
 
 ---
 
 ## Apps
+
+### Project Dashboard
+
+**File:** `project_dashboard.html`
+
+A full-featured personal project and milestone tracker. All data — projects, milestones, tasks, settings — is stored in `localStorage` and fully exportable/importable as a single JSON file, enabling exact state round-trips across devices or sessions.
+
+**Key sections:**
+
+- **Sidebar (Projects panel):** Collapsible and resizable left panel listing all projects. Each project shows its status badges (Active, Critical, custom tags), a task count, and artefact links. Projects can be filtered by tag and reordered via drag-and-drop.
+- **Milestone table:** Per-project milestone tracking with configurable visible columns (Name, Status, Due Date, Owner, Artefacts, Notes, Progress). Columns are resizable with pixel-precise drag handles; a "Restore defaults" option resets widths. Column visibility and widths persist across sessions.
+- **Tasks panel:** Expandable per-milestone task list. Each task has a name, due date, owner, status, progress (%), and a notes field. Tasks can be reordered via drag-and-drop within a milestone.
+- **Tag filtering:** Projects can carry custom tags alongside the built-in Active/Critical badges. The tag filter bar above the dashboard filters projects in real time.
+- **Editable title:** The dashboard title ("PROJECT DASHBOARD" by default) is inline-editable and persists to `localStorage`.
+- **Export / Import:** Full state export to a timestamped JSON file (`project-dashboard-YYYYMMDDHHMMSS.json`) covering all project data, ordering, sidebar width/collapse state, and column configuration. Import recreates the exact exported state.
+
+**Data model:**
+```
+DB = {
+  projects: [
+    {
+      id, name, status, tags[],
+      milestones: [
+        {
+          id, name, status, due, owner, progress, notes,
+          artefacts: [{label, url}],
+          tasks: [{id, name, due, owner, status, progress, notes}]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Drag-and-drop reordering:** All three levels — projects in the sidebar, milestones within a project, and tasks within a milestone — support mouse and touch drag-and-drop. Order is saved immediately on every drop.
+
+**How to use:** Open `project_dashboard.html` in any browser. Use the **＋ Project** button to add a project, then add milestones and tasks within each project. Export regularly to back up state.
+
+---
 
 ### Agni
 
@@ -235,6 +277,7 @@ The `apple-touch-icon` is inlined as an SVG data URI — no separate image file 
 
 | App | Icon | Home Screen Name |
 |---|---|---|
+| Project Dashboard | No icon defined (uses Safari default) | Project Dashboard |
 | Agni | Dark amber with Agni flame motif | Agni |
 | Jyotish Sādhana | Deep amber radial gradient with white ॐ | Jyotish Sādhana |
 | Yoga Sudhakara | Deep teal with white ॐ | Yoga Sudhakara |
