@@ -2,7 +2,7 @@
 
 > *saṃgraha* (संग्रह) — Sanskrit for *compendium*, a curated gathering of knowledge and practice.
 
-A collection of personal single-file web apps — project management, metabolic tracking, Vedic sādhana, Yoga study, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
+A collection of personal single-file web apps — project management, metabolic tracking, Vedic sādhana, Upaniṣadic study, Yoga, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
 
 ---
 
@@ -13,6 +13,7 @@ A collection of personal single-file web apps — project management, metabolic 
   - [Project Dashboard](#project-dashboard)
   - [Agni](#agni)
   - [Jyotish Sādhana](#jyotish-sādhana)
+  - [Kena Upaniṣad](#kena-upaniṣad)
   - [Yoga Sudhakara](#yoga-sudhakara)
   - [Marginalia](#marginalia)
     - [Books Toolchain](#books-toolchain)
@@ -27,7 +28,7 @@ A collection of personal single-file web apps — project management, metabolic 
 
 This repository contains a suite of personal knowledge and practice tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
 
-The seven apps cover: a full-featured project and milestone tracker (**Project Dashboard**), a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
+The eight apps cover: a full-featured project and milestone tracker (**Project Dashboard**), a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a verse-by-verse study companion for the Kena Upaniṣad (**Kena Upaniṣad**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
 
 ---
 
@@ -118,6 +119,27 @@ A Jyotish (Vedic astrology) daily spiritual practice companion. The app is organ
 - Gāyatrī Mantra
 
 **How to use:** Open `jyotish_sadhana.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Jyotish Sādhana** with a deep amber ॐ icon.
+
+---
+
+### Kena Upaniṣad
+
+**File:** `kena_upanishad.html`
+
+A verse-by-verse study companion for the Kena Upaniṣad (केनोपनिषद्), one of the principal Upaniṣads of the Sāmaveda (Talavakāra Brāhmaṇa). The text opens with the most radical question in philosophy: *By whom directed does the mind fly forth?* — and proceeds through systematic negation to reveal Brahman as the witness behind all instruments of knowing. Each mantra is presented with Sanskrit, IAST transliteration, word-by-word breakdown, English translation, and Śaṅkara commentary.
+
+**Key sections (four screens via bottom navigation):**
+
+- **Home:** App dashboard with the opening verse hero (*केनेषितं पतति प्रेषितं मनः*), quick-access cards for each khaṇḍa, and an overview card.
+- **Overview:** Upaniṣad context — structure (verse + prose, two interlocking halves), textual lineage (Sāmaveda · Talavakāra Brāhmaṇa), and study method guide.
+- **Khaṇḍas:** All four chapters accessible via tab navigation:
+  - **Khaṇḍa I** — *"Eye of the eye, mind of the mind"* — The opening question (By whom?), the Teacher's paradoxical response, systematic negation (Brahman is not known by speech, mind, eye, ear, or breath), and the four paradoxes of knowing by not-knowing (5 mantras, 5 expandable cards).
+  - **Khaṇḍa II** — *"न विद्यो न विजानीमः"* — Brahman is not an object of thought; Brahman is apprehended in each flash of cognition as the very ground of cognition (2 mantras).
+  - **Khaṇḍa III** — The prose narrative: Brahman wins a victory for the gods; Agni fails, Vāyu fails, Indra approaches — Uma Haimavatī reveals the secret. The story enacts the entire metaphysics of the verse section (3 episodes).
+  - **Khaṇḍa IV** — The practical teaching: tapas, dama, and karma as the foundation of Brahman-knowledge; the nature of the knower; the supreme upāsanā (*"all the Vedas as its limbs, truth as its abode"*) (3 mantras).
+- **Mantra Index:** All mantras browsable by khaṇḍa, each expandable for full Sanskrit, transliteration, word-by-word table, translation, and commentary.
+
+**How to use:** Open `kena_upanishad.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Kena Upaniṣad** with a deep violet gradient icon displaying केन.
 
 ---
 
@@ -280,6 +302,7 @@ The `apple-touch-icon` is inlined as an SVG data URI — no separate image file 
 | Project Dashboard | No icon defined (uses Safari default) | Project Dashboard |
 | Agni | Dark amber with Agni flame motif | Agni |
 | Jyotish Sādhana | Deep amber radial gradient with white ॐ | Jyotish Sādhana |
+| Kena Upaniṣad | Deep violet radial gradient with केन | Kena Upaniṣad |
 | Yoga Sudhakara | Deep teal with white ॐ | Yoga Sudhakara |
 | Marginalia | Navy-to-steel-blue gradient with ✏️ | Marginalia |
 | Recipes | Dark green radial gradient with 🍃 | Recipes |
