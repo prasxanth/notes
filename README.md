@@ -2,7 +2,7 @@
 
 > *saṃgraha* (संग्रह) — Sanskrit for *compendium*, a curated gathering of knowledge and practice.
 
-A collection of personal single-file web apps — project management, metabolic tracking, Vedic sādhana, Upaniṣadic study, Yoga, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
+A collection of personal single-file web apps — project management, metabolic tracking, Vedic sādhana, Upaniṣadic study and memorization, Yoga, a reading library, I Ching divination, and health recipes — each designed to live on an iPhone home screen.
 
 ---
 
@@ -14,6 +14,7 @@ A collection of personal single-file web apps — project management, metabolic 
   - [Agni](#agni)
   - [Jyotish Sādhana](#jyotish-sādhana)
   - [Kena Upaniṣad](#kena-upaniṣad)
+  - [Kena Game](#kena-game)
   - [Yoga Sudhakara](#yoga-sudhakara)
   - [Marginalia](#marginalia)
     - [Books Toolchain](#books-toolchain)
@@ -28,7 +29,7 @@ A collection of personal single-file web apps — project management, metabolic 
 
 This repository contains a suite of personal knowledge and practice tools. Each app is a single self-contained HTML file: no server, no build step, no dependencies to install. Open any file directly in a browser, or — on iOS — use Safari's **Add to Home Screen** to install it as a standalone app with its own icon, title, and full-screen launch. All apps work fully offline.
 
-The eight apps cover: a full-featured project and milestone tracker (**Project Dashboard**), a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a verse-by-verse study companion for the Kena Upaniṣad (**Kena Upaniṣad**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
+The nine apps cover: a full-featured project and milestone tracker (**Project Dashboard**), a metabolic health protocol system driven by blood lab data (**Agni**), a Vedic astrology daily spiritual practice (**Jyotish Sādhana**), a verse-by-verse study companion for the Kena Upaniṣad (**Kena Upaniṣad**), an interactive memorization game for the same text (**Kena Game**), a Yoga Sūtra learning course (**Yoga Sudhakara**), a personal reading library with thematic browsing and stats (**Marginalia**), a classical I Ching divination oracle (**I Ching Oracle**), and a health-protocol recipe reference with daily checklist (**Recipes**). The books app is backed by a CSV database that can be updated via a small Python script.
 
 ---
 
@@ -140,6 +141,33 @@ A verse-by-verse study companion for the Kena Upaniṣad (केनोपनि�
 - **Mantra Index:** All mantras browsable by khaṇḍa, each expandable for full Sanskrit, transliteration, word-by-word table, translation, and commentary.
 
 **How to use:** Open `kena_upanishad.html` in any browser. On iPhone: Safari → Share → Add to Home Screen → launches as **Kena Upaniṣad** with a deep violet gradient icon displaying केन.
+
+---
+
+### Kena Game
+
+**File:** `kena_game.html`
+
+An interactive memorization companion for the Kena Upaniṣad — four game modes that drill Sanskrit mantras, their meanings, and the Yakṣa narrative at increasing depth. XP and streak tracking persist across sessions. All content is filterable by khaṇḍa.
+
+**Game modes:**
+
+| Mode | Badge | Description |
+|---|---|---|
+| **Flashcards** 🃏 | SR | Spaced-repetition cards — Sanskrit on the front, full meaning with word-by-word table on the reverse. Tap to flip. |
+| **Fill the Gap** ✍️ | FIB | A mantra is shown with one word blanked out. Select the correct word from a bank of options. |
+| **Match Pairs** 🔗 | Pairs | Tap-to-match grid of Sanskrit terms and English meanings. Clear all pairs to complete the round. |
+| **Story Order** 📖 | Seq | Arrange the eight episodes of the Yakṣa parable (Khaṇḍas III–IV) in correct narrative sequence. |
+
+**Scoring:**
+- Each correct answer earns XP; wrong answers break the streak.
+- XP bar shows progress toward the next level (every 200 XP).
+- Session summary screen shows XP earned, streak, and correct count.
+- Cumulative stats (total sessions, total correct, best streak, total XP) visible on the Home screen.
+
+**Khaṇḍa filter:** Before each game session a picker lets you choose which khaṇḍas to include (I, II, III, IV, or any combination), so you can focus on specific sections of the text.
+
+**How to use:** Open `kena_game.html` in any browser. Select a mode, pick your khaṇḍas, and tap **Start**.
 
 ---
 
@@ -303,6 +331,7 @@ The `apple-touch-icon` is inlined as an SVG data URI — no separate image file 
 | Agni | Dark amber with Agni flame motif | Agni |
 | Jyotish Sādhana | Deep amber radial gradient with white ॐ | Jyotish Sādhana |
 | Kena Upaniṣad | Deep violet radial gradient with केन | Kena Upaniṣad |
+| Kena Game | No icon defined (uses Safari default) | Kena · Memorization |
 | Yoga Sudhakara | Deep teal with white ॐ | Yoga Sudhakara |
 | Marginalia | Navy-to-steel-blue gradient with ✏️ | Marginalia |
 | Recipes | Dark green radial gradient with 🍃 | Recipes |
