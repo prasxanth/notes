@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a12">
+<title>Kena · Memorization</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Tiro+Devanagari+Sanskrit&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #0a0a12;
+  --bg2:    #11111e;
+  --bg3:    #191928;
+  --bg4:    #202035;
+  --border: rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.14);
+  --text:   #e4e0f4;
+  --text2:  #9b97b8;
+  --text3:  #55527a;
+  --purple: #8F87E0;
+  --purple2:#CECBF6;
+  --purple3:#6B62D4;
+  --teal:   #5DCAA5;
+  --teal2:  #9FE1CB;
+  --gold:   #E8C27A;
+  --gold2:  #F5D9A0;
+  --coral:  #E07878;
+  --amber:  #D4901A;
+  --amber2: #FAC775;
+  --sans:   'Nunito', sans-serif;
+  --dev:    'Tiro Devanagari Sanskrit', serif;
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:var(--sans);color:var(--text);font-size:15px;line-height:1.6;overscroll-behavior:none;}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+.safe-top{height:var(--safe-t);background:var(--bg);flex-shrink:0;}
+
+/* ── HEADER ── */
+.hdr{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg);}
+.hdr-back{font-size:18px;cursor:pointer;padding:2px 6px 2px 0;color:var(--text3);display:none;}
+.hdr-back.show{display:block;}
+.hdr-title{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--purple2);flex:1;}
+.hdr-streak{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;color:var(--gold);}
+.hdr-score{font-family:var(--mono);font-size:11px;color:var(--text2);}
+
+/* ── CONTENT ── */
+#content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;}
+.screen{display:none;min-height:100%;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ── NAV ── */
+.bottom-nav{flex-shrink:0;display:flex;background:var(--bg2);border-top:1px solid var(--border2);padding-bottom:var(--safe-b);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;border:none;background:transparent;cursor:pointer;}
+.nav-icon{font-size:18px;line-height:1;}
+.nav-label{font-family:var(--mono);font-size:8px;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);transition:color 0.15s;}
+.nav-btn.active .nav-label{color:var(--purple);}
+
+/* ─────────────────────────────────────────
+   HOME
+───────────────────────────────────────── */
+.home-wrap{padding:24px 18px 20px;}
+.home-title{font-family:var(--dev);font-size:32px;color:var(--purple2);margin-bottom:4px;}
+.home-subtitle{font-family:var(--serif);font-size:14px;color:var(--text3);font-style:italic;margin-bottom:24px;}
+.xp-bar-wrap{margin-bottom:24px;}
+.xp-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;display:flex;justify-content:space-between;}
+.xp-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--purple3),var(--purple));border-radius:3px;transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+.mode-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.mode-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:15px 16px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:14px;}
+.mode-card:active{background:var(--bg3);}
+.mode-icon{font-size:26px;flex-shrink:0;width:40px;text-align:center;}
+.mode-info{flex:1;}
+.mode-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:1px;}
+.mode-desc{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.04em;}
+.mode-badge{font-family:var(--mono);font-size:9px;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.badge-purple{background:rgba(143,135,224,0.15);color:var(--purple2);}
+.badge-teal{background:rgba(93,202,165,0.15);color:var(--teal2);}
+.badge-gold{background:rgba(232,194,122,0.15);color:var(--gold2);}
+.badge-coral{background:rgba(224,120,120,0.15);color:var(--coral);}
+.stats-row{display:flex;gap:8px;}
+.stat-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;}
+.stat-num{font-family:var(--serif);font-size:22px;color:var(--purple2);font-weight:400;}
+.stat-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+
+/* ─────────────────────────────────────────
+   PICKER SCREEN  ← NEW
+───────────────────────────────────────── */
+.picker-wrap{padding:24px 18px 28px;flex:1;display:flex;flex-direction:column;}
+.picker-mode-banner{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:14px 16px;margin-bottom:22px;}
+.picker-mode-icon{font-size:26px;}
+.picker-mode-name{font-size:16px;font-weight:600;color:var(--text);}
+.picker-mode-desc{font-family:var(--mono);font-size:9px;color:var(--text3);}
+
+.picker-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--text3);text-transform:uppercase;margin-bottom:12px;}
+
+/* Chapter filter pills */
+.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;}
+.filter-pill{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:14px 12px;cursor:pointer;transition:all 0.15s;text-align:left;position:relative;overflow:hidden;}
+.filter-pill:active{transform:scale(0.97);}
+.filter-pill.active{border-color:var(--purple);background:rgba(143,135,224,0.10);}
+.filter-pill.active .fp-num{color:var(--purple);}
+.filter-pill.active .fp-name{color:var(--purple2);}
+.filter-pill.active .fp-check{opacity:1;}
+.fp-num{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;}
+.fp-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.fp-sub{font-family:var(--mono);font-size:9px;color:var(--text3);}
+.fp-check{position:absolute;top:10px;right:10px;font-size:14px;opacity:0;transition:opacity 0.15s;color:var(--purple2);}
+
+/* Full upanishad pill spans full width */
+.filter-pill.full-pill{grid-column:1 / -1;display:flex;align-items:center;gap:12px;padding:16px 16px;}
+.filter-pill.full-pill .fp-icon{font-size:22px;}
+.filter-pill.full-pill.active{border-color:var(--gold);background:rgba(232,194,122,0.08);}
+.filter-pill.full-pill.active .fp-num{color:var(--amber);}
+.filter-pill.full-pill.active .fp-name{color:var(--gold2);}
+.filter-pill.full-pill.active .fp-check{color:var(--gold2);}
+
+/* Counts preview */
+.picker-preview{background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:22px;display:flex;gap:16px;}
+.pp-item{flex:1;text-align:center;}
+.pp-num{font-family:var(--serif);font-size:20px;color:var(--purple2);}
+.pp-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+
+/* Start button */
+.start-btn{width:100%;padding:16px;border:none;border-radius:13px;background:var(--purple3);color:white;font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em;margin-top:auto;}
+.start-btn:active{transform:scale(0.97);}
+.start-btn:disabled{opacity:0.3;cursor:default;}
+
+/* Color variants for chapter pills */
+.filter-pill[data-kh="1"].active{border-color:var(--purple);background:rgba(143,135,224,0.10);}
+.filter-pill[data-kh="2"].active{border-color:var(--teal);background:rgba(93,202,165,0.08);}
+.filter-pill[data-kh="2"].active .fp-num,.filter-pill[data-kh="2"].active .fp-name{color:var(--teal2);}
+.filter-pill[data-kh="2"].active .fp-check{color:var(--teal2);}
+.filter-pill[data-kh="3"].active{border-color:var(--amber2);background:rgba(212,144,26,0.08);}
+.filter-pill[data-kh="3"].active .fp-num,.filter-pill[data-kh="3"].active .fp-name{color:var(--amber2);}
+.filter-pill[data-kh="3"].active .fp-check{color:var(--amber2);}
+.filter-pill[data-kh="4"].active{border-color:var(--coral);background:rgba(224,120,120,0.08);}
+.filter-pill[data-kh="4"].active .fp-num,.filter-pill[data-kh="4"].active .fp-name{color:var(--coral);}
+.filter-pill[data-kh="4"].active .fp-check{color:var(--coral);}
+
+/* ─────────────────────────────────────────
+   SHARED GAME CHROME
+───────────────────────────────────────── */
+.game-wrap{padding:16px 18px 24px;flex:1;display:flex;flex-direction:column;overflow-y:auto;}
+.game-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0;}
+.game-filter-badge{font-family:var(--mono);font-size:9px;padding:3px 10px;border-radius:20px;background:rgba(143,135,224,0.12);color:var(--purple2);border:1px solid rgba(143,135,224,0.2);}
+.game-progress{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-shrink:0;}
+.gp-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.gp-fill{height:100%;background:linear-gradient(90deg,var(--purple3),var(--purple));border-radius:3px;transition:width 0.4s ease;}
+.gp-label{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;}
+.result-flash{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;opacity:0;transition:opacity 0.1s;z-index:100;}
+.result-flash.correct{background:rgba(107,204,160,0.12);}
+.result-flash.wrong{background:rgba(224,120,120,0.12);}
+.result-flash.show{opacity:1;}
+
+/* ─────────────────────────────────────────
+   FLASHCARDS
+───────────────────────────────────────── */
+.card-arena{width:100%;}
+.flashcard{width:100%;perspective:1200px;cursor:pointer;}
+.fc-inner{position:relative;width:100%;transform-style:preserve-3d;transition:transform 0.55s cubic-bezier(.4,0,.2,1);}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-face{position:absolute;top:0;left:0;right:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 18px;text-align:center;box-sizing:border-box;}
+.fc-front{background:var(--bg2);border:1px solid rgba(143,135,224,0.2);}
+.fc-back{background:var(--bg3);border:1px solid rgba(93,202,165,0.22);transform:rotateY(180deg);justify-content:flex-start;padding:16px 16px 14px;}
+/* off-screen measurement container */
+.fc-measure{position:fixed;top:-9999px;left:0;width:calc(100vw - 36px);visibility:hidden;pointer-events:none;border-radius:18px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;box-sizing:border-box;}
+.fc-measure-back{padding:16px 16px 14px;align-items:flex-start;}
+.fc-kh{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;}
+.fc-sanskrit{font-family:var(--dev);font-size:20px;line-height:1.85;color:var(--purple2);margin-bottom:4px;}
+.fc-front-tr{font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:4px;text-align:center;padding:0 6px;}
+.fc-hint{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:8px;letter-spacing:0.06em;}
+.fc-translit{font-family:var(--mono);font-size:10px;color:var(--purple);line-height:1.6;margin-bottom:10px;width:100%;text-align:center;}
+.fc-wbw{width:100%;margin-bottom:10px;}
+.fc-wbw-row{display:flex;border-bottom:1px solid rgba(255,255,255,0.07);padding:5px 0;}
+.fc-wbw-row:last-child{border-bottom:none;}
+.fc-wbw-sk{font-family:var(--dev);font-size:13px;color:var(--purple2);min-width:38%;text-align:left;padding-right:6px;}
+.fc-wbw-tr{font-family:var(--mono);font-size:9px;color:var(--text3);min-width:30%;text-align:left;padding-right:4px;line-height:1.4;padding-top:2px;}
+.fc-wbw-en{font-size:11px;color:var(--text2);flex:1;text-align:left;line-height:1.4;padding-top:2px;}
+.fc-meaning{font-size:12.5px;color:var(--teal2);line-height:1.6;width:100%;text-align:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);font-style:italic;}
+.fc-tap-hint{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;text-align:center;}
+.fc-btns{display:flex;gap:8px;width:100%;margin-top:16px;padding-bottom:4px;}
+.fc-btn{flex:1;padding:14px 8px;border:none;border-radius:12px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.12s;}
+.fc-btn:active{transform:scale(0.96);}
+.btn-again{background:rgba(224,120,120,0.15);color:var(--coral);border:1px solid rgba(224,120,120,0.25);}
+.btn-hard{background:rgba(232,194,122,0.12);color:var(--gold);border:1px solid rgba(232,194,122,0.22);}
+.btn-good{background:rgba(93,202,165,0.12);color:var(--teal2);border:1px solid rgba(93,202,165,0.22);}
+.btn-easy{background:rgba(143,135,224,0.15);color:var(--purple2);border:1px solid rgba(143,135,224,0.25);}
+
+/* ─────────────────────────────────────────
+   FILL IN THE BLANK
+───────────────────────────────────────── */
+.fitb-wrap{flex:1;display:flex;flex-direction:column;}
+.fitb-kh{font-family:var(--mono);font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:14px;padding:5px 10px;background:rgba(143,135,224,0.08);border-radius:6px;display:inline-block;}
+.fitb-context{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;padding:12px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);}
+.fitb-verse{font-family:var(--dev);font-size:18px;line-height:2.2;color:var(--text);margin-bottom:18px;text-align:center;}
+.fitb-translit-reveal{font-family:var(--mono);font-size:11px;color:var(--text3);text-align:center;margin-bottom:12px;line-height:1.8;display:none;}
+.fitb-meaning-reveal{font-size:13px;color:var(--text2);line-height:1.65;text-align:center;padding:12px 14px;background:var(--bg2);border-radius:10px;margin-bottom:14px;display:none;border-left:2px solid var(--teal);}
+.fitb-meaning-reveal.show,.fitb-translit-reveal.show{display:block;}
+.section-lbl{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;justify-content:center;}
+.word-chip{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;font-family:var(--dev);font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.12s;user-select:none;}
+.word-chip:active{transform:scale(0.94);}
+.word-chip.selected{background:rgba(143,135,224,0.15);border-color:var(--purple);color:var(--purple2);}
+.submit-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em;margin-top:auto;}
+.submit-btn.check{background:var(--purple3);color:white;}
+.submit-btn.next{background:rgba(93,202,165,0.12);color:var(--teal2);border:1px solid rgba(93,202,165,0.3);}
+.submit-btn:active{transform:scale(0.97);}
+.submit-btn:disabled{opacity:0.3;cursor:default;}
+
+/* ─────────────────────────────────────────
+   MATCH PAIRS
+───────────────────────────────────────── */
+.match-instruction{font-size:13px;color:var(--text2);margin-bottom:14px;padding:11px 14px;background:var(--bg2);border-radius:10px;border-left:2px solid var(--purple);}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.match-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 10px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.5;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.match-card.sanskrit{font-family:var(--dev);font-size:14px;color:var(--purple2);}
+.match-card.selected{border-color:var(--purple);background:rgba(143,135,224,0.12);color:var(--purple2);}
+.match-card.matched-ok{border-color:var(--teal);background:rgba(93,202,165,0.08);color:var(--teal2);pointer-events:none;opacity:0.8;}
+.match-card.matched-bad{border-color:var(--coral);background:rgba(224,120,120,0.08);animation:shake 0.35s ease;}
+.match-card:active{transform:scale(0.96);}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)}}
+
+/* ─────────────────────────────────────────
+   SEQUENCE
+───────────────────────────────────────── */
+.seq-instruction{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px;padding:11px 14px;background:var(--bg2);border-radius:10px;border-left:2px solid var(--gold);}
+.seq-slots{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.seq-slot{min-height:48px;border:1.5px dashed var(--border2);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:10px;transition:all 0.15s;}
+.seq-slot.filled{border-style:solid;border-color:rgba(143,135,224,0.3);background:rgba(143,135,224,0.06);color:var(--text);}
+.seq-slot.correct-slot{border-color:rgba(93,202,165,0.5);background:rgba(93,202,165,0.06);}
+.seq-slot.wrong-slot{border-color:rgba(224,120,120,0.5);background:rgba(224,120,120,0.06);}
+.slot-num{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:16px;}
+.slot-text{flex:1;font-size:12px;line-height:1.4;}
+.slot-remove{font-size:14px;color:var(--text3);cursor:pointer;padding:2px;}
+.seq-choices{display:flex;flex-direction:column;gap:7px;}
+.seq-choice{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.12s;line-height:1.4;}
+.seq-choice:active{transform:scale(0.98);}
+.seq-choice.placed{opacity:0.22;pointer-events:none;}
+
+/* ─────────────────────────────────────────
+   COMPLETE
+───────────────────────────────────────── */
+.complete-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;}
+.complete-icon{font-size:52px;margin-bottom:16px;}
+.complete-title{font-family:var(--serif);font-size:26px;color:var(--purple2);margin-bottom:8px;}
+.complete-sub{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.6;}
+.complete-stats{display:flex;gap:12px;margin-bottom:28px;}
+.cs-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 8px;}
+.cs-num{font-family:var(--serif);font-size:28px;color:var(--gold2);}
+.cs-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;}
+.complete-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;}
+.play-again-btn{background:var(--purple3);color:white;border:none;border-radius:12px;padding:14px 24px;font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.play-again-btn:active{transform:scale(0.96);}
+.play-again-btn.secondary{background:transparent;color:var(--text2);border:1px solid var(--border2);font-weight:500;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="safe-top"></div>
+  <header class="hdr">
+    <div class="hdr-back" id="hdr-back" onclick="handleBack()">‹</div>
+    <div class="hdr-title" id="hdr-title">केन · Practice</div>
+    <div class="hdr-streak">🔥 <span id="streak-num">0</span></div>
+    &nbsp;
+    <div class="hdr-score" id="hdr-score">0 XP</div>
+  </header>
+
+  <div id="content">
+
+    <!-- ══ HOME ══ -->
+    <div class="screen active" id="screen-home">
+      <div class="home-wrap">
+        <div class="home-title">केनोपनिषद्</div>
+        <div class="home-subtitle">Memorization Practice · Four Game Modes</div>
+        <div class="xp-bar-wrap">
+          <div class="xp-label"><span>Progress</span><span id="xp-display">0 / 200 XP</span></div>
+          <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+        </div>
+        <div class="mode-grid">
+          <div class="mode-card" onclick="openPicker('flash')">
+            <div class="mode-icon">🃏</div>
+            <div class="mode-info">
+              <div class="mode-name">Flashcards</div>
+              <div class="mode-desc">Spaced repetition · Sanskrit → Meaning</div>
+            </div>
+            <div class="mode-badge badge-purple">SR</div>
+          </div>
+          <div class="mode-card" onclick="openPicker('fitb')">
+            <div class="mode-icon">✍️</div>
+            <div class="mode-info">
+              <div class="mode-name">Fill the Gap</div>
+              <div class="mode-desc">Complete the mantra · Word bank</div>
+            </div>
+            <div class="mode-badge badge-teal">FIB</div>
+          </div>
+          <div class="mode-card" onclick="openPicker('match')">
+            <div class="mode-icon">🔗</div>
+            <div class="mode-info">
+              <div class="mode-name">Match Pairs</div>
+              <div class="mode-desc">Sanskrit ↔ English meaning</div>
+            </div>
+            <div class="mode-badge badge-gold">Pairs</div>
+          </div>
+          <div class="mode-card" onclick="openPicker('seq')">
+            <div class="mode-icon">📖</div>
+            <div class="mode-info">
+              <div class="mode-name">Story Order</div>
+              <div class="mode-desc">Arrange the Yakṣa narrative</div>
+            </div>
+            <div class="mode-badge badge-coral">Seq</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-num" id="stat-sessions">0</div><div class="stat-lbl">Sessions</div></div>
+          <div class="stat-box"><div class="stat-num" id="stat-correct">0</div><div class="stat-lbl">Correct</div></div>
+          <div class="stat-box"><div class="stat-num" id="stat-xp">0</div><div class="stat-lbl">XP</div></div>
+          <div class="stat-box"><div class="stat-num" id="stat-streak">0</div><div class="stat-lbl">Best 🔥</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PICKER ══ -->
+    <div class="screen" id="screen-picker">
+      <div class="picker-wrap">
+        <div class="picker-mode-banner" id="picker-banner">
+          <div class="picker-mode-icon" id="picker-icon">🃏</div>
+          <div>
+            <div class="picker-mode-name" id="picker-name">Flashcards</div>
+            <div class="picker-mode-desc" id="picker-desc">Spaced repetition</div>
+          </div>
+        </div>
+
+        <div class="picker-label">Filter by Khaṇḍa</div>
+        <div class="filter-grid">
+          <div class="filter-pill" data-kh="1" onclick="toggleFilter(1)">
+            <div class="fp-num">Khaṇḍa I</div>
+            <div class="fp-name">Verse section</div>
+            <div class="fp-sub" id="fp-sub-1">8 mantras · Brahman's nature</div>
+            <div class="fp-check">✓</div>
+          </div>
+          <div class="filter-pill" data-kh="2" onclick="toggleFilter(2)">
+            <div class="fp-num">Khaṇḍa II</div>
+            <div class="fp-name">Verse section</div>
+            <div class="fp-sub" id="fp-sub-2">5 mantras · Paradox & lightning</div>
+            <div class="fp-check">✓</div>
+          </div>
+          <div class="filter-pill" data-kh="3" onclick="toggleFilter(3)">
+            <div class="fp-num">Khaṇḍa III</div>
+            <div class="fp-name">Prose section</div>
+            <div class="fp-sub" id="fp-sub-3">12 mantras · The Yakṣa parable</div>
+            <div class="fp-check">✓</div>
+          </div>
+          <div class="filter-pill" data-kh="4" onclick="toggleFilter(4)">
+            <div class="fp-num">Khaṇḍa IV</div>
+            <div class="fp-name">Prose section</div>
+            <div class="fp-sub" id="fp-sub-4">9 mantras · Knowledge & tapas</div>
+            <div class="fp-check">✓</div>
+          </div>
+          <div class="filter-pill full-pill" data-kh="all" onclick="selectAll()">
+            <div class="fp-icon">🕉</div>
+            <div>
+              <div class="fp-num">Whole Upaniṣad</div>
+              <div class="fp-name">All four Khaṇḍas</div>
+            </div>
+            <div class="fp-check" style="margin-left:auto;">✓</div>
+          </div>
+        </div>
+
+        <div class="picker-label">Selected content</div>
+        <div class="picker-preview">
+          <div class="pp-item"><div class="pp-num" id="preview-cards">0</div><div class="pp-lbl" id="preview-cards-lbl">Cards</div></div>
+          <div class="pp-item"><div class="pp-num" id="preview-q">0</div><div class="pp-lbl">Questions</div></div>
+          <div class="pp-item"><div class="pp-num" id="preview-kh">0</div><div class="pp-lbl">Khaṇḍas</div></div>
+        </div>
+
+        <button class="start-btn" id="start-btn" onclick="launchGame()" disabled>Select at least one Khaṇḍa</button>
+      </div>
+    </div>
+
+    <!-- ══ FLASHCARDS ══ -->
+    <div class="screen" id="screen-flash">
+      <div class="game-wrap">
+        <div class="game-header">
+          <div class="game-filter-badge" id="fc-filter-badge">All Khaṇḍas</div>
+        </div>
+        <div class="game-progress">
+          <div class="gp-track"><div class="gp-fill" id="fc-progress" style="width:0%"></div></div>
+          <div class="gp-label" id="fc-count">1 / 14</div>
+        </div>
+        <div class="card-arena">
+          <div class="fc-tap-hint" id="fc-tap-hint">Tap card to reveal</div>
+          <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="fc-inner" id="fc-inner">
+              <div class="fc-face fc-front">
+                <div class="fc-kh" id="fc-khanda">Khaṇḍa I · 1.1</div>
+                <div class="fc-sanskrit" id="fc-sanskrit">–</div>
+                <div class="fc-front-tr" id="fc-front-tr">–</div>
+                <div class="fc-hint">Tap to reveal meaning</div>
+              </div>
+              <div class="fc-face fc-back">
+                <div class="fc-kh" id="fc-back-kh">Khaṇḍa I · 1.1</div>
+                <div class="fc-translit" id="fc-translit">–</div>
+                <div class="fc-wbw" id="fc-wbw"></div>
+                <div class="fc-meaning" id="fc-meaning">–</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-btns" id="fc-btns" style="display:none;">
+          <button class="fc-btn btn-again" onclick="rateCard('again')">Again</button>
+          <button class="fc-btn btn-hard" onclick="rateCard('hard')">Hard</button>
+          <button class="fc-btn btn-good" onclick="rateCard('good')">Good</button>
+          <button class="fc-btn btn-easy" onclick="rateCard('easy')">Easy</button>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FILL THE BLANK ══ -->
+    <div class="screen" id="screen-fitb">
+      <div class="game-wrap">
+        <div class="game-header">
+          <div class="game-filter-badge" id="fitb-filter-badge">All Khaṇḍas</div>
+        </div>
+        <div class="game-progress">
+          <div class="gp-track"><div class="gp-fill" id="fitb-progress" style="width:0%"></div></div>
+          <div class="gp-label" id="fitb-count">1 / 12</div>
+        </div>
+        <div class="fitb-wrap">
+          <div class="fitb-kh" id="fitb-kh">Khaṇḍa I · 1.2</div>
+          <div class="fitb-context" id="fitb-context">–</div>
+          <div style="text-align:center;margin-bottom:14px;">
+            <div class="fitb-verse" id="fitb-verse">–</div>
+          </div>
+          <div class="fitb-translit-reveal" id="fitb-translit">–</div>
+          <div class="fitb-meaning-reveal" id="fitb-meaning">–</div>
+          <div class="section-lbl">Word Bank</div>
+          <div class="word-bank" id="word-bank"></div>
+          <button class="submit-btn check" id="fitb-submit" onclick="checkFitb()">Check Answer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MATCH PAIRS ══ -->
+    <div class="screen" id="screen-match">
+      <div class="game-wrap">
+        <div class="game-header">
+          <div class="game-filter-badge" id="match-filter-badge">All Khaṇḍas</div>
+        </div>
+        <div class="game-progress">
+          <div class="gp-track"><div class="gp-fill" id="match-progress" style="width:0%"></div></div>
+          <div class="gp-label" id="match-count">0 / 8 matched</div>
+        </div>
+        <div class="match-instruction">Tap a Sanskrit phrase, then its English meaning. Find all pairs!</div>
+        <div class="match-grid" id="match-grid"></div>
+        <button class="submit-btn next" id="match-next" style="display:none;" onclick="completeMode('match')">See Results →</button>
+      </div>
+    </div>
+
+    <!-- ══ SEQUENCE ══ -->
+    <div class="screen" id="screen-seq">
+      <div class="game-wrap">
+        <div class="game-header">
+          <div class="game-filter-badge">Khaṇḍas III–IV · Yakṣa Narrative</div>
+        </div>
+        <div class="game-progress">
+          <div class="gp-track"><div class="gp-fill" id="seq-progress" style="width:0%"></div></div>
+          <div class="gp-label" id="seq-count">0 / 8 placed</div>
+        </div>
+        <div class="seq-instruction">Tap events in the correct narrative order of the Yakṣa parable.</div>
+        <div class="seq-slots" id="seq-slots"></div>
+        <div class="section-lbl">Events — tap to place</div>
+        <div class="seq-choices" id="seq-choices"></div>
+        <button class="submit-btn check" id="seq-check" onclick="checkSequence()" style="display:none;margin-top:12px;">Check Order</button>
+      </div>
+    </div>
+
+    <!-- ══ COMPLETE ══ -->
+    <div class="screen" id="screen-complete">
+      <div class="complete-wrap">
+        <div class="complete-icon" id="complete-icon">🌟</div>
+        <div class="complete-title" id="complete-title">Excellent!</div>
+        <div class="complete-sub" id="complete-sub">Session complete.</div>
+        <div class="complete-stats">
+          <div class="cs-box"><div class="cs-num" id="cs-correct">–</div><div class="cs-lbl">Correct</div></div>
+          <div class="cs-box"><div class="cs-num" id="cs-xp">–</div><div class="cs-lbl">XP Earned</div></div>
+          <div class="cs-box"><div class="cs-num" id="cs-streak">–</div><div class="cs-lbl">Streak 🔥</div></div>
+        </div>
+        <div class="complete-btns">
+          <button class="play-again-btn" onclick="replayMode()">Play Again</button>
+          <button class="play-again-btn secondary" onclick="goHome()">← All Modes</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#content -->
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="goHome()">
+      <div class="nav-icon">🏠</div><span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" id="nav-flash" onclick="openPicker('flash')">
+      <div class="nav-icon">🃏</div><span class="nav-label">Cards</span>
+    </button>
+    <button class="nav-btn" id="nav-fitb" onclick="openPicker('fitb')">
+      <div class="nav-icon">✍️</div><span class="nav-label">Fill</span>
+    </button>
+    <button class="nav-btn" id="nav-match" onclick="openPicker('match')">
+      <div class="nav-icon">🔗</div><span class="nav-label">Match</span>
+    </button>
+  </nav>
+  <div class="result-flash" id="result-flash"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   ALL DATA — tagged with khanda: 1|2|3|4
+═══════════════════════════════════════════════════ */
+var ALL_MANTRAS = [
+  {id:"1.1",khanda:1,kh:"Khaṇḍa I · 1.1",
+   sk:"केनेषितं पतति प्रेषितं मनः \nकेन प्राणः प्रथमः प्रैति युक्तः",
+   tr:"kena iṣitaṃ patati preṣitaṃ manaḥ / kena prāṇaḥ prathamaḥ praiti yuktaḥ",
+   en:"By whom willed does the mind fly forth? By whom commanded does the first prāṇa move? By whose will do men utter this speech? What deva directs the eye and ear?",
+   wbw:[
+     ["केन","kena","by whom"],
+     ["इषितम्","iṣitam","willed / directed (past passive participle of √iṣ)"],
+     ["पतति","patati","flies forth / moves outward"],
+     ["प्रेषितम्","preṣitam","sent forth / commanded"],
+     ["मनः","manaḥ","the mind"],
+     ["प्राणः प्रथमः","prāṇaḥ prathamaḥ","the prāṇa, the first (vital breath)"],
+     ["प्रैति","praiti","goes forth / departs"],
+     ["युक्तः","yuktaḥ","yoked / set in motion"]
+   ]},
+  {id:"1.2",khanda:1,kh:"Khaṇḍa I · 1.2",
+   sk:"श्रोत्रस्य श्रोत्रं मनसो मनो यद्\nवाचो ह वाचं स उ प्राणस्य प्राणः\nचक्षुषश्चक्षुः",
+   tr:"śrotrasya śrotraṃ manaso mano yad vāco ha vācaṃ sa u prāṇasya prāṇaḥ cakṣuṣaś cakṣuḥ",
+   en:"That which is the ear of the ear, the mind of the mind, the speech of speech, the prāṇa of prāṇa, the eye of the eye — that is Brahman. The wise, freeing themselves from this world, become immortal.",
+   wbw:[
+     ["श्रोत्रस्य श्रोत्रम्","śrotrasya śrotram","ear of the ear — the awareness behind hearing"],
+     ["मनसो मनः","manaso manaḥ","mind of the mind — the knowing behind thought"],
+     ["यत्","yat","that which"],
+     ["वाचो वाचम्","vāco vācam","speech of speech — that which enables language"],
+     ["प्राणस्य प्राणः","prāṇasya prāṇaḥ","prāṇa of prāṇa — the life behind the breath"],
+     ["चक्षुषश्चक्षुः","cakṣuṣaś cakṣuḥ","eye of the eye — that by which the eye sees"],
+     ["अतिमुच्य","atimucya","completely releasing / freeing themselves"],
+     ["अमृताः भवन्ति","amṛtāḥ bhavanti","become immortal"]
+   ]},
+  {id:"1.3",khanda:1,kh:"Khaṇḍa I · 1.3",
+   sk:"न तत्र चक्षुर्गच्छति न वाग्गच्छति\nनो मनः न विद्मो न विजानीमः",
+   tr:"na tatra cakṣur gacchati na vāg gacchati no manaḥ / na vidmo na vijānīmaḥ",
+   en:"The eye does not go there, nor speech, nor mind. We do not know It; we do not understand how one would teach It.",
+   wbw:[
+     ["न","na","not"],
+     ["तत्र","tatra","there (to that place / Brahman)"],
+     ["चक्षुः गच्छति","cakṣuḥ gacchati","the eye goes"],
+     ["न वाक् गच्छति","na vāk gacchati","nor does speech go"],
+     ["नो मनः","no manaḥ","nor the mind"],
+     ["न विद्मः","na vidmaḥ","we do not know (vidmaḥ = 1st pl. perfect of √vid)"],
+     ["न विजानीमः","na vijānīmaḥ","we do not understand / discern"]
+   ]},
+  {id:"1.4",khanda:1,kh:"Khaṇḍa I · 1.4",
+   sk:"अन्यदेव तद्विदितादथो अविदितादधि",
+   tr:"anyad eva tad viditād atho aviditād adhi",
+   en:"It is indeed other than the known; and moreover, It is above (beyond) the unknown. Thus have we heard from those ancients who explained it to us.",
+   wbw:[
+     ["अन्यत् एव","anyat eva","other indeed / different indeed"],
+     ["तत्","tat","that (Brahman)"],
+     ["विदितात्","viditāt","from the known (ablative of vidita)"],
+     ["अथो","atho","and moreover / also"],
+     ["अविदितात्","aviditāt","from the unknown"],
+     ["अधि","adhi","above / beyond"]
+   ]},
+  {id:"1.5",khanda:1,kh:"Khaṇḍa I · 1.5",
+   sk:"यस्यामतं तस्य मतं मतं यस्य न वेद सः\nअविज्ञातं विजानतां विज्ञातमविजानताम्",
+   tr:"yasyāmataṃ tasya mataṃ mataṃ yasya na veda saḥ / avijñātaṃ vijānatāṃ vijñātam avijānatām",
+   en:"He by whom It is not thought (as an object) — by him It is known. He who thinks he knows It — he does not know. It is unknown to those who know (It as object); known to those who do not know (It as object).",
+   wbw:[
+     ["यस्य","yasya","by whom / for whom"],
+     ["अमतम्","amatam","not thought / not made an object of cognition"],
+     ["तस्य","tasya","by him / for him"],
+     ["मतम्","matam","thought / known"],
+     ["यस्य मतम्","yasya matam","by whom it is thought (taken as object)"],
+     ["न वेद सः","na veda saḥ","he does not know (√vid, perf.)"],
+     ["अविज्ञातम्","avijñātam","unknown (to the knowers)"],
+     ["विजानताम्","vijānatām","of those who know (genitive plural)"],
+     ["विज्ञातम्","vijñātam","known (to those who do not know It as object)"],
+     ["अविजानताम्","avijānatām","of those who do not know It (as object)"]
+   ]},
+  {id:"1.6",khanda:1,kh:"Khaṇḍa I · 1.6",
+   sk:"प्रतिबोधविदितं मतममृतत्वं हि विन्दते\nआत्मना विन्दते वीर्यं विद्यया विन्दतेऽमृतम्",
+   tr:"pratibodha-viditaṃ matam amṛtatvaṃ hi vindate / ātmanā vindate vīryaṃ vidyayā vindate'mṛtam",
+   en:"It is thought to be known through every state of consciousness — that is the view (matam). Through this one attains immortality. Through the Self one gains strength (vīrya); through Knowledge one attains immortality.",
+   wbw:[
+     ["प्रतिबोधविदितम्","pratibodha-viditam","known in / through every cognition (prati = in each, bodha = cognition)"],
+     ["मतम्","matam","considered / this is the view"],
+     ["अमृतत्वम्","amṛtatvam","immortality"],
+     ["हि विन्दते","hi vindate","indeed one attains"],
+     ["आत्मना","ātmanā","through the Self (instrumental)"],
+     ["वीर्यम्","vīryam","strength / power"],
+     ["विद्यया","vidyayā","through knowledge (instrumental)"],
+     ["अमृतम्","amṛtam","immortality"]
+   ]},
+  {id:"1.7",khanda:1,kh:"Khaṇḍa I · 1.7",
+   sk:"इह चेदवेदीदथ सत्यमस्ति\nन चेदिहावेदीन्महती विनष्टिः",
+   tr:"iha ced avedīd atha satyam asti / na ced ihāvedīn mahatī vinaṣṭiḥ",
+   en:"If one has known It here (in this life), then there is truth (reality / liberation). If one has not known It here, then there is great destruction (loss).",
+   wbw:[
+     ["इह","iha","here / in this world / in this life"],
+     ["चेत्","cet","if"],
+     ["अवेदीत्","avedīt","one knew / has known (aorist of √vid)"],
+     ["अथ","atha","then"],
+     ["सत्यम् अस्ति","satyam asti","there is truth / reality"],
+     ["न चेत्","na cet","if not"],
+     ["महती","mahatī","great"],
+     ["विनष्टिः","vinaṣṭiḥ","destruction / loss"]
+   ]},
+  {id:"1.8",khanda:1,kh:"Khaṇḍa I · 1.8",
+   sk:"भूतेषु भूतेषु विचित्य धीराः\nप्रेत्यास्माल्लोकादमृता भवन्ति",
+   tr:"bhūteṣu bhūteṣu vicitya dhīrāḥ / pretyāsmāl lokād amṛtā bhavanti",
+   en:"The wise (dhīrāḥ), having discerned It in all beings, become immortal on departing from this world.",
+   wbw:[
+     ["भूतेषु भूतेषु","bhūteṣu bhūteṣu","in all beings (distributive repetition)"],
+     ["विचित्य","vicitya","having discerned / perceived (gerund of vi+√cit)"],
+     ["धीराः","dhīrāḥ","the wise / those of steady intelligence"],
+     ["प्रेत्य","pretya","departing / having gone forth from the body"],
+     ["अस्मात् लोकात्","asmāt lokāt","from this world"],
+     ["अमृताः भवन्ति","amṛtāḥ bhavanti","become immortal"]
+   ]},
+  {id:"2.1",khanda:2,kh:"Khaṇḍa II · 2.1",
+   sk:"मन्ये विदितमिति नो न विदितं परं मतम्",
+   tr:"manye viditam iti no na viditaṃ paraṃ matam",
+   en:"I do not think 'I know It well' — nor do I think 'I do not know It.' He among us who knows (the meaning of) 'I know' and 'I know not' — he truly knows.",
+   wbw:[
+     ["मन्ये","manye","I think / I consider (1st sg. ātmanepada of √man)"],
+     ["विदितम् इति","viditam iti","'(It is) known' — thus (I think)"],
+     ["नो","no","not so / indeed not"],
+     ["न विदितम्","na viditam","not known (as object)"],
+     ["परम्","param","supreme / higher"],
+     ["मतम्","matam","view / opinion / considered (past passive)"]
+   ]},
+  {id:"2.3",khanda:2,kh:"Khaṇḍa II · 2.3",
+   sk:"तस्यैष आदेशो यद्विद्युत् व्यद्युतदा इति",
+   tr:"tasyaiṣa ādeśo yad vidyut vyadyutad ā iti",
+   en:"This is the indication of That: it is as if lightning suddenly flashes — ah! — (and is gone). Thus is Brahman taught in terms of the divine (adhidaivata).",
+   wbw:[
+     ["तस्य","tasya","of That (Brahman — genitive)"],
+     ["एषः आदेशः","eṣa ādeśaḥ","this is the indication / teaching"],
+     ["यत्","yat","that which / as"],
+     ["विद्युत्","vidyut","lightning"],
+     ["व्यद्युतत्","vyadyutat","flashed / blazed forth (augmented aorist)"],
+     ["आ इति","ā iti","ah! — the interjection marking the sudden flash"]
+   ]},
+  {id:"2.4",khanda:2,kh:"Khaṇḍa II · 2.4",
+   sk:"अथाध्यात्मं यदेतद्गच्छतीव च मनोऽनेन\nचैतदुपस्मरत्यभीक्ष्णं सङ्कल्पः",
+   tr:"athādhyātmaṃ yad etad gacchatīva ca mano'nena caitad upasmaranty abhīkṣṇaṃ saṅkalpaḥ",
+   en:"Now in terms of the Self (adhyātma): it is as if the mind moves toward It — by this (mind) one constantly remembers It again and again. This is the saṅkalpa (intention) that keeps returning.",
+   wbw:[
+     ["अथ अध्यात्मम्","atha adhyātmam","now in terms of the self / individual"],
+     ["यत् एतत्","yat etat","that which this"],
+     ["गच्छतीव","gacchatīva","goes as if / seems to move toward (iva = as if)"],
+     ["मनः","manaḥ","the mind"],
+     ["उपस्मरति","upasmarati","recollects / remembers (repeatedly)"],
+     ["अभीक्ष्णम्","abhīkṣṇam","again and again / constantly"],
+     ["सङ्कल्पः","saṅkalpaḥ","the intention / resolve that keeps returning to It"]
+   ]},
+  {id:"2.5",khanda:2,kh:"Khaṇḍa II · 2.5",
+   sk:"तद्धा तद्वनं नाम तद्वनमित्युपासितव्यम्",
+   tr:"tad dhā tad vanaṃ nāma tad vanam ity upāsitavyam",
+   en:"That verily is called Tad Vana ('the delight of all / that desirable one'). It should be meditated upon as Tad Vana. He who knows It thus — all beings long for him.",
+   wbw:[
+     ["तत् ह","tat ha","that verily / that indeed"],
+     ["तद्वनम्","tad-vanam","Tad Vana — 'delight of that' or 'desired by all' (van = to wish/love)"],
+     ["नाम","nāma","by name / called"],
+     ["उपासितव्यम्","upāsitavyam","is to be meditated upon / worshipped (gerundive, obligation)"],
+     ["सर्वाणि भूतानि","sarvāṇi bhūtāni","all beings"],
+     ["संवाञ्छन्ति","saṃvāñchanti","long for / yearn toward"]
+   ]},
+  {id:"3.1",khanda:3,kh:"Khaṇḍa III · 3.1",
+   sk:"ब्रह्म ह देवेभ्यो विजिग्ये\nतस्य ह ब्रह्मणो विजये देवा अमहीयन्त",
+   tr:"brahma ha devebhyo vijigye / tasya ha brahmaṇo vijaye devā amahīyanta",
+   en:"Brahman won a victory for the gods. In that victory of Brahman, the gods became elated (with pride, thinking: 'Ours is this victory').",
+   wbw:[
+     ["ब्रह्म","brahma","Brahman"],
+     ["ह","ha","verily / indeed (emphatic particle)"],
+     ["देवेभ्यः","devebhyaḥ","for the gods (dative plural)"],
+     ["विजिग्ये","vijigye","won / conquered (perfect of vi+√ji)"],
+     ["तस्य विजये","tasya vijaye","in that victory (locative)"],
+     ["देवाः","devāḥ","the gods"],
+     ["अमहीयन्त","amahīyanta","became elated / glorified themselves (aorist passive)"]
+   ]},
+  {id:"3.2",khanda:3,kh:"Khaṇḍa III · 3.2",
+   sk:"तदग्निमब्रुवन् जातवेद एतद्विजानीहि\nयदेतद्यक्षमिति",
+   tr:"tad agnim abruvan jātaveda etad vijānīhi yad etad yakṣam iti",
+   en:"The gods spoke to Agni: 'O Jātavedas (knower of all creatures), find out what this Yakṣa is.'",
+   wbw:[
+     ["तत्","tat","then / thereupon"],
+     ["अग्निम् अब्रुवन्","agnim abruvan","they spoke to Agni (imperfect of √brū)"],
+     ["जातवेदः","jātavedaḥ","O Jātavedas — 'knower of all born things', epithet of Agni"],
+     ["एतत् विजानीहि","etat vijānīhi","find out this / ascertain this (imperative)"],
+     ["यत् एतत् यक्षम्","yat etat yakṣam","what this Yakṣa is"]
+   ]},
+  {id:"3.3",khanda:3,kh:"Khaṇḍa III · 3.3",
+   sk:"तमभ्यवदत् को ऽसीति\nअग्निर्वा अहमस्मि जातवेदा इति",
+   tr:"tam abhyavadat ko'sīti / agnir vā aham asmi jātavedā iti",
+   en:"(The Yakṣa) addressed him: 'Who are you?' (Agni replied:) 'I am Agni — I am Jātavedas (the all-knowing fire).'",
+   wbw:[
+     ["तम् अभ्यवदत्","tam abhyavadat","addressed him / spoke to him (imperfect of abhi+√vad)"],
+     ["कः असि","kaḥ asi","who are you?"],
+     ["इति","iti","thus (marks quoted speech)"],
+     ["अग्निः वा अहम् अस्मि","agniḥ vā aham asmi","I am indeed Agni"],
+     ["जातवेदाः","jātavedāḥ","Jātavedas — 'knower of all that is born'"]
+   ]},
+  {id:"3.4",khanda:3,kh:"Khaṇḍa III · 3.4",
+   sk:"तदग्निरभ्यद्रवत् तन्न शशाक दग्धुम्",
+   tr:"tad agnir abhyadravat tan na śaśāka dagdhum",
+   en:"Agni ran toward it (the blade of grass placed by Brahman) with all his might, but could not burn it.",
+   wbw:[
+     ["तत्","tat","that (the blade of grass placed by Brahman)"],
+     ["अग्निः अभ्यद्रवत्","agniḥ abhyadravat","Agni rushed toward it (imperfect of abhi+√dru)"],
+     ["न शशाक","na śaśāka","was not able / could not (perfect of √śak)"],
+     ["दग्धुम्","dagdhum","to burn (infinitive of √dah)"]
+   ]},
+  {id:"4.6",khanda:4,kh:"Khaṇḍa IV · 4.6",
+   sk:"उपनिषदं भो ब्रूहीति\nउक्ता त उपनिषद्",
+   tr:"upaniṣadaṃ bho brūhīti / uktā ta upaniṣad",
+   en:"'Sir, tell me the Upaniṣad (the secret teaching).' (The teacher replies:) 'The Upaniṣad has indeed been told to you.'",
+   wbw:[
+     ["उपनिषदम्","upaniṣadam","the secret teaching (object)"],
+     ["भोः","bhoḥ","O sir / venerable one"],
+     ["ब्रूहि","brūhi","tell / speak (imperative of √brū)"],
+     ["इति","iti","thus (marks end of speech)"],
+     ["उक्ता","uktā","has been told / spoken (past passive of √vac)"],
+     ["ते","te","to you (dative)"],
+     ["उपनिषद्","upaniṣad","the Upaniṣad / the secret teaching"]
+   ]},
+  {id:"4.7",khanda:4,kh:"Khaṇḍa IV · 4.7",
+   sk:"तस्यै तपो दमः कर्मेति प्रतिष्ठा",
+   tr:"tasyai tapo damaḥ karmeti pratiṣṭhā",
+   en:"For this (Brahman-knowledge), tapas (austerity), dama (sense-restraint), and karma (right action) are the foundation (pratiṣṭhā).",
+   wbw:[
+     ["तस्यै","tasyai","for that / of that (dative/genitive feminine)"],
+     ["तपः","tapaḥ","austerity / the burning away of impurities"],
+     ["दमः","damaḥ","restraint of the senses"],
+     ["कर्म","karma","right action / duties performed without ego"],
+     ["इति","iti","thus — marks the three as a set"],
+     ["प्रतिष्ठा","pratiṣṭhā","foundation / basis / support"]
+   ]},
+  {id:"4.8",khanda:4,kh:"Khaṇḍa IV · 4.8",
+   sk:"वेदाः सर्वाङ्गानि सत्यमायतनम्",
+   tr:"vedāḥ sarvāṅgāni satyam āyatanam",
+   en:"All the Vedas are its limbs (aṅga). Truth (satya) is its abode (āyatana).",
+   wbw:[
+     ["वेदाः","vedāḥ","the Vedas (all scriptural learning)"],
+     ["सर्व-अङ्गानि","sarva-aṅgāni","all the limbs / all the ancillary parts"],
+     ["सत्यम्","satyam","truth / the real"],
+     ["आयतनम्","āyatanam","abode / resting-place / home"]
+   ]},
+  {id:"4.9",khanda:4,kh:"Khaṇḍa IV · 4.9",
+   sk:"यो वा एतामेवं वेदापहत्य पाप्मानम्\nअनन्ते स्वर्गे लोके ज्येये प्रतितिष्ठति",
+   tr:"yo vā etām evaṃ vedāpahatya pāpmānam / anante svarge loke jyeye pratitiṣṭhati",
+   en:"He who knows this (Upaniṣad) thus, having destroyed sin (pāpman), becomes firmly established in the infinite, supreme, blissful world. He becomes established — established.",
+   wbw:[
+     ["यः वा","yaḥ vā","he who indeed / whoever"],
+     ["एताम् एवम्","etām evam","this (teaching) thus"],
+     ["वेद","veda","knows (√vid, perfect)"],
+     ["अपहत्य","apahatya","having destroyed / struck away (gerund of apa+√han)"],
+     ["पाप्मानम्","pāpmānam","sin / evil / the sense of finitude"],
+     ["अनन्ते","anante","in the infinite / endless"],
+     ["स्वर्गे लोके","svarge loke","in the heavenly / blissful world"],
+     ["ज्येये","jyeye","in the supreme / the highest"],
+     ["प्रतितिष्ठति","pratitiṣṭhati","becomes firmly established (doubled for emphasis)"]
+   ]}
+];
+
+var ALL_FITB = [
+  {khanda:1,kh:"Khaṇḍa I · 1.2",ctx:"The teacher describes Brahman as the illuminator behind all sense faculties:",before:"श्रोत्रस्य",blank:"श्रोत्रं",after:"मनसो मनो यत्",tr:"śrotrasya śrotraṃ manaso mano yat",meaning:"Ear of the ear, mind of the mind — that by which all faculties operate.",distractors:["मनः","चक्षुः","प्राणः","वाक्"]},
+  {khanda:1,kh:"Khaṇḍa I · 1.3",ctx:"Conventional faculties cannot reach Brahman:",before:"न तत्र चक्षुर्गच्छति न वाग्गच्छति नो",blank:"मनः",after:"।",tr:"na tatra cakṣur gacchati na vāg gacchati no manaḥ",meaning:"The eye does not go there, nor speech, nor mind.",distractors:["श्रोत्रम्","प्राणः","बुद्धिः","अहंकार"]},
+  {khanda:1,kh:"Khaṇḍa I · 1.5",ctx:"The great paradox of knowing and not-knowing:",before:"यस्यामतं तस्य मतं मतं",blank:"यस्य",after:"न वेद सः",tr:"yasyāmataṃ tasya mataṃ mataṃ yasya na veda saḥ",meaning:"He by whom It is not thought — by him It is thought. He who thinks he knows It, knows It not.",distractors:["तस्य","येन","एषः","यत्र"]},
+  {khanda:1,kh:"Khaṇḍa I · 1.6",ctx:"Brahman is known as the ground of every cognition:",before:"",blank:"प्रतिबोधविदितं",after:"मतममृतत्वं हि विन्दते",tr:"pratibodha-viditaṃ matam amṛtatvaṃ hi vindate",meaning:"Known in every flash of cognition — one attains immortality through knowledge.",distractors:["अप्रतिबोधम्","सर्वज्ञातम्","नित्यज्ञानम्","सत्यज्ञानम्"]},
+  {khanda:1,kh:"Khaṇḍa I · 1.7",ctx:"The urgency of realisation in this very life:",before:"इह चेदवेदीदथ",blank:"सत्यमस्ति",after:"न चेदिहावेदीन्महती विनष्टिः",tr:"iha ced avedīd atha satyam asti",meaning:"If one has known It here, then there is truth. If not, then there is great destruction.",distractors:["मोक्षमस्ति","ज्ञानमस्ति","धर्मोऽस्ति","शान्तिरस्ति"]},
+  {khanda:1,kh:"Khaṇḍa I · 1.4",ctx:"Brahman transcends both the known and the unknown:",before:"अन्यदेव तद्विदितादथो",blank:"अविदितादधि",after:"।",tr:"anyad eva tad viditād atho aviditād adhi",meaning:"It is other than the known, and beyond the unknown — thus the ancients taught.",distractors:["अज्ञाताद्धि","परोक्षाद्धि","सूक्ष्माद्धि","अव्यक्ताद्धि"]},
+  {khanda:2,kh:"Khaṇḍa II · 2.3",ctx:"Brahman is indicated through a natural analogy:",before:"तस्यैष आदेशो यत्",blank:"विद्युत्",after:"व्यद्युतदा इति",tr:"tasyaiṣa ādeśo yad vidyut vyadyutadā iti",meaning:"Its teaching is like a flash of lightning — thus the divine indication of Brahman.",distractors:["सूर्यः","ज्योतिः","तारा","अग्निः"]},
+  {khanda:2,kh:"Khaṇḍa II · 2.5",ctx:"Brahman receives a devotional name:",before:"तद्धा",blank:"तद्वनं",after:"नाम तद्वनमित्युपासितव्यम्",tr:"tad dhā tad vanaṃ nāma tad vanam ity upāsitavyam",meaning:"It is called Tad Vana — the delight of all — and is to be contemplated as such.",distractors:["तत्सत्यं","तदानन्दं","तत्प्रेम","तद्ब्रह्म"]},
+  {khanda:3,kh:"Khaṇḍa III · 3.1",ctx:"The narrative opens with Brahman's role:",before:"ब्रह्म ह देवेभ्यो",blank:"विजिग्ये",after:"तस्य ह ब्रह्मणो विजये",tr:"brahma ha devebhyo vijigye",meaning:"Brahman won the victory for the gods. In this victory, the gods became proud.",distractors:["उवास","जज्ञे","युयुधे","चचार"]},
+  {khanda:4,kh:"Khaṇḍa IV · 4.7",ctx:"The triple foundation of Brahman-knowledge:",before:"तस्यै",blank:"तपो दमः कर्म",after:"इति प्रतिष्ठा",tr:"tasyai tapo damaḥ karma iti pratiṣṭhā",meaning:"For this knowledge: austerity, restraint, and right action are the foundation.",distractors:["श्रद्धा भक्तिर्ज्ञानम्","ध्यानं मौनं जपः","यमो नियमश्च","विवेको वैराग्यम्"]},
+  {khanda:4,kh:"Khaṇḍa IV · 4.7",ctx:"The abode of Brahman-knowledge:",before:"वेदाः सर्वाङ्गानि",blank:"सत्यम्",after:"आयतनम्",tr:"vedāḥ sarvāṅgāni satyam āyatanam",meaning:"All Vedas are its limbs. Truth (satya) is its home, its resting place.",distractors:["ब्रह्म","ज्ञानम्","मोक्षः","धर्मः"]},
+  {khanda:4,kh:"Khaṇḍa IV · 4.9",ctx:"The final promise to the knower:",before:"यो वा एतामेवं वेदापहत्य पाप्मानम्",blank:"अनन्ते",after:"स्वर्गे लोके ज्येये प्रतितिष्ठति",tr:"yo vā etām evaṃ vedāpahatya pāpmānam anante svarge loke pratitiṣṭhati",meaning:"He who knows this becomes established in the infinite, supreme, blissful world.",distractors:["उत्तमे","सर्वश्रेष्ठे","परमे","शाश्वते"]}
+];
+
+var ALL_MATCH = [
+  {khanda:1,sk:"केनेषितम्",en:"By whom directed?"},
+  {khanda:1,sk:"श्रोत्रस्य श्रोत्रम्",en:"Ear of the ear"},
+  {khanda:1,sk:"न तत्र चक्षुः",en:"Eye does not go there"},
+  {khanda:1,sk:"यस्यामतं तस्य मतम्",en:"Not thought — is thought"},
+  {khanda:1,sk:"प्रतिबोधविदितम्",en:"Known in each cognition"},
+  {khanda:2,sk:"यद्विद्युत्",en:"Like lightning flash"},
+  {khanda:2,sk:"तद्वनम्",en:"Delight of all beings"},
+  {khanda:3,sk:"ब्रह्म विजिग्ये",en:"Brahman won the victory"},
+  {khanda:3,sk:"अग्नि तृणं दग्धुम्",en:"Agni could not burn the grass"},
+  {khanda:4,sk:"तपो दमः कर्म",en:"Tapas, restraint, action"},
+  {khanda:4,sk:"सत्यमायतनम्",en:"Truth is its abode"},
+  {khanda:4,sk:"अनन्ते लोके",en:"In the infinite world"}
+];
+
+var SEQ_STEPS = [
+  {text:"Brahman wins a great victory for the gods.", order:0},
+  {text:"The gods grow proud, claiming the victory as their own.", order:1},
+  {text:"Brahman appears before them as a mysterious Yakṣa.", order:2},
+  {text:"The gods send Agni (Fire) to identify the Yakṣa.", order:3},
+  {text:"Agni cannot burn a blade of grass — he returns baffled.", order:4},
+  {text:"Vāyu (Wind) rushes at the grass with all force and fails.", order:5},
+  {text:"Indra approaches — but the Yakṣa vanishes before him.", order:6},
+  {text:"Uma Haimavatī appears and reveals: 'It was Brahman!'", order:7}
+];
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+var state = {
+  xp:0, streak:0, bestStreak:0,
+  sessions:0, totalCorrect:0,
+  fcIndex:0, fcQueue:[], fcFlipped:false,
+  fitbIndex:0, fitbOrder:[],
+  fitbSelected:null, fitbAnswered:false,
+  currentMode:null, pendingMode:null,
+  activeKhandas:[], // array of 1,2,3,4
+  sessionCorrect:0, sessionXP:0
+};
+
+/* ═══════════════════════════════════════════════════
+   SCREEN NAV
+═══════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('content').scrollTop = 0;
+}
+function setNav(id) {
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var el = document.getElementById('nav-'+id);
+  if(el) el.classList.add('active');
+}
+function showBack(show, label) {
+  var el = document.getElementById('hdr-back');
+  el.className = show ? 'hdr-back show' : 'hdr-back';
+  document.getElementById('hdr-title').textContent = label || 'केन · Practice';
+}
+function handleBack() {
+  var s = state.currentMode;
+  if(s === 'picker') { goHome(); }
+  else if(s) { openPicker(s); }
+  else goHome();
+}
+function goHome() {
+  updateHomeStats();
+  showScreen('home');
+  showBack(false);
+  setNav('home');
+  state.currentMode = null;
+}
+function replayMode() {
+  if(state.pendingMode) openPicker(state.pendingMode);
+  else goHome();
+}
+
+/* ═══════════════════════════════════════════════════
+   XP & STATS
+═══════════════════════════════════════════════════ */
+function addXP(n) {
+  state.xp+=n; state.sessionXP+=n;
+  document.getElementById('hdr-score').textContent=state.xp+' XP';
+  document.getElementById('xp-display').textContent=state.xp+' / '+(Math.ceil((state.xp+1)/200)*200)+' XP';
+  document.getElementById('xp-fill').style.width=((state.xp%200)/200*100)+'%';
+}
+function addStreak(){state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;document.getElementById('streak-num').textContent=state.streak;}
+function resetStreak(){state.streak=0;document.getElementById('streak-num').textContent=0;}
+function addCorrect(){state.totalCorrect++;state.sessionCorrect++;}
+function flashResult(ok){var el=document.getElementById('result-flash');el.className='result-flash '+(ok?'correct':'wrong')+' show';setTimeout(function(){el.classList.remove('show');},250);}
+function updateHomeStats(){
+  document.getElementById('stat-sessions').textContent=state.sessions;
+  document.getElementById('stat-correct').textContent=state.totalCorrect;
+  document.getElementById('stat-xp').textContent=state.xp;
+  document.getElementById('stat-streak').textContent=state.bestStreak;
+}
+function showComplete(title,sub,icon){
+  document.getElementById('complete-icon').textContent=icon||'🌟';
+  document.getElementById('complete-title').textContent=title;
+  document.getElementById('complete-sub').textContent=sub;
+  document.getElementById('cs-correct').textContent=state.sessionCorrect;
+  document.getElementById('cs-xp').textContent='+'+state.sessionXP;
+  document.getElementById('cs-streak').textContent=state.bestStreak;
+  showScreen('complete'); showBack(false);
+}
+
+/* ═══════════════════════════════════════════════════
+   PICKER
+═══════════════════════════════════════════════════ */
+var MODE_META = {
+  flash:{icon:'🃏',name:'Flashcards',desc:'Spaced repetition · Sanskrit → Meaning'},
+  fitb: {icon:'✍️',name:'Fill the Gap',desc:'Complete the mantra · Word bank'},
+  match:{icon:'🔗',name:'Match Pairs',desc:'Sanskrit ↔ English meaning'},
+  seq:  {icon:'📖',name:'Story Order',desc:'Arrange the Yakṣa narrative'}
+};
+
+function openPicker(mode) {
+  state.pendingMode = mode;
+  state.currentMode = 'picker';
+  var m = MODE_META[mode];
+  document.getElementById('picker-icon').textContent = m.icon;
+  document.getElementById('picker-name').textContent = m.name;
+  document.getElementById('picker-desc').textContent = m.desc;
+
+  // Reset pills to "All" selected
+  state.activeKhandas = [1,2,3,4];
+  renderFilterPills();
+  updatePreview(mode);
+
+  showScreen('picker');
+  showBack(true, 'Choose Khaṇḍas');
+  setNav(mode==='flash'?'flash':mode==='fitb'?'fitb':mode==='match'?'match':'home');
+}
+
+function toggleFilter(kh) {
+  // Deselect "All" visually
+  document.querySelector('.filter-pill[data-kh="all"]').classList.remove('active');
+
+  var idx = state.activeKhandas.indexOf(kh);
+  if(idx > -1) {
+    if(state.activeKhandas.length === 1) return; // must keep at least one
+    state.activeKhandas.splice(idx,1);
+  } else {
+    state.activeKhandas.push(kh);
+  }
+  // If all 4 selected, also activate "All" pill
+  if(state.activeKhandas.length === 4) {
+    document.querySelector('.filter-pill[data-kh="all"]').classList.add('active');
+  }
+  renderFilterPills();
+  updatePreview(state.pendingMode);
+}
+
+function selectAll() {
+  state.activeKhandas = [1,2,3,4];
+  renderFilterPills();
+  updatePreview(state.pendingMode);
+}
+
+function renderFilterPills() {
+  [1,2,3,4].forEach(function(k){
+    var pill = document.querySelector('.filter-pill[data-kh="'+k+'"]');
+    if(state.activeKhandas.indexOf(k) > -1) pill.classList.add('active');
+    else pill.classList.remove('active');
+  });
+  var allPill = document.querySelector('.filter-pill[data-kh="all"]');
+  if(state.activeKhandas.length === 4) allPill.classList.add('active');
+  else allPill.classList.remove('active');
+}
+
+function getFilteredData(mode) {
+  var khs = state.activeKhandas;
+  if(mode === 'flash') return ALL_MANTRAS.filter(function(m){return khs.indexOf(m.khanda)>-1;});
+  if(mode === 'fitb')  return ALL_FITB.filter(function(q){return khs.indexOf(q.khanda)>-1;});
+  if(mode === 'match') return ALL_MATCH.filter(function(p){return khs.indexOf(p.khanda)>-1;});
+  if(mode === 'seq')   return SEQ_STEPS; // always all
+  return [];
+}
+
+function updatePreview(mode) {
+  var mantras = getFilteredData('flash');
+  var fitbQ = getFilteredData('fitb');
+  var pairs = getFilteredData('match');
+  var khCount = state.activeKhandas.length;
+
+  var cardsNum = mode==='flash' ? mantras.length : mode==='match' ? pairs.length : mode==='seq' ? 8 : fitbQ.length;
+  var cardsLbl = mode==='flash' ? 'Mantras' : mode==='match' ? 'Pairs' : mode==='seq' ? 'Events' : 'Questions';
+
+  document.getElementById('preview-cards').textContent = cardsNum;
+  document.getElementById('preview-cards-lbl').textContent = cardsLbl;
+  document.getElementById('preview-q').textContent = mode==='fitb' ? fitbQ.length : mode==='match' ? pairs.length*2 : mode==='seq' ? 8 : mantras.length;
+  document.getElementById('preview-kh').textContent = mode==='seq' ? '3–4' : khCount;
+
+  var btn = document.getElementById('start-btn');
+  var ready = cardsNum >= 1;
+  btn.disabled = !ready;
+  btn.textContent = ready ? 'Start ' + MODE_META[mode].name + ' →' : 'Select at least one Khaṇḍa';
+}
+
+function buildFilterBadge() {
+  if(state.activeKhandas.length === 4) return 'All Khaṇḍas';
+  return state.activeKhandas.map(function(k){return 'Khaṇḍa '+['','I','II','III','IV'][k];}).join(' + ');
+}
+
+function launchGame() {
+  var mode = state.pendingMode;
+  state.sessions++;
+  state.sessionCorrect = 0;
+  state.sessionXP = 0;
+  state.currentMode = mode;
+
+  if(mode === 'flash') launchFlash();
+  else if(mode === 'fitb') launchFitb();
+  else if(mode === 'match') launchMatch();
+  else if(mode === 'seq') launchSeq();
+}
+
+/* ═══════════════════════════════════════════════════
+   FLASHCARDS
+═══════════════════════════════════════════════════ */
+function launchFlash() {
+  state.fcQueue = shuffle(getFilteredData('flash'));
+  state.fcIndex = 0;
+  state.fcFlipped = false;
+  document.getElementById('fc-filter-badge').textContent = buildFilterBadge();
+  showScreen('flash');
+  showBack(true, 'Flashcards');
+  setNav('flash');
+  loadFlashcard();
+}
+function loadFlashcard() {
+  var card = state.fcQueue[state.fcIndex];
+  if(!card) { completeMode('flash'); return; }
+  var fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  state.fcFlipped = false;
+  document.getElementById('fc-btns').style.display = 'none';
+  // Front face
+  document.getElementById('fc-khanda').textContent = card.kh;
+  document.getElementById('fc-sanskrit').textContent = card.sk;
+  document.getElementById('fc-front-tr').textContent = card.tr;
+  // Back face
+  document.getElementById('fc-back-kh').textContent = card.kh;
+  document.getElementById('fc-translit').textContent = card.tr;
+  var wbwHtml = card.wbw ? card.wbw.map(function(r){
+    return '<div class="fc-wbw-row"><div class="fc-wbw-sk">'+r[0]+'</div><div class="fc-wbw-tr">'+r[1]+'</div><div class="fc-wbw-en">'+r[2]+'</div></div>';
+  }).join('') : '';
+  document.getElementById('fc-wbw').innerHTML = wbwHtml;
+  document.getElementById('fc-meaning').textContent = card.en;
+  // Populate off-screen measurers with same content
+  document.getElementById('msr-sanskrit').textContent = card.sk;
+  document.getElementById('msr-tr').textContent = card.tr;
+  document.getElementById('msr-btr').textContent = card.tr;
+  document.getElementById('msr-wbw').innerHTML = wbwHtml;
+  document.getElementById('msr-en').textContent = card.en;
+  // Measure both faces and set fc-inner to the taller one
+  requestAnimationFrame(function(){
+    var hFront = document.getElementById('msr-front').offsetHeight;
+    var hBack  = document.getElementById('msr-back').offsetHeight;
+    var h = Math.max(hFront, hBack, 180);
+    var inner = document.getElementById('fc-inner');
+    inner.style.height = h + 'px';
+    document.querySelectorAll('.fc-face').forEach(function(f){ f.style.height = h + 'px'; });
+  });
+  // Progress
+  document.getElementById('fc-progress').style.width = (state.fcIndex/state.fcQueue.length*100)+'%';
+  document.getElementById('fc-count').textContent = (state.fcIndex+1)+' / '+state.fcQueue.length;
+}
+function flipCard() {
+  if(state.fcFlipped) return;
+  state.fcFlipped = true;
+  document.getElementById('flashcard').classList.add('flipped');
+  document.getElementById('fc-btns').style.display = 'flex';
+}
+function rateCard(rating) {
+  var xpMap = {again:0,hard:3,good:7,easy:12};
+  var xp = xpMap[rating]||0;
+  if(xp>0){addCorrect();addStreak();}else resetStreak();
+  addXP(xp); flashResult(xp>0);
+  state.fcIndex++;
+  setTimeout(loadFlashcard, 200);
+}
+
+/* ═══════════════════════════════════════════════════
+   FILL THE BLANK
+═══════════════════════════════════════════════════ */
+function launchFitb() {
+  var pool = getFilteredData('fitb');
+  state.fitbOrder = shuffle(pool);
+  state.fitbIndex = 0;
+  state.fitbSelected = null;
+  state.fitbAnswered = false;
+  document.getElementById('fitb-filter-badge').textContent = buildFilterBadge();
+  showScreen('fitb');
+  showBack(true, 'Fill the Gap');
+  setNav('fitb');
+  loadFitb();
+}
+function loadFitb() {
+  if(state.fitbIndex >= state.fitbOrder.length) { completeMode('fitb'); return; }
+  var q = state.fitbOrder[state.fitbIndex];
+  state.fitbSelected = null; state.fitbAnswered = false;
+  document.getElementById('fitb-kh').textContent = q.kh;
+  document.getElementById('fitb-context').textContent = q.ctx;
+  document.getElementById('fitb-translit').classList.remove('show');
+  document.getElementById('fitb-meaning').classList.remove('show');
+  var verse = (q.before?q.before+' ':'')+'_____ '+(q.after||'');
+  var verseEl = document.getElementById('fitb-verse');
+  verseEl.textContent = verse; verseEl.style.color = '';
+  document.getElementById('fitb-translit').textContent = q.tr;
+  document.getElementById('fitb-meaning').textContent = q.meaning;
+  var options = shuffle([q.blank].concat(q.distractors.slice(0,3)));
+  var wb = document.getElementById('word-bank');
+  wb.innerHTML = '';
+  options.forEach(function(w){
+    var chip = document.createElement('div');
+    chip.className = 'word-chip';
+    chip.textContent = w;
+    chip.setAttribute('data-word',w);
+    chip.addEventListener('click',function(){selectWord(this,q);});
+    wb.appendChild(chip);
+  });
+  var btn = document.getElementById('fitb-submit');
+  btn.textContent='Check Answer'; btn.className='submit-btn check'; btn.disabled=true;
+  btn.onclick=function(){checkFitb();};
+  document.getElementById('fitb-progress').style.width=(state.fitbIndex/state.fitbOrder.length*100)+'%';
+  document.getElementById('fitb-count').textContent=(state.fitbIndex+1)+' / '+state.fitbOrder.length;
+}
+function selectWord(el,q){
+  if(state.fitbAnswered)return;
+  document.querySelectorAll('.word-chip').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  state.fitbSelected = el.getAttribute('data-word');
+  document.getElementById('fitb-submit').disabled = false;
+}
+function checkFitb(){
+  if(!state.fitbSelected||state.fitbAnswered)return;
+  var q = state.fitbOrder[state.fitbIndex];
+  var correct = (state.fitbSelected===q.blank);
+  state.fitbAnswered = true;
+  var verseEl = document.getElementById('fitb-verse');
+  if(correct){
+    verseEl.textContent=(q.before?q.before+' ':'')+q.blank+' '+(q.after||'');
+    verseEl.style.color='var(--teal2)';
+    addCorrect();addStreak();addXP(10);flashResult(true);
+  } else {
+    verseEl.textContent=(q.before?q.before+' ':'')+'['+q.blank+'] '+(q.after||'');
+    verseEl.style.color='var(--coral)';
+    resetStreak();addXP(2);flashResult(false);
+  }
+  document.querySelectorAll('.word-chip').forEach(function(c){
+    if(c.getAttribute('data-word')===q.blank){
+      c.style.background='rgba(93,202,165,0.2)';c.style.borderColor='var(--teal)';c.style.color='var(--teal2)';
+    }
+  });
+  document.getElementById('fitb-translit').classList.add('show');
+  document.getElementById('fitb-meaning').classList.add('show');
+  var btn=document.getElementById('fitb-submit');
+  btn.textContent=state.fitbIndex+1<state.fitbOrder.length?'Next →':'Finish';
+  btn.className='submit-btn next';
+  btn.onclick=function(){verseEl.style.color='';state.fitbIndex++;loadFitb();};
+}
+
+/* ═══════════════════════════════════════════════════
+   MATCH PAIRS
+═══════════════════════════════════════════════════ */
+var matchFirst=null, matchMatched=0;
+function launchMatch(){
+  matchFirst=null; matchMatched=0;
+  var pairs=shuffle(getFilteredData('match'));
+  // cap at 6 for readability on mobile
+  if(pairs.length>6) pairs=pairs.slice(0,6);
+  document.getElementById('match-filter-badge').textContent=buildFilterBadge();
+  showScreen('match');
+  showBack(true,'Match Pairs');
+  setNav('match');
+
+  var lefts=pairs.map(function(p,i){return{type:'sk',text:p.sk,pairId:i};});
+  var rights=shuffle(pairs.map(function(p,i){return{type:'en',text:p.en,pairId:i};}));
+  var all=[];
+  for(var i=0;i<lefts.length;i++){all.push(lefts[i]);all.push(rights[i]);}
+  var grid=document.getElementById('match-grid');
+  grid.innerHTML='';
+  all.forEach(function(c){
+    var div=document.createElement('div');
+    div.className='match-card'+(c.type==='sk'?' sanskrit':'');
+    div.textContent=c.text;
+    div.setAttribute('data-type',c.type);
+    div.setAttribute('data-pair',c.pairId);
+    div.addEventListener('click',function(){onMatchClick(this);});
+    grid.appendChild(div);
+  });
+  document.getElementById('match-count').textContent='0 / '+pairs.length+' matched';
+  document.getElementById('match-next').style.display='none';
+  document.getElementById('match-progress').style.width='0%';
+  // store total
+  grid.setAttribute('data-total',pairs.length);
+}
+function onMatchClick(el){
+  if(el.classList.contains('matched-ok')||el.classList.contains('matched-bad'))return;
+  if(!matchFirst){el.classList.add('selected');matchFirst=el;}
+  else if(matchFirst===el){el.classList.remove('selected');matchFirst=null;}
+  else{
+    var a=matchFirst,b=el;matchFirst=null;
+    if(a.getAttribute('data-type')===b.getAttribute('data-type')){a.classList.remove('selected');b.classList.remove('selected');return;}
+    a.classList.remove('selected');b.classList.remove('selected');
+    var total=parseInt(document.getElementById('match-grid').getAttribute('data-total')||8);
+    if(a.getAttribute('data-pair')===b.getAttribute('data-pair')){
+      a.classList.add('matched-ok');b.classList.add('matched-ok');
+      matchMatched++;addCorrect();addStreak();addXP(12);flashResult(true);
+      document.getElementById('match-count').textContent=matchMatched+' / '+total+' matched';
+      document.getElementById('match-progress').style.width=(matchMatched/total*100)+'%';
+      if(matchMatched===total)setTimeout(function(){document.getElementById('match-next').style.display='block';},400);
+    } else {
+      a.classList.add('matched-bad');b.classList.add('matched-bad');
+      resetStreak();flashResult(false);
+      setTimeout(function(){a.classList.remove('matched-bad');b.classList.remove('matched-bad');},600);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SEQUENCE
+═══════════════════════════════════════════════════ */
+var seqPlaced=[], seqSteps=[];
+function launchSeq(){
+  seqPlaced=new Array(SEQ_STEPS.length).fill(null);
+  seqSteps=shuffle(SEQ_STEPS.slice());
+  showScreen('seq');
+  showBack(true,'Story Order');
+  renderSeqSlots();renderSeqChoices();
+  document.getElementById('seq-progress').style.width='0%';
+  document.getElementById('seq-count').textContent='0 / '+SEQ_STEPS.length+' placed';
+  document.getElementById('seq-check').style.display='none';
+}
+function renderSeqSlots(){
+  var html='';
+  for(var i=0;i<SEQ_STEPS.length;i++){
+    var item=seqPlaced[i];
+    html+='<div class="seq-slot'+(item?' filled':'')+'">';
+    html+='<div class="slot-num">'+(i+1)+'.</div>';
+    html+='<div class="slot-text">'+(item?item.text:'Place here…')+'</div>';
+    if(item)html+='<div class="slot-remove" onclick="removeFromSlot('+i+')">✕</div>';
+    html+='</div>';
+  }
+  document.getElementById('seq-slots').innerHTML=html;
+}
+function renderSeqChoices(){
+  var html='';
+  seqSteps.forEach(function(s,idx){
+    var placed=seqPlaced.some(function(p){return p&&p.order===s.order;});
+    html+='<div class="seq-choice'+(placed?' placed':'')+'" onclick="placeStep('+idx+')">'+s.text+'</div>';
+  });
+  document.getElementById('seq-choices').innerHTML=html;
+}
+function placeStep(idx){
+  var s=seqSteps[idx];if(!s)return;
+  for(var i=0;i<seqPlaced.length;i++){if(!seqPlaced[i]){seqPlaced[i]=s;break;}}
+  updateSeqUI();
+}
+function removeFromSlot(i){seqPlaced[i]=null;updateSeqUI();}
+function updateSeqUI(){
+  var filled=seqPlaced.filter(function(p){return p!==null;}).length;
+  document.getElementById('seq-count').textContent=filled+' / '+SEQ_STEPS.length+' placed';
+  document.getElementById('seq-progress').style.width=(filled/SEQ_STEPS.length*100)+'%';
+  renderSeqSlots();renderSeqChoices();
+  document.getElementById('seq-check').style.display=filled===SEQ_STEPS.length?'block':'none';
+}
+function checkSequence(){
+  var correct=0;
+  var slots=document.querySelectorAll('.seq-slot');
+  seqPlaced.forEach(function(item,i){
+    if(item&&item.order===i){correct++;if(slots[i])slots[i].classList.add('correct-slot');}
+    else if(item){if(slots[i])slots[i].classList.add('wrong-slot');}
+  });
+  state.sessionCorrect+=correct;state.totalCorrect+=correct;
+  addXP(correct*8);
+  if(correct===SEQ_STEPS.length){addStreak();flashResult(true);}else{resetStreak();flashResult(false);}
+  var btn=document.getElementById('seq-check');
+  btn.textContent=correct+'/'+SEQ_STEPS.length+' correct — See Results →';
+  btn.className='submit-btn next';
+  btn.onclick=function(){completeMode('seq');};
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPLETE
+═══════════════════════════════════════════════════ */
+function completeMode(mode){
+  var titles={flash:'Session Complete!',fitb:'Well Done!',match:'All Pairs Found!',seq:'Story Sequenced!'};
+  var subs={
+    flash:'Reviewed '+state.fcQueue.length+' mantras from '+buildFilterBadge()+'.',
+    fitb:'Completed '+state.fitbOrder.length+' fill-in questions.',
+    match:'Matched all pairs from '+buildFilterBadge()+'.',
+    seq:'You arranged the Yakṣa parable correctly.'
+  };
+  var icons={flash:'📖',fitb:'✍️',match:'🔗',seq:'📜'};
+  state.pendingMode = mode;
+  showComplete(titles[mode]||'Done!',subs[mode]||'',icons[mode]||'🌟');
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════ */
+function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
+
+/* init picker with all selected */
+state.activeKhandas=[1,2,3,4];
+</script>
+<!-- off-screen measurement clones -->
+<div class="fc-measure" id="msr-front">
+  <div class="fc-kh">X</div>
+  <div id="msr-sanskrit" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:20px;line-height:1.85;margin-bottom:4px;"></div>
+  <div id="msr-tr" style="font-family:'DM Mono',monospace;font-size:10px;line-height:1.7;margin-bottom:4px;"></div>
+  <div style="font-size:10px;margin-top:8px;">Tap to reveal meaning</div>
+</div>
+<div class="fc-measure fc-measure-back" id="msr-back">
+  <div class="fc-kh">X</div>
+  <div id="msr-btr" style="font-family:'DM Mono',monospace;font-size:10px;line-height:1.6;margin-bottom:10px;width:100%;"></div>
+  <div id="msr-wbw" style="width:100%;"></div>
+  <div id="msr-en" style="font-size:12.5px;line-height:1.6;padding-top:8px;width:100%;"></div>
+</div>
+</body>
+</html>
